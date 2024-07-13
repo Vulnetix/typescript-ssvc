@@ -1,8 +1,8 @@
 {
-  "name": "typescript-ssvc",
+  "name": "ssvc",
   "version": "0.0.1",
   "description": "TypeScript implementation of SSVC (Stakeholder-Specific Vulnerability Categorization) ",
-  "main": "src/index.js",
+  "main": "src/index.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
