@@ -1,9 +1,9 @@
 # TypeScript implementation of SSVC (Stakeholder-Specific Vulnerability Categorization)
 
-
 [![NPM Version](https://img.shields.io/npm/v/ssvc?style=flat)](https://www.npmjs.com/package/ssvc)
 [![NPM License](https://img.shields.io/npm/l/ssvc?style=flat)](https://github.com/trivialsec/typescript-ssvc/blob/master/LICENSE)
 [![NPM Downloads](https://img.shields.io/npm/dt/ssvc.svg?style=flat)](https://www.npmjs.com/package/ssvc)
+
 [![NPM](https://nodei.co/npm/ssvc.png?downloads=true)](https://www.npmjs.com/package/ssvc)
 
 A prioritization framework to triage CVE vulnerabilities as an alternative or compliment to CVSS.
@@ -47,154 +47,70 @@ import {
 } from './decision';
 ```
 
+> **Note**: The `Decision` constructor also accepts string inputs for enum values:
+
 ### CISA Methodology Examples
 
-#### Example 1: High Severity Case
-
 ```javascript
-const cisaHigh = new Decision(
-  Exploitation.ACTIVE,
-  Automatable.YES,
-  undefined,
-  TechnicalImpact.TOTAL,
-  undefined,
-  MissionWellbeingImpact.HIGH,
-  Methodology.CISA
-);
+const cisaHigh = new Decision({
+  methodology: Methodology.CISA,
+  exploitation: Exploitation.ACTIVE,
+  automatable: Automatable.YES,
+  technical_impact: TechnicalImpact.TOTAL,
+  mission_wellbeing: MissionWellbeingImpact.HIGH
+});
 console.log(cisaHigh.evaluate());
 // Expected output: OutcomeCISA { action: 'Act', priority: 'immediate' }
 ```
 
-#### Example 2: Medium Severity Case
+```javascript
+const cisaStringInputs = new Decision({
+  methodology: 'CISA',
+  exploitation: 'active',
+  automatable: 'yes',
+  technical_impact: 'total',
+  mission_wellbeing: 'high'
+});
+console.log(cisaStringInputs.evaluate());
+// Expected output: OutcomeCISA { action: 'Act', priority: 'immediate' }
+```
 
 ```javascript
-const cisaMedium = new Decision(
-  Exploitation.POC,
-  Automatable.NO,
-  undefined,
-  TechnicalImpact.PARTIAL,
-  undefined,
-  MissionWellbeingImpact.MEDIUM,
-  Methodology.CISA
-);
+const cisaMedium = new Decision({
+  methodology: Methodology.CISA,
+  exploitation: Exploitation.POC,
+  automatable: Automatable.NO,
+  technical_impact: TechnicalImpact.PARTIAL,
+  mission_wellbeing: MissionWellbeingImpact.MEDIUM
+});
 console.log(cisaMedium.evaluate());
 // Expected output: OutcomeCISA { action: 'Track*', priority: 'medium' }
 ```
 
-#### Example 3: Low Severity Case
-
-```javascript
-const cisaLow = new Decision(
-  Exploitation.NONE,
-  Automatable.NO,
-  undefined,
-  TechnicalImpact.PARTIAL,
-  undefined,
-  MissionWellbeingImpact.LOW,
-  Methodology.CISA
-);
-console.log(cisaLow.evaluate());
-// Expected output: OutcomeCISA { action: 'Track', priority: 'low' }
-```
-
 ### FIRST Methodology Examples
 
-#### Example 1: High Severity Case
-
 ```javascript
-const firstHigh = new Decision(
-  Exploitation.ACTIVE,
-  undefined,
-  Utility.SUPER_EFFECTIVE,
-  TechnicalImpact.TOTAL,
-  SafetyImpact.CATASTROPHIC,
-  undefined,
-  Methodology.FIRST
-);
+const firstHigh = new Decision({
+  methodology: Methodology.FIRST,
+  exploitation: Exploitation.ACTIVE,
+  utility: Utility.SUPER_EFFECTIVE,
+  technical_impact: TechnicalImpact.TOTAL,
+  safety_impact: SafetyImpact.CATASTROPHIC
+});
 console.log(firstHigh.evaluate());
 // Expected output: OutcomeFIRST { action: 'immediate', priority: 'immediate' }
 ```
 
-#### Example 2: Medium Severity Case
-
-```javascript
-const firstMedium = new Decision(
-  Exploitation.POC,
-  undefined,
-  Utility.EFFICIENT,
-  TechnicalImpact.PARTIAL,
-  SafetyImpact.MAJOR,
-  undefined,
-  Methodology.FIRST
-);
-console.log(firstMedium.evaluate());
-// Expected output: OutcomeFIRST { action: 'out-of-band', priority: 'medium' }
-```
-
 #### Example 3: Low Severity Case
 
 ```javascript
-const firstLow = new Decision(
-  Exploitation.NONE,
-  undefined,
-  Utility.LABORIOUS,
-  TechnicalImpact.PARTIAL,
-  SafetyImpact.MINOR,
-  undefined,
-  Methodology.FIRST
-);
-console.log(firstLow.evaluate());
-// Expected output: OutcomeFIRST { action: 'scheduled', priority: 'low' }
-```
-
-### Using String Inputs
-
-The `Decision` constructor also accepts string inputs for enum values:
-
-```javascript
-const cisaStringInputs = new Decision(
-  'active',
-  'yes',
-  undefined,
-  'total',
-  undefined,
-  'high',
-  'CISA'
-);
-console.log(cisaStringInputs.evaluate());
-// Expected output: OutcomeCISA { action: 'Act', priority: 'immediate' }
-
-const firstStringInputs = new Decision(
-  'poc',
-  undefined,
-  'efficient',
-  'partial',
-  'major',
-  undefined,
-  'FIRST'
-);
+const firstStringInputs = new Decision({
+  methodology: 'FIRST',
+  exploitation: 'poc',
+  utility: 'efficient',
+  technical_impact: 'partial',
+  safety_impact: 'major'
+});
 console.log(firstStringInputs.evaluate());
 // Expected output: OutcomeFIRST { action: 'out-of-band', priority: 'medium' }
-```
-
-### Error Handling
-
-The `Decision` class will throw errors if required fields are missing or invalid:
-
-```javascript
-try {
-  const invalidDecision = new Decision(
-    undefined,
-    Automatable.YES,
-    undefined,
-    TechnicalImpact.TOTAL,
-    undefined,
-    MissionWellbeingImpact.HIGH,
-    Methodology.CISA
-  );
-  invalidDecision.evaluate();
-} catch (error) {
-  console.error(error.message);
-  // Expected output: "Exploitation must be a valid Exploitation enum value"
-}
 ```

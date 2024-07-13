@@ -139,12 +139,12 @@
                   "uriBaseId": "%SRCROOT%"
                 },
                 "region": {
-                  "endColumn": 44,
+                  "endColumn": 48,
                   "endLine": 77,
                   "snippet": {
-                    "text": "        this.priority = priorityMap[action];"
+                    "text": "            this.priority = priorityMap[action];"
                   },
-                  "startColumn": 25,
+                  "startColumn": 29,
                   "startLine": 77
                 }
               }
@@ -168,12 +168,12 @@
                   "uriBaseId": "%SRCROOT%"
                 },
                 "region": {
-                  "endColumn": 44,
+                  "endColumn": 48,
                   "endLine": 86,
                   "snippet": {
-                    "text": "        this.priority = priorityMap[action];"
+                    "text": "            this.priority = priorityMap[action];"
                   },
-                  "startColumn": 25,
+                  "startColumn": 29,
                   "startLine": 86
                 }
               }
@@ -197,13 +197,13 @@
                   "uriBaseId": "%SRCROOT%"
                 },
                 "region": {
-                  "endColumn": 58,
-                  "endLine": 213,
+                  "endColumn": 62,
+                  "endLine": 207,
                   "snippet": {
-                    "text": "        const action = decisionMatrix[this.exploitation!]?.[this.automatable!]?.[this.technical_impact!]?.[this.mission_wellbeing!] ?? ActionCISA.TRACK;"
+                    "text": "            const action = decisionMatrix[this.exploitation!]?.[this.automatable!]?.[this.technical_impact!]?.[this.mission_wellbeing!] ?? ActionCISA.TRACK;"
                   },
-                  "startColumn": 24,
-                  "startLine": 213
+                  "startColumn": 28,
+                  "startLine": 207
                 }
               }
             }
@@ -226,13 +226,13 @@
                   "uriBaseId": "%SRCROOT%"
                 },
                 "region": {
-                  "endColumn": 79,
-                  "endLine": 213,
+                  "endColumn": 83,
+                  "endLine": 207,
                   "snippet": {
-                    "text": "        const action = decisionMatrix[this.exploitation!]?.[this.automatable!]?.[this.technical_impact!]?.[this.mission_wellbeing!] ?? ActionCISA.TRACK;"
+                    "text": "            const action = decisionMatrix[this.exploitation!]?.[this.automatable!]?.[this.technical_impact!]?.[this.mission_wellbeing!] ?? ActionCISA.TRACK;"
                   },
-                  "startColumn": 24,
-                  "startLine": 213
+                  "startColumn": 28,
+                  "startLine": 207
                 }
               }
             }
@@ -255,13 +255,13 @@
                   "uriBaseId": "%SRCROOT%"
                 },
                 "region": {
-                  "endColumn": 105,
-                  "endLine": 213,
+                  "endColumn": 109,
+                  "endLine": 207,
                   "snippet": {
-                    "text": "        const action = decisionMatrix[this.exploitation!]?.[this.automatable!]?.[this.technical_impact!]?.[this.mission_wellbeing!] ?? ActionCISA.TRACK;"
+                    "text": "            const action = decisionMatrix[this.exploitation!]?.[this.automatable!]?.[this.technical_impact!]?.[this.mission_wellbeing!] ?? ActionCISA.TRACK;"
                   },
-                  "startColumn": 24,
-                  "startLine": 213
+                  "startColumn": 28,
+                  "startLine": 207
                 }
               }
             }
@@ -284,13 +284,13 @@
                   "uriBaseId": "%SRCROOT%"
                 },
                 "region": {
-                  "endColumn": 132,
-                  "endLine": 213,
+                  "endColumn": 136,
+                  "endLine": 207,
                   "snippet": {
-                    "text": "        const action = decisionMatrix[this.exploitation!]?.[this.automatable!]?.[this.technical_impact!]?.[this.mission_wellbeing!] ?? ActionCISA.TRACK;"
+                    "text": "            const action = decisionMatrix[this.exploitation!]?.[this.automatable!]?.[this.technical_impact!]?.[this.mission_wellbeing!] ?? ActionCISA.TRACK;"
                   },
-                  "startColumn": 24,
-                  "startLine": 213
+                  "startColumn": 28,
+                  "startLine": 207
                 }
               }
             }
@@ -313,13 +313,13 @@
                   "uriBaseId": "%SRCROOT%"
                 },
                 "region": {
-                  "endColumn": 58,
-                  "endLine": 373,
+                  "endColumn": 62,
+                  "endLine": 367,
                   "snippet": {
-                    "text": "        const action = decisionMatrix[this.exploitation!]?.[this.utility!]?.[this.technical_impact!]?.[this.safety_impact!] ?? ActionFIRST.SCHEDULED;"
+                    "text": "            const action = decisionMatrix[this.exploitation!]?.[this.utility!]?.[this.technical_impact!]?.[this.safety_impact!] ?? ActionFIRST.SCHEDULED;"
                   },
-                  "startColumn": 24,
-                  "startLine": 373
+                  "startColumn": 28,
+                  "startLine": 367
                 }
               }
             }
@@ -342,13 +342,13 @@
                   "uriBaseId": "%SRCROOT%"
                 },
                 "region": {
-                  "endColumn": 75,
-                  "endLine": 373,
+                  "endColumn": 79,
+                  "endLine": 367,
                   "snippet": {
-                    "text": "        const action = decisionMatrix[this.exploitation!]?.[this.utility!]?.[this.technical_impact!]?.[this.safety_impact!] ?? ActionFIRST.SCHEDULED;"
+                    "text": "            const action = decisionMatrix[this.exploitation!]?.[this.utility!]?.[this.technical_impact!]?.[this.safety_impact!] ?? ActionFIRST.SCHEDULED;"
                   },
-                  "startColumn": 24,
-                  "startLine": 373
+                  "startColumn": 28,
+                  "startLine": 367
                 }
               }
             }
@@ -371,13 +371,13 @@
                   "uriBaseId": "%SRCROOT%"
                 },
                 "region": {
-                  "endColumn": 101,
-                  "endLine": 373,
+                  "endColumn": 105,
+                  "endLine": 367,
                   "snippet": {
-                    "text": "        const action = decisionMatrix[this.exploitation!]?.[this.utility!]?.[this.technical_impact!]?.[this.safety_impact!] ?? ActionFIRST.SCHEDULED;"
+                    "text": "            const action = decisionMatrix[this.exploitation!]?.[this.utility!]?.[this.technical_impact!]?.[this.safety_impact!] ?? ActionFIRST.SCHEDULED;"
                   },
-                  "startColumn": 24,
-                  "startLine": 373
+                  "startColumn": 28,
+                  "startLine": 367
                 }
               }
             }
@@ -400,13 +400,13 @@
                   "uriBaseId": "%SRCROOT%"
                 },
                 "region": {
-                  "endColumn": 124,
-                  "endLine": 373,
+                  "endColumn": 128,
+                  "endLine": 367,
                   "snippet": {
-                    "text": "        const action = decisionMatrix[this.exploitation!]?.[this.utility!]?.[this.technical_impact!]?.[this.safety_impact!] ?? ActionFIRST.SCHEDULED;"
+                    "text": "            const action = decisionMatrix[this.exploitation!]?.[this.utility!]?.[this.technical_impact!]?.[this.safety_impact!] ?? ActionFIRST.SCHEDULED;"
                   },
-                  "startColumn": 24,
-                  "startLine": 373
+                  "startColumn": 28,
+                  "startLine": 367
                 }
               }
             }
@@ -805,34 +805,6 @@
             },
             {
               "defaultConfiguration": {
-                "level": "error"
-              },
-              "fullDescription": {
-                "text": "A formatted or concatenated string was detected as input to a java.lang.Runtime call. This is dangerous if a variable is controlled by user input and could result in a command injection. Ensure your variables are not controlled by users or sufficiently sanitized."
-              },
-              "help": {
-                "markdown": "A formatted or concatenated string was detected as input to a java.lang.Runtime call. This is dangerous if a variable is controlled by user input and could result in a command injection. Ensure your variables are not controlled by users or sufficiently sanitized.\n\n<b>References:</b>\n - [Semgrep Rule](https://semgrep.dev/r/kotlin.lang.security.command-injection-formatted-runtime-call.command-injection-formatted-runtime-call)\n - [https://owasp.org/Top10/A03_2021-Injection](https://owasp.org/Top10/A03_2021-Injection)\n",
-                "text": "A formatted or concatenated string was detected as input to a java.lang.Runtime call. This is dangerous if a variable is controlled by user input and could result in a command injection. Ensure your variables are not controlled by users or sufficiently sanitized."
-              },
-              "helpUri": "https://semgrep.dev/r/kotlin.lang.security.command-injection-formatted-runtime-call.command-injection-formatted-runtime-call",
-              "id": "kotlin.lang.security.command-injection-formatted-runtime-call.command-injection-formatted-runtime-call",
-              "name": "kotlin.lang.security.command-injection-formatted-runtime-call.command-injection-formatted-runtime-call",
-              "properties": {
-                "precision": "very-high",
-                "tags": [
-                  "CWE-78: Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')",
-                  "LOW CONFIDENCE",
-                  "OWASP-A01:2017 - Injection",
-                  "OWASP-A03:2021 - Injection",
-                  "security"
-                ]
-              },
-              "shortDescription": {
-                "text": "Semgrep Finding: kotlin.lang.security.command-injection-formatted-runtime-call.command-injection-formatted-runtime-call"
-              }
-            },
-            {
-              "defaultConfiguration": {
                 "level": "warning"
               },
               "fullDescription": {
@@ -857,6 +829,34 @@
               },
               "shortDescription": {
                 "text": "Semgrep Finding: javascript.jose.security.audit.jose-exposed-data.jose-exposed-data"
+              }
+            },
+            {
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "fullDescription": {
+                "text": "A formatted or concatenated string was detected as input to a java.lang.Runtime call. This is dangerous if a variable is controlled by user input and could result in a command injection. Ensure your variables are not controlled by users or sufficiently sanitized."
+              },
+              "help": {
+                "markdown": "A formatted or concatenated string was detected as input to a java.lang.Runtime call. This is dangerous if a variable is controlled by user input and could result in a command injection. Ensure your variables are not controlled by users or sufficiently sanitized.\n\n<b>References:</b>\n - [Semgrep Rule](https://semgrep.dev/r/kotlin.lang.security.command-injection-formatted-runtime-call.command-injection-formatted-runtime-call)\n - [https://owasp.org/Top10/A03_2021-Injection](https://owasp.org/Top10/A03_2021-Injection)\n",
+                "text": "A formatted or concatenated string was detected as input to a java.lang.Runtime call. This is dangerous if a variable is controlled by user input and could result in a command injection. Ensure your variables are not controlled by users or sufficiently sanitized."
+              },
+              "helpUri": "https://semgrep.dev/r/kotlin.lang.security.command-injection-formatted-runtime-call.command-injection-formatted-runtime-call",
+              "id": "kotlin.lang.security.command-injection-formatted-runtime-call.command-injection-formatted-runtime-call",
+              "name": "kotlin.lang.security.command-injection-formatted-runtime-call.command-injection-formatted-runtime-call",
+              "properties": {
+                "precision": "very-high",
+                "tags": [
+                  "CWE-78: Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')",
+                  "LOW CONFIDENCE",
+                  "OWASP-A01:2017 - Injection",
+                  "OWASP-A03:2021 - Injection",
+                  "security"
+                ]
+              },
+              "shortDescription": {
+                "text": "Semgrep Finding: kotlin.lang.security.command-injection-formatted-runtime-call.command-injection-formatted-runtime-call"
               }
             },
             {
@@ -17044,34 +17044,6 @@
                 "level": "warning"
               },
               "fullDescription": {
-                "text": "The `__html__` method indicates to the Django template engine that the value is 'safe' for rendering. This means that normal HTML escaping will not be applied to the return value. This exposes your application to cross-site scripting (XSS) vulnerabilities. If you need to render raw HTML, consider instead using `mark_safe()` which more clearly marks the intent to render raw HTML than a class with a magic method."
-              },
-              "help": {
-                "markdown": "The `__html__` method indicates to the Django template engine that the value is 'safe' for rendering. This means that normal HTML escaping will not be applied to the return value. This exposes your application to cross-site scripting (XSS) vulnerabilities. If you need to render raw HTML, consider instead using `mark_safe()` which more clearly marks the intent to render raw HTML than a class with a magic method.\n\n<b>References:</b>\n - [Semgrep Rule](https://semgrep.dev/r/python.django.security.audit.xss.html-magic-method.html-magic-method)\n - [https://docs.djangoproject.com/en/3.0/_modules/django/utils/html/#conditional_escape](https://docs.djangoproject.com/en/3.0/_modules/django/utils/html/#conditional_escape)\n - [https://gist.github.com/minusworld/7885d8a81dba3ea2d1e4b8fd3c218ef5](https://gist.github.com/minusworld/7885d8a81dba3ea2d1e4b8fd3c218ef5)\n",
-                "text": "The `__html__` method indicates to the Django template engine that the value is 'safe' for rendering. This means that normal HTML escaping will not be applied to the return value. This exposes your application to cross-site scripting (XSS) vulnerabilities. If you need to render raw HTML, consider instead using `mark_safe()` which more clearly marks the intent to render raw HTML than a class with a magic method."
-              },
-              "helpUri": "https://semgrep.dev/r/python.django.security.audit.xss.html-magic-method.html-magic-method",
-              "id": "python.django.security.audit.xss.html-magic-method.html-magic-method",
-              "name": "python.django.security.audit.xss.html-magic-method.html-magic-method",
-              "properties": {
-                "precision": "very-high",
-                "tags": [
-                  "CWE-79: Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting')",
-                  "LOW CONFIDENCE",
-                  "OWASP-A03:2021 - Injection",
-                  "OWASP-A07:2017 - Cross-Site Scripting (XSS)",
-                  "security"
-                ]
-              },
-              "shortDescription": {
-                "text": "Semgrep Finding: python.django.security.audit.xss.html-magic-method.html-magic-method"
-              }
-            },
-            {
-              "defaultConfiguration": {
-                "level": "warning"
-              },
-              "fullDescription": {
                 "text": "The object is passed strictly to jsonwebtoken.sign(...) Make sure that sensitive information is not exposed through JWT token payload."
               },
               "help": {
@@ -17093,6 +17065,34 @@
               },
               "shortDescription": {
                 "text": "Semgrep Finding: javascript.jsonwebtoken.security.audit.jwt-exposed-data.jwt-exposed-data"
+              }
+            },
+            {
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "fullDescription": {
+                "text": "The `__html__` method indicates to the Django template engine that the value is 'safe' for rendering. This means that normal HTML escaping will not be applied to the return value. This exposes your application to cross-site scripting (XSS) vulnerabilities. If you need to render raw HTML, consider instead using `mark_safe()` which more clearly marks the intent to render raw HTML than a class with a magic method."
+              },
+              "help": {
+                "markdown": "The `__html__` method indicates to the Django template engine that the value is 'safe' for rendering. This means that normal HTML escaping will not be applied to the return value. This exposes your application to cross-site scripting (XSS) vulnerabilities. If you need to render raw HTML, consider instead using `mark_safe()` which more clearly marks the intent to render raw HTML than a class with a magic method.\n\n<b>References:</b>\n - [Semgrep Rule](https://semgrep.dev/r/python.django.security.audit.xss.html-magic-method.html-magic-method)\n - [https://docs.djangoproject.com/en/3.0/_modules/django/utils/html/#conditional_escape](https://docs.djangoproject.com/en/3.0/_modules/django/utils/html/#conditional_escape)\n - [https://gist.github.com/minusworld/7885d8a81dba3ea2d1e4b8fd3c218ef5](https://gist.github.com/minusworld/7885d8a81dba3ea2d1e4b8fd3c218ef5)\n",
+                "text": "The `__html__` method indicates to the Django template engine that the value is 'safe' for rendering. This means that normal HTML escaping will not be applied to the return value. This exposes your application to cross-site scripting (XSS) vulnerabilities. If you need to render raw HTML, consider instead using `mark_safe()` which more clearly marks the intent to render raw HTML than a class with a magic method."
+              },
+              "helpUri": "https://semgrep.dev/r/python.django.security.audit.xss.html-magic-method.html-magic-method",
+              "id": "python.django.security.audit.xss.html-magic-method.html-magic-method",
+              "name": "python.django.security.audit.xss.html-magic-method.html-magic-method",
+              "properties": {
+                "precision": "very-high",
+                "tags": [
+                  "CWE-79: Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting')",
+                  "LOW CONFIDENCE",
+                  "OWASP-A03:2021 - Injection",
+                  "OWASP-A07:2017 - Cross-Site Scripting (XSS)",
+                  "security"
+                ]
+              },
+              "shortDescription": {
+                "text": "Semgrep Finding: python.django.security.audit.xss.html-magic-method.html-magic-method"
               }
             },
             {
@@ -46985,6 +46985,32 @@
             },
             {
               "defaultConfiguration": {
+                "level": "error"
+              },
+              "fullDescription": {
+                "text": "Possible path traversal through `tarfile.open($PATH).extractall()` if the source tar is controlled by an attacker"
+              },
+              "help": {
+                "markdown": "Possible path traversal through `tarfile.open($PATH).extractall()` if the source tar is controlled by an attacker\n\n<b>References:</b>\n - [Semgrep Rule](https://semgrep.dev/r/trailofbits.python.tarfile-extractall-traversal.tarfile-extractall-traversal)\n - [https://docs.python.org/3/library/tarfile.html#tarfile.TarFile.extractall](https://docs.python.org/3/library/tarfile.html#tarfile.TarFile.extractall)\n",
+                "text": "Possible path traversal through `tarfile.open($PATH).extractall()` if the source tar is controlled by an attacker"
+              },
+              "helpUri": "https://semgrep.dev/r/trailofbits.python.tarfile-extractall-traversal.tarfile-extractall-traversal",
+              "id": "trailofbits.python.tarfile-extractall-traversal.tarfile-extractall-traversal",
+              "name": "trailofbits.python.tarfile-extractall-traversal.tarfile-extractall-traversal",
+              "properties": {
+                "precision": "very-high",
+                "tags": [
+                  "CWE-22: Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal')",
+                  "MEDIUM CONFIDENCE",
+                  "security"
+                ]
+              },
+              "shortDescription": {
+                "text": "Semgrep Finding: trailofbits.python.tarfile-extractall-traversal.tarfile-extractall-traversal"
+              }
+            },
+            {
+              "defaultConfiguration": {
                 "level": "warning"
               },
               "fullDescription": {
@@ -47009,32 +47035,6 @@
               },
               "shortDescription": {
                 "text": "Semgrep Finding: javascript.angular.security.detect-third-party-angular-translate.detect-angular-translateprovider-translations-method"
-              }
-            },
-            {
-              "defaultConfiguration": {
-                "level": "error"
-              },
-              "fullDescription": {
-                "text": "Possible path traversal through `tarfile.open($PATH).extractall()` if the source tar is controlled by an attacker"
-              },
-              "help": {
-                "markdown": "Possible path traversal through `tarfile.open($PATH).extractall()` if the source tar is controlled by an attacker\n\n<b>References:</b>\n - [Semgrep Rule](https://semgrep.dev/r/trailofbits.python.tarfile-extractall-traversal.tarfile-extractall-traversal)\n - [https://docs.python.org/3/library/tarfile.html#tarfile.TarFile.extractall](https://docs.python.org/3/library/tarfile.html#tarfile.TarFile.extractall)\n",
-                "text": "Possible path traversal through `tarfile.open($PATH).extractall()` if the source tar is controlled by an attacker"
-              },
-              "helpUri": "https://semgrep.dev/r/trailofbits.python.tarfile-extractall-traversal.tarfile-extractall-traversal",
-              "id": "trailofbits.python.tarfile-extractall-traversal.tarfile-extractall-traversal",
-              "name": "trailofbits.python.tarfile-extractall-traversal.tarfile-extractall-traversal",
-              "properties": {
-                "precision": "very-high",
-                "tags": [
-                  "CWE-22: Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal')",
-                  "MEDIUM CONFIDENCE",
-                  "security"
-                ]
-              },
-              "shortDescription": {
-                "text": "Semgrep Finding: trailofbits.python.tarfile-extractall-traversal.tarfile-extractall-traversal"
               }
             },
             {

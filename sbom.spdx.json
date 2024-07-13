@@ -3,14 +3,14 @@
   "spdxVersion": "SPDX-2.2",
   "creationInfo": {
     "comment": "This SPDX document has been converted from CycloneDX format.",
-    "created": "2024-07-13T14:09:17.418Z",
+    "created": "2024-07-13T15:38:38.418Z",
     "creators": [
       "Tool: cli-10.7.0"
     ]
   },
-  "name": "typescript-ssvc-0.0.1",
+  "name": "typescript-ssvc-0.1.0",
   "dataLicense": "CC0-1.0",
-  "documentNamespace": "http://spdx.org/spdxdocs/typescript-ssvc-0.0.1-4167ced9-ffe9-4e42-9c22-27ed7616881e",
+  "documentNamespace": "http://spdx.org/spdxdocs/typescript-ssvc-0.1.0-bd977240-1a14-43c5-968b-7277aa5d18e4",
   "packages": [
     {
       "SPDXID": "SPDXRef-ts-enum-util@4.1.0",
