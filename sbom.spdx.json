@@ -1,0 +1,58 @@
+{
+  "SPDXID": "SPDXRef-DOCUMENT",
+  "spdxVersion": "SPDX-2.2",
+  "creationInfo": {
+    "comment": "This SPDX document has been converted from CycloneDX format.",
+    "created": "2024-07-13T14:09:17.418Z",
+    "creators": [
+      "Tool: cli-10.7.0"
+    ]
+  },
+  "name": "typescript-ssvc-0.0.1",
+  "dataLicense": "CC0-1.0",
+  "documentNamespace": "http://spdx.org/spdxdocs/typescript-ssvc-0.0.1-4167ced9-ffe9-4e42-9c22-27ed7616881e",
+  "packages": [
+    {
+      "SPDXID": "SPDXRef-ts-enum-util@4.1.0",
+      "checksums": [
+        {
+          "algorithm": "SHA512",
+          "checksumValue": "908b38f22b6635e864ccb9346095bf2df236f95158972b1c1ac63ea033429f1ac37e47b1fce7d8515d62a7b2fb60837ba694aa8f656638eb2c896f35467a3d40"
+        }
+      ],
+      "copyrightText": "NOASSERTION",
+      "downloadLocation": "NOASSERTION",
+      "homepage": "NOASSERTION",
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "NOASSERTION",
+      "licenseInfoFromFiles": [
+        "NOASSERTION"
+      ],
+      "name": "ts-enum-util",
+      "originator": "NOASSERTION",
+      "supplier": "NOASSERTION",
+      "versionInfo": "4.1.0"
+    },
+    {
+      "SPDXID": "SPDXRef-zod@3.23.8",
+      "checksums": [
+        {
+          "algorithm": "SHA512",
+          "checksumValue": "5c1c7d01785792d8d4aa77a9813884e5f95c2886168bfae67b411a8fee58d257edb8606afa3c91bbf99de169eec6a80fd6e6dda4d0ac60460fc6bcd51c3f1dea"
+        }
+      ],
+      "copyrightText": "NOASSERTION",
+      "downloadLocation": "NOASSERTION",
+      "homepage": "NOASSERTION",
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "NOASSERTION",
+      "licenseInfoFromFiles": [
+        "NOASSERTION"
+      ],
+      "name": "zod",
+      "originator": "NOASSERTION",
+      "supplier": "NOASSERTION",
+      "versionInfo": "3.23.8"
+    }
+  ]
+}

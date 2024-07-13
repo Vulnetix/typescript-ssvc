@@ -1,13 +1,21 @@
 {
   "name": "ssvc",
   "version": "0.0.1",
-  "description": "TypeScript implementation of SSVC (Stakeholder-Specific Vulnerability Categorization) ",
+  "description": "TypeScript implementation of SSVC (Stakeholder-Specific Vulnerability Categorization). A prioritization framework to triage CVE vulnerabilities as an alternative or compliment to CVSS",
   "main": "src/index.ts",
+  "keywords": ["vulnerabilities", "prioritization", "triage", "CVE", "CVSS", "SSVC", "CISA", "FIRST"],
   "scripts": {
-    "test": "npx jest"
+    "version": "node -e \"console.log(require('./package.json').version)\"",
+    "test": "npx jest --coverage",
+    "watch": "npx tsc -w",
+    "build": "npx tsc --pretty"
   },
   "devDependencies": {
-    "jest": "*"
+    "@types/jest": "^29.5.12",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.2.2",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.5.3"
   },
   "repository": {
     "type": "git",
@@ -18,5 +26,9 @@
   "bugs": {
     "url": "https://github.com/trivialsec/typescript-ssvc/issues"
   },
-  "homepage": "https://github.com/trivialsec/typescript-ssvc#readme"
+  "homepage": "https://github.com/trivialsec/typescript-ssvc#readme",
+  "dependencies": {
+    "ts-enum-util": "^4.1.0",
+    "zod": "^3.23.8"
+  }
 }

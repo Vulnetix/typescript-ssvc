@@ -14,18 +14,17 @@ setup: ## Basic nodejs install
 	npm i
 	npm audit fix --force --include=dev
 
-publish: setup ## upload to npm.org
+publish: ## upload to npm.org
 	npm publish
-	git commit -a -s -m 'feat: v$(shell poetry version -s)'
-	git tag --force v$(shell poetry version -s)
+	git commit -a -s -m 'feat: v$(shell node -e "console.log(require('./package.json').version)")'
+	git tag --force v$(shell node -e "console.log(require('./package.json').version)")
 	git push
 	git push --tags --force
 
-sarif: clean update ## generate SARIF from Semgrep for this project
+sarif: ## generate SARIF from Semgrep for this project
 	osv-scanner --format sarif --call-analysis=all -r . | jq >osv.sarif.json
 	semgrep $(SEMGREP_ARGS) $(SEMGREP_RULES) | jq >semgrep.sarif.json
 
-sbom: lockfile ## generate CycloneDX for this project
-	npm sbom --omit dev --sbom-format cyclonedx | jq > sbom.cdx.json
-	rm requirements.txt
+sbom: ## generate CycloneDX and convert it to SPDX
+	npm sbom --package-lock-only --omit dev --sbom-format cyclonedx | jq > sbom.cdx.json
 	cyclonedx convert --input-file sbom.cdx.json --output-file sbom.spdx.json
