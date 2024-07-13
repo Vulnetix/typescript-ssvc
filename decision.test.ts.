@@ -1,0 +1,86 @@
+import { 
+    ExploitationLevel, 
+    Automatable, 
+    TechnicalImpact, 
+    MissionWellbeingImpact, 
+    DecisionPriority, 
+    ActionCISA, 
+    Methodology, 
+    OutcomeCISA, 
+    Decision 
+} from './your-module-path'; // Adjust the import path as necessary
+
+describe('OutcomeCISA', () => {
+    it('should set the correct priority based on action', () => {
+        const outcome = new OutcomeCISA(ActionCISA.ACT);
+        expect(outcome.priority).toBe(DecisionPriority.IMMEDIATE);
+        expect(outcome.action).toBe(ActionCISA.ACT);
+    });
+});
+
+describe('Decision', () => {
+    it('should initialize with correct enum values', () => {
+        const decision = new Decision(
+            ExploitationLevel.ACTIVE, 
+            Automatable.YES, 
+            TechnicalImpact.TOTAL, 
+            MissionWellbeingImpact.HIGH, 
+            Methodology.CISA
+        );
+        expect(decision.exploitation).toBe(ExploitationLevel.ACTIVE);
+        expect(decision.automatable).toBe(Automatable.YES);
+        expect(decision.technical_impact).toBe(TechnicalImpact.TOTAL);
+        expect(decision.mission_wellbeing).toBe(MissionWellbeingImpact.HIGH);
+        expect(decision.methodology).toBe(Methodology.CISA);
+    });
+
+    it('should convert string values to enum values', () => {
+        const decision = new Decision(
+            'active', 
+            'yes', 
+            'total', 
+            'high', 
+            'CISA'
+        );
+        expect(decision.exploitation).toBe(ExploitationLevel.ACTIVE);
+        expect(decision.automatable).toBe(Automatable.YES);
+        expect(decision.technical_impact).toBe(TechnicalImpact.TOTAL);
+        expect(decision.mission_wellbeing).toBe(MissionWellbeingImpact.HIGH);
+        expect(decision.methodology).toBe(Methodology.CISA);
+    });
+
+    it('should evaluate and return correct OutcomeCISA', () => {
+        const decision = new Decision(
+            ExploitationLevel.ACTIVE, 
+            Automatable.YES, 
+            TechnicalImpact.TOTAL, 
+            MissionWellbeingImpact.HIGH, 
+            Methodology.CISA
+        );
+        const outcome = decision.evaluate();
+        expect(outcome).toBeInstanceOf(OutcomeCISA);
+        expect(outcome?.action).toBe(ActionCISA.ACT);
+    });
+
+    it('should throw error if required fields are missing in CISA methodology', () => {
+        expect(() => {
+            new Decision(
+                undefined, 
+                Automatable.YES, 
+                TechnicalImpact.TOTAL, 
+                MissionWellbeingImpact.HIGH, 
+                Methodology.CISA
+            ).evaluate();
+        }).toThrow("ExploitationLevel has not been provided");
+
+        expect(() => {
+            new Decision(
+                ExploitationLevel.ACTIVE, 
+                undefined, 
+                TechnicalImpact.TOTAL, 
+                MissionWellbeingImpact.HIGH, 
+                Methodology.CISA
+            ).evaluate();
+        }).toThrow("Automatable has not been provided");
+    });
+});
