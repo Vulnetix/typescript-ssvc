@@ -1,0 +1,19 @@
+{
+  "name": "typescript-ssvc",
+  "version": "0.0.1",
+  "description": "TypeScript implementation of SSVC (Stakeholder-Specific Vulnerability Categorization) ",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/trivialsec/typescript-ssvc.git"
+  },
+  "author": "Christopher Langton <chris@langton.cloud>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/trivialsec/typescript-ssvc/issues"
+  },
+  "homepage": "https://github.com/trivialsec/typescript-ssvc#readme"
+}
