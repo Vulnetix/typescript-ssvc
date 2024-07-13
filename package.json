@@ -4,7 +4,10 @@
   "description": "TypeScript implementation of SSVC (Stakeholder-Specific Vulnerability Categorization) ",
   "main": "src/index.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "npx jest"
+  },
+  "Dev dependencies": {
+    "jest": "*"
   },
   "repository": {
     "type": "git",
