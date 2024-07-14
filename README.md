@@ -44,7 +44,7 @@ import {
   MissionWellbeingImpact,
   SafetyImpact, 
   Methodology 
-} from './decision';
+} from 'ssvc';
 ```
 
 > **Note**: The `Decision` constructor also accepts string inputs for enum values:
