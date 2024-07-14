@@ -1,6 +1,6 @@
 {
   "name": "ssvc",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "TypeScript implementation of SSVC (Stakeholder-Specific Vulnerability Categorization). A prioritization framework to triage CVE vulnerabilities as an alternative or compliment to CVSS",
   "main": "src/index.ts",
   "keywords": ["vulnerabilities", "prioritization", "triage", "CVE", "CVSS", "SSVC", "CISA", "FIRST"],
