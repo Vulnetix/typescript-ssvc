@@ -1,0 +1,144 @@
+{
+  "$schema": "http://cyclonedx.org/schema/bom-1.5.schema.json",
+  "bomFormat": "CycloneDX",
+  "specVersion": "1.5",
+  "serialNumber": "urn:uuid:af2c5c39-527a-4b8d-917d-de19ac0660e7",
+  "version": 1,
+  "metadata": {
+    "timestamp": "2024-09-04T13:32:56.645Z",
+    "lifecycles": [
+      {
+        "phase": "pre-build"
+      }
+    ],
+    "tools": [
+      {
+        "vendor": "npm",
+        "name": "cli",
+        "version": "10.8.2"
+      }
+    ],
+    "component": {
+      "bom-ref": "ssvc@0.1.1",
+      "type": "library",
+      "name": "typescript-ssvc",
+      "version": "0.1.1",
+      "scope": "required",
+      "author": "Christopher Langton",
+      "description": "TypeScript implementation of SSVC (Stakeholder-Specific Vulnerability Categorization). A prioritization framework to triage CVE vulnerabilities as an alternative or compliment to CVSS",
+      "purl": "pkg:npm/ssvc@0.1.1",
+      "properties": [
+        {
+          "name": "cdx:npm:package:path",
+          "value": ""
+        }
+      ],
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "git+https://github.com/trivialsec/typescript-ssvc.git"
+        },
+        {
+          "type": "website",
+          "url": "https://github.com/trivialsec/typescript-ssvc#readme"
+        },
+        {
+          "type": "issue-tracker",
+          "url": "https://github.com/trivialsec/typescript-ssvc/issues"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    }
+  },
+  "components": [
+    {
+      "bom-ref": "ts-enum-util@4.1.0",
+      "type": "library",
+      "name": "ts-enum-util",
+      "version": "4.1.0",
+      "scope": "required",
+      "purl": "pkg:npm/ts-enum-util@4.1.0",
+      "properties": [
+        {
+          "name": "cdx:npm:package:path",
+          "value": "node_modules/ts-enum-util"
+        }
+      ],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/ts-enum-util/-/ts-enum-util-4.1.0.tgz"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "908b38f22b6635e864ccb9346095bf2df236f95158972b1c1ac63ea033429f1ac37e47b1fce7d8515d62a7b2fb60837ba694aa8f656638eb2c896f35467a3d40"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "zod@3.23.8",
+      "type": "library",
+      "name": "zod",
+      "version": "3.23.8",
+      "scope": "required",
+      "purl": "pkg:npm/zod@3.23.8",
+      "properties": [
+        {
+          "name": "cdx:npm:package:path",
+          "value": "node_modules/zod"
+        }
+      ],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/zod/-/zod-3.23.8.tgz"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "5c1c7d01785792d8d4aa77a9813884e5f95c2886168bfae67b411a8fee58d257edb8606afa3c91bbf99de169eec6a80fd6e6dda4d0ac60460fc6bcd51c3f1dea"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    }
+  ],
+  "dependencies": [
+    {
+      "ref": "ssvc@0.1.1",
+      "dependsOn": [
+        "ts-enum-util@4.1.0",
+        "zod@3.23.8"
+      ]
+    },
+    {
+      "ref": "ts-enum-util@4.1.0",
+      "dependsOn": []
+    },
+    {
+      "ref": "zod@3.23.8",
+      "dependsOn": []
+    }
+  ]
+}
