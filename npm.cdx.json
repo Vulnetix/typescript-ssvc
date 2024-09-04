@@ -2,10 +2,10 @@
   "$schema": "http://cyclonedx.org/schema/bom-1.5.schema.json",
   "bomFormat": "CycloneDX",
   "specVersion": "1.5",
-  "serialNumber": "urn:uuid:af2c5c39-527a-4b8d-917d-de19ac0660e7",
+  "serialNumber": "urn:uuid:3af8dfd5-742b-47b0-8abf-669d129b837e",
   "version": 1,
   "metadata": {
-    "timestamp": "2024-09-04T13:32:56.645Z",
+    "timestamp": "2024-09-04T13:37:30.143Z",
     "lifecycles": [
       {
         "phase": "pre-build"
@@ -19,14 +19,14 @@
       }
     ],
     "component": {
-      "bom-ref": "ssvc@0.1.1",
+      "bom-ref": "ssvc@0.1.2",
       "type": "library",
       "name": "typescript-ssvc",
-      "version": "0.1.1",
+      "version": "0.1.2",
       "scope": "required",
       "author": "Christopher Langton",
       "description": "TypeScript implementation of SSVC (Stakeholder-Specific Vulnerability Categorization). A prioritization framework to triage CVE vulnerabilities as an alternative or compliment to CVSS",
-      "purl": "pkg:npm/ssvc@0.1.1",
+      "purl": "pkg:npm/ssvc@0.1.2",
       "properties": [
         {
           "name": "cdx:npm:package:path",
@@ -126,7 +126,7 @@
   ],
   "dependencies": [
     {
-      "ref": "ssvc@0.1.1",
+      "ref": "ssvc@0.1.2",
       "dependsOn": [
         "ts-enum-util@4.1.0",
         "zod@3.23.8"
