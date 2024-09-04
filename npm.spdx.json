@@ -2,22 +2,22 @@
   "spdxVersion": "SPDX-2.3",
   "dataLicense": "CC0-1.0",
   "SPDXID": "SPDXRef-DOCUMENT",
-  "name": "ssvc@0.1.1",
-  "documentNamespace": "http://spdx.org/spdxdocs/ssvc-0.1.1-6726c8fa-6867-46f6-a2ed-6ef7f449bbaf",
+  "name": "ssvc@0.1.2",
+  "documentNamespace": "http://spdx.org/spdxdocs/ssvc-0.1.2-91ee5d63-1fb2-426f-b437-798e0753923e",
   "creationInfo": {
-    "created": "2024-09-04T13:32:57.001Z",
+    "created": "2024-09-04T13:37:30.474Z",
     "creators": [
       "Tool: npm/cli-10.8.2"
     ]
   },
   "documentDescribes": [
-    "SPDXRef-Package-ssvc-0.1.1"
+    "SPDXRef-Package-ssvc-0.1.2"
   ],
   "packages": [
     {
       "name": "ssvc",
-      "SPDXID": "SPDXRef-Package-ssvc-0.1.1",
-      "versionInfo": "0.1.1",
+      "SPDXID": "SPDXRef-Package-ssvc-0.1.2",
+      "versionInfo": "0.1.2",
       "packageFileName": "",
       "description": "TypeScript implementation of SSVC (Stakeholder-Specific Vulnerability Categorization). A prioritization framework to triage CVE vulnerabilities as an alternative or compliment to CVSS",
       "primaryPackagePurpose": "LIBRARY",
@@ -29,7 +29,7 @@
         {
           "referenceCategory": "PACKAGE-MANAGER",
           "referenceType": "purl",
-          "referenceLocator": "pkg:npm/ssvc@0.1.1"
+          "referenceLocator": "pkg:npm/ssvc@0.1.2"
         }
       ]
     },
@@ -83,17 +83,17 @@
   "relationships": [
     {
       "spdxElementId": "SPDXRef-DOCUMENT",
-      "relatedSpdxElement": "SPDXRef-Package-ssvc-0.1.1",
+      "relatedSpdxElement": "SPDXRef-Package-ssvc-0.1.2",
       "relationshipType": "DESCRIBES"
     },
     {
       "spdxElementId": "SPDXRef-Package-ts-enum-util-4.1.0",
-      "relatedSpdxElement": "SPDXRef-Package-ssvc-0.1.1",
+      "relatedSpdxElement": "SPDXRef-Package-ssvc-0.1.2",
       "relationshipType": "DEPENDENCY_OF"
     },
     {
       "spdxElementId": "SPDXRef-Package-zod-3.23.8",
-      "relatedSpdxElement": "SPDXRef-Package-ssvc-0.1.1",
+      "relatedSpdxElement": "SPDXRef-Package-ssvc-0.1.2",
       "relationshipType": "DEPENDENCY_OF"
     }
   ]
