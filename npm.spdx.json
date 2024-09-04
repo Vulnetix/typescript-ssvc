@@ -1,0 +1,100 @@
+{
+  "spdxVersion": "SPDX-2.3",
+  "dataLicense": "CC0-1.0",
+  "SPDXID": "SPDXRef-DOCUMENT",
+  "name": "ssvc@0.1.1",
+  "documentNamespace": "http://spdx.org/spdxdocs/ssvc-0.1.1-6726c8fa-6867-46f6-a2ed-6ef7f449bbaf",
+  "creationInfo": {
+    "created": "2024-09-04T13:32:57.001Z",
+    "creators": [
+      "Tool: npm/cli-10.8.2"
+    ]
+  },
+  "documentDescribes": [
+    "SPDXRef-Package-ssvc-0.1.1"
+  ],
+  "packages": [
+    {
+      "name": "ssvc",
+      "SPDXID": "SPDXRef-Package-ssvc-0.1.1",
+      "versionInfo": "0.1.1",
+      "packageFileName": "",
+      "description": "TypeScript implementation of SSVC (Stakeholder-Specific Vulnerability Categorization). A prioritization framework to triage CVE vulnerabilities as an alternative or compliment to CVSS",
+      "primaryPackagePurpose": "LIBRARY",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "homepage": "https://github.com/trivialsec/typescript-ssvc#readme",
+      "licenseDeclared": "MIT",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:npm/ssvc@0.1.1"
+        }
+      ]
+    },
+    {
+      "name": "ts-enum-util",
+      "SPDXID": "SPDXRef-Package-ts-enum-util-4.1.0",
+      "versionInfo": "4.1.0",
+      "packageFileName": "node_modules/ts-enum-util",
+      "downloadLocation": "https://registry.npmjs.org/ts-enum-util/-/ts-enum-util-4.1.0.tgz",
+      "filesAnalyzed": false,
+      "homepage": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:npm/ts-enum-util@4.1.0"
+        }
+      ],
+      "checksums": [
+        {
+          "algorithm": "SHA512",
+          "checksumValue": "908b38f22b6635e864ccb9346095bf2df236f95158972b1c1ac63ea033429f1ac37e47b1fce7d8515d62a7b2fb60837ba694aa8f656638eb2c896f35467a3d40"
+        }
+      ]
+    },
+    {
+      "name": "zod",
+      "SPDXID": "SPDXRef-Package-zod-3.23.8",
+      "versionInfo": "3.23.8",
+      "packageFileName": "node_modules/zod",
+      "downloadLocation": "https://registry.npmjs.org/zod/-/zod-3.23.8.tgz",
+      "filesAnalyzed": false,
+      "homepage": "NOASSERTION",
+      "licenseDeclared": "MIT",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:npm/zod@3.23.8"
+        }
+      ],
+      "checksums": [
+        {
+          "algorithm": "SHA512",
+          "checksumValue": "5c1c7d01785792d8d4aa77a9813884e5f95c2886168bfae67b411a8fee58d257edb8606afa3c91bbf99de169eec6a80fd6e6dda4d0ac60460fc6bcd51c3f1dea"
+        }
+      ]
+    }
+  ],
+  "relationships": [
+    {
+      "spdxElementId": "SPDXRef-DOCUMENT",
+      "relatedSpdxElement": "SPDXRef-Package-ssvc-0.1.1",
+      "relationshipType": "DESCRIBES"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-ts-enum-util-4.1.0",
+      "relatedSpdxElement": "SPDXRef-Package-ssvc-0.1.1",
+      "relationshipType": "DEPENDENCY_OF"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-zod-3.23.8",
+      "relatedSpdxElement": "SPDXRef-Package-ssvc-0.1.1",
+      "relationshipType": "DEPENDENCY_OF"
+    }
+  ]
+}
