@@ -12,10 +12,12 @@ SEMGREP_RULES=-c p/default -c p/python -c p/php -c p/c -c p/rust -c p/apex -c p/
 clean: ## Cleanup tmp files
 	@find . -type f -name '*.DS_Store' -delete 2>/dev/null
 
-setup: ## Basic nodejs install
+setup: ## FOR DOCO ONLY - Run these one at a time, do not call this target directly
 	nvm install --lts
-	npm i
-	npm audit fix --force --include=dev
+	nvm use --lts
+	yarn set version stable
+	yarn plugin import https://raw.githubusercontent.com/spdx/yarn-plugin-spdx/main/bundles/@yarnpkg/plugin-spdx.js
+	yarn plugin import https://github.com/CycloneDX/cyclonedx-node-yarn/releases/latest/download/yarn-plugin-cyclonedx.cjs
 
 publish: clean ## upload to npm.org
 	npm publish
@@ -24,10 +26,16 @@ publish: clean ## upload to npm.org
 	git push
 	git push --tags --force
 
-sarif: ## generate SARIF from Semgrep for this project
+update: ## get app updates, migrate should be run first
+	yarn up
+
+install: ## install deps and build icons
+	yarn install
+
+sarif: clean ## generate SARIF from Semgrep for this project
 	osv-scanner --format sarif --call-analysis=all -r . | jq >osv.sarif.json
 	semgrep $(SEMGREP_ARGS) $(SEMGREP_RULES) | jq >semgrep.sarif.json
 
-sbom: ## generate CycloneDX from NPM for this project
-	npm sbom --omit dev --package-lock-only --sbom-format cyclonedx | jq >npm.cdx.json
-	npm sbom --omit dev --package-lock-only --sbom-format spdx | jq >npm.spdx.json
+sbom: clean ## generate CycloneDX from NPM for this project
+	yarn cyclonedx --spec-version 1.6 --output-format JSON --output-file ssvc.cdx.json
+	yarn spdx
