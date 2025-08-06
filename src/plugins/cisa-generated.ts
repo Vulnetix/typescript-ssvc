@@ -1,0 +1,204 @@
+/**
+ * CISA Plugin
+ * 
+ * CISA Stakeholder-Specific Vulnerability Categorization
+ * Generated from YAML configuration.
+ */
+
+export enum ExploitationStatus {
+  NONE = "none",
+  POC = "poc",
+  ACTIVE = "active"
+}
+
+export enum AutomatableStatus {
+  YES = "yes",
+  NO = "no"
+}
+
+export enum TechnicalImpactLevel {
+  PARTIAL = "partial",
+  TOTAL = "total"
+}
+
+export enum MissionWellbeingImpactLevel {
+  LOW = "low",
+  MEDIUM = "medium",
+  HIGH = "high"
+}
+
+export enum DecisionPriorityLevel {
+  LOW = "low",
+  MEDIUM = "medium",
+  HIGH = "high",
+  IMMEDIATE = "immediate"
+}
+
+export enum ActionType {
+  TRACK = "track",
+  TRACK_STAR = "track_star",
+  ATTEND = "attend",
+  ACT = "act"
+}
+
+export const priorityMap = {
+  [ActionType.TRACK]: DecisionPriorityLevel.LOW,
+  [ActionType.TRACK_STAR]: DecisionPriorityLevel.MEDIUM,
+  [ActionType.ATTEND]: DecisionPriorityLevel.MEDIUM,
+  [ActionType.ACT]: DecisionPriorityLevel.IMMEDIATE
+};
+
+export class OutcomeCisa {
+  priority: string;
+  action: string;
+
+  constructor(action: any) {
+    this.priority = (priorityMap as any)[action];
+    this.action = action;
+  }
+}
+
+interface DecisionCisaOptions {
+  exploitation?: ExploitationStatus | string;
+  automatable?: AutomatableStatus | string;
+  technicalImpact?: TechnicalImpactLevel | string;
+  missionWellbeingImpact?: MissionWellbeingImpactLevel | string;
+}
+
+export class DecisionCisa {
+  exploitation?: ExploitationStatus;
+  automatable?: AutomatableStatus;
+  technicalImpact?: TechnicalImpactLevel;
+  missionWellbeingImpact?: MissionWellbeingImpactLevel;
+  outcome?: OutcomeCisa;
+
+  constructor(options: DecisionCisaOptions = {}) {
+    if (typeof options.exploitation === 'string') {
+      this.exploitation = Object.values(ExploitationStatus).find(v => v === options.exploitation) as ExploitationStatus || undefined;
+    } else {
+      this.exploitation = options.exploitation;
+    }
+    if (typeof options.automatable === 'string') {
+      this.automatable = Object.values(AutomatableStatus).find(v => v === options.automatable) as AutomatableStatus || undefined;
+    } else {
+      this.automatable = options.automatable;
+    }
+    if (typeof options.technicalImpact === 'string') {
+      this.technicalImpact = Object.values(TechnicalImpactLevel).find(v => v === options.technicalImpact) as TechnicalImpactLevel || undefined;
+    } else {
+      this.technicalImpact = options.technicalImpact;
+    }
+    if (typeof options.missionWellbeingImpact === 'string') {
+      this.missionWellbeingImpact = Object.values(MissionWellbeingImpactLevel).find(v => v === options.missionWellbeingImpact) as MissionWellbeingImpactLevel || undefined;
+    } else {
+      this.missionWellbeingImpact = options.missionWellbeingImpact;
+    }
+    
+    // Always try to evaluate if we have the minimum required parameters
+    if (this.exploitation !== undefined && this.automatable !== undefined && this.technicalImpact !== undefined && this.missionWellbeingImpact !== undefined) {
+      this.outcome = this.evaluate();
+    }
+  }
+
+  evaluate(): OutcomeCisa {
+    const action = this.traverseTree();
+    this.outcome = new OutcomeCisa(action);
+    return this.outcome;
+  }
+
+  private traverseTree(): any {
+    // Traverse the decision tree to determine the outcome
+    if (this.exploitation === ExploitationStatus.NONE) {
+      if (this.automatable === AutomatableStatus.YES) {
+        if (this.technicalImpact === TechnicalImpactLevel.TOTAL) {
+          if (this.missionWellbeingImpact === MissionWellbeingImpactLevel.HIGH) {
+            return ActionType.ATTEND;
+          }
+        }
+      }
+      else if (this.automatable === AutomatableStatus.NO) {
+        if (this.technicalImpact === TechnicalImpactLevel.TOTAL) {
+          if (this.missionWellbeingImpact === MissionWellbeingImpactLevel.HIGH) {
+            return ActionType.TRACK_STAR;
+          }
+        }
+      }
+    }
+    else if (this.exploitation === ExploitationStatus.POC) {
+      if (this.automatable === AutomatableStatus.YES) {
+        if (this.technicalImpact === TechnicalImpactLevel.TOTAL) {
+          if (this.missionWellbeingImpact === MissionWellbeingImpactLevel.MEDIUM) {
+            return ActionType.TRACK_STAR;
+          }
+          else if (this.missionWellbeingImpact === MissionWellbeingImpactLevel.HIGH) {
+            return ActionType.ATTEND;
+          }
+        }
+        else if (this.technicalImpact === TechnicalImpactLevel.PARTIAL) {
+          if (this.missionWellbeingImpact === MissionWellbeingImpactLevel.HIGH) {
+            return ActionType.ATTEND;
+          }
+        }
+      }
+      else if (this.automatable === AutomatableStatus.NO) {
+        if (this.technicalImpact === TechnicalImpactLevel.PARTIAL) {
+          if (this.missionWellbeingImpact === MissionWellbeingImpactLevel.HIGH) {
+            return ActionType.TRACK_STAR;
+          }
+        }
+        else if (this.technicalImpact === TechnicalImpactLevel.TOTAL) {
+          if (this.missionWellbeingImpact === MissionWellbeingImpactLevel.MEDIUM) {
+            return ActionType.TRACK_STAR;
+          }
+          else if (this.missionWellbeingImpact === MissionWellbeingImpactLevel.HIGH) {
+            return ActionType.ATTEND;
+          }
+        }
+      }
+    }
+    else if (this.exploitation === ExploitationStatus.ACTIVE) {
+      if (this.automatable === AutomatableStatus.YES) {
+        if (this.technicalImpact === TechnicalImpactLevel.PARTIAL) {
+          if (this.missionWellbeingImpact === MissionWellbeingImpactLevel.LOW) {
+            return ActionType.ATTEND;
+          }
+          else if (this.missionWellbeingImpact === MissionWellbeingImpactLevel.MEDIUM) {
+            return ActionType.ATTEND;
+          }
+          else if (this.missionWellbeingImpact === MissionWellbeingImpactLevel.HIGH) {
+            return ActionType.ACT;
+          }
+        }
+        else if (this.technicalImpact === TechnicalImpactLevel.TOTAL) {
+          if (this.missionWellbeingImpact === MissionWellbeingImpactLevel.LOW) {
+            return ActionType.ATTEND;
+          }
+          else if (this.missionWellbeingImpact === MissionWellbeingImpactLevel.MEDIUM) {
+            return ActionType.ACT;
+          }
+          else if (this.missionWellbeingImpact === MissionWellbeingImpactLevel.HIGH) {
+            return ActionType.ACT;
+          }
+        }
+      }
+      else if (this.automatable === AutomatableStatus.NO) {
+        if (this.technicalImpact === TechnicalImpactLevel.PARTIAL) {
+          if (this.missionWellbeingImpact === MissionWellbeingImpactLevel.HIGH) {
+            return ActionType.ATTEND;
+          }
+        }
+        else if (this.technicalImpact === TechnicalImpactLevel.TOTAL) {
+          if (this.missionWellbeingImpact === MissionWellbeingImpactLevel.MEDIUM) {
+            return ActionType.ATTEND;
+          }
+          else if (this.missionWellbeingImpact === MissionWellbeingImpactLevel.HIGH) {
+            return ActionType.ACT;
+          }
+        }
+      }
+    }
+    
+    // Default action for unmapped paths
+    return ActionType.TRACK;
+  }
+}

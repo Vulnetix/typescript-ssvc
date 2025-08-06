@@ -121,6 +121,7 @@ dist
 
 # Stores VSCode versions used for testing VSCode extensions
 .vscode-test
+.idea
 
 # yarn
 .yarn
@@ -131,3 +132,13 @@ semgrep.sarif.json
 osv.sarif.json
 ssvc.cdx.json
 ssvc.spdx.json
+
+# No AI files
+CLAUDE.md
+.claude/
+.qwen/
+.github/*copilot*
+GEMINI.md
+QWEN.md
+OpenCode.md
+.opencode/

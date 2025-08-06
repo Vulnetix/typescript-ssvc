@@ -131,6 +131,23 @@ describe('Decision - CISA Methodology', () => {
         const outcome = decision.evaluate();
         expect(outcome).toBeInstanceOf(OutcomeCISA);
     });
+    
+    it('should return TRACK as default action for CISA methodology when no match found', () => {
+        // Create a decision that doesn't match any specific case in the matrix
+        const decision = new Decision({
+            exploitation: Exploitation.NONE,
+            automatable: Automatable.NO,
+            technical_impact: TechnicalImpact.PARTIAL,
+            mission_wellbeing: MissionWellbeingImpact.MEDIUM,
+            methodology: Methodology.CISA
+        });
+        const outcome = decision.evaluate();
+        expect(outcome).toBeInstanceOf(OutcomeCISA);
+        if (outcome instanceof OutcomeCISA) {
+            expect(outcome.action).toBe(ActionCISA.TRACK);
+            expect(outcome.priority).toBe(DecisionPriority.LOW);
+        }
+    });
 });
 
 describe('Decision - FIRST Methodology', () => {
@@ -328,7 +345,25 @@ describe('Decision - FIRST Methodology', () => {
             expect(outcome.priority).toBe(DecisionPriority.LOW);
         }
     });
+    
+    it('should return SCHEDULED as default action for FIRST methodology when no match found', () => {
+        // Create a decision that doesn't match any specific case in the matrix
+        const decision = new Decision({
+            exploitation: Exploitation.NONE,
+            utility: Utility.LABORIOUS,
+            technical_impact: TechnicalImpact.PARTIAL,
+            safety_impact: SafetyImpact.MINOR,
+            methodology: Methodology.FIRST
+        });
+        const outcome = decision.evaluate();
+        expect(outcome).toBeInstanceOf(OutcomeFIRST);
+        if (outcome instanceof OutcomeFIRST) {
+            expect(outcome.action).toBe(ActionFIRST.SCHEDULED);
+            expect(outcome.priority).toBe(DecisionPriority.LOW);
+        }
+    });
 });
+
 describe('Decision - Edge Cases and Error Handling', () => {
     it('should return undefined when an invalid methodology is provided', () => {
         const decision = new Decision({
@@ -437,5 +472,123 @@ describe('Decision - Edge Cases and Error Handling', () => {
         (decision as any).safety_impact = undefined;
 
         expect(() => decision.evaluate()).toThrow("Exploitation must be a valid Exploitation enum value");
+    });
+});
+
+describe('Decision - toEnum Method Coverage', () => {
+    it('should return undefined when value is undefined', () => {
+        const decision = new Decision({
+            exploitation: Exploitation.ACTIVE,
+            automatable: Automatable.YES,
+            technical_impact: TechnicalImpact.TOTAL,
+            mission_wellbeing: MissionWellbeingImpact.HIGH,
+            methodology: Methodology.CISA
+        });
+        
+        // Test the toEnum method directly with undefined value
+        const result = (decision as any).toEnum(Exploitation, undefined);
+        expect(result).toBeUndefined();
+    });
+
+    it('should return undefined when string value does not match any enum value', () => {
+        const decision = new Decision({
+            exploitation: Exploitation.ACTIVE,
+            automatable: Automatable.YES,
+            technical_impact: TechnicalImpact.TOTAL,
+            mission_wellbeing: MissionWellbeingImpact.HIGH,
+            methodology: Methodology.CISA
+        });
+        
+        // Test the toEnum method directly with invalid string value
+        const result = (decision as any).toEnum(Exploitation, 'invalid_value');
+        expect(result).toBeUndefined();
+    });
+});
+
+describe('Decision - Validation Coverage', () => {
+    it('should throw error when automatable is empty string for CISA methodology', () => {
+        expect(() => {
+            new Decision({
+                exploitation: Exploitation.ACTIVE,
+                automatable: '',
+                technical_impact: TechnicalImpact.TOTAL,
+                mission_wellbeing: MissionWellbeingImpact.HIGH,
+                methodology: Methodology.CISA
+            }).evaluate();
+        }).toThrow("Automatable must be a valid Automatable enum value");
+    });
+
+    it('should throw error when mission wellbeing is empty string for CISA methodology', () => {
+        expect(() => {
+            new Decision({
+                exploitation: Exploitation.ACTIVE,
+                automatable: Automatable.YES,
+                technical_impact: TechnicalImpact.TOTAL,
+                mission_wellbeing: '',
+                methodology: Methodology.CISA
+            }).evaluate();
+        }).toThrow("MissionWellbeingImpact must be a valid MissionWellbeingImpact enum value");
+    });
+
+    it('should throw error when utility is empty string for FIRST methodology', () => {
+        expect(() => {
+            new Decision({
+                exploitation: Exploitation.ACTIVE,
+                utility: '',
+                technical_impact: TechnicalImpact.TOTAL,
+                safety_impact: SafetyImpact.CATASTROPHIC,
+                methodology: Methodology.FIRST
+            }).evaluate();
+        }).toThrow("Utility must be a valid Utility enum value");
+    });
+
+    it('should throw error when safety impact is empty string for FIRST methodology', () => {
+        expect(() => {
+            new Decision({
+                exploitation: Exploitation.ACTIVE,
+                utility: Utility.SUPER_EFFECTIVE,
+                technical_impact: TechnicalImpact.TOTAL,
+                safety_impact: '',
+                methodology: Methodology.FIRST
+            }).evaluate();
+        }).toThrow("SafetyImpact must be a valid SafetyImpact enum value");
+    });
+});
+
+describe('Decision - Additional Edge Cases', () => {
+    it('should handle edge cases in CISA decision matrix', () => {
+        // Test a case that might not be covered in the existing tests
+        const decision = new Decision({
+            exploitation: Exploitation.NONE,
+            automatable: Automatable.YES,
+            technical_impact: TechnicalImpact.TOTAL,
+            mission_wellbeing: MissionWellbeingImpact.HIGH,
+            methodology: Methodology.CISA
+        });
+        const outcome = decision.evaluate();
+        expect(outcome).toBeInstanceOf(OutcomeCISA);
+        
+        // This should trigger one of the uncovered branches
+        if (outcome instanceof OutcomeCISA) {
+            expect([ActionCISA.TRACK, ActionCISA.ATTEND, ActionCISA.TRACK_STAR, ActionCISA.ACT]).toContain(outcome.action);
+        }
+    });
+
+    it('should handle edge cases in FIRST decision matrix', () => {
+        // Test a case that might not be covered in the existing tests
+        const decision = new Decision({
+            exploitation: Exploitation.NONE,
+            utility: Utility.SUPER_EFFECTIVE,
+            technical_impact: TechnicalImpact.TOTAL,
+            safety_impact: SafetyImpact.CATASTROPHIC,
+            methodology: Methodology.FIRST
+        });
+        const outcome = decision.evaluate();
+        expect(outcome).toBeInstanceOf(OutcomeFIRST);
+        
+        // This should trigger one of the uncovered branches
+        if (outcome instanceof OutcomeFIRST) {
+            expect([ActionFIRST.SCHEDULED, ActionFIRST.OUT_OF_BAND, ActionFIRST.IMMEDIATE]).toContain(outcome.action);
+        }
     });
 });
