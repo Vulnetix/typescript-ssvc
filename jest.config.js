@@ -3,7 +3,7 @@ module.exports = {
     testEnvironment: 'node',
     moduleFileExtensions: ['ts', 'js'],
     transform: {
-        '^.+\\.ts$': 'ts-jest',
+        '^.+\.ts$': 'ts-jest',
     },
     roots: ['<rootDir>/src'],
     testMatch: ['**/__tests__/**/*.ts?(x)', '**/?(*.)+(spec|test).ts?(x)'],
@@ -22,4 +22,3 @@ module.exports = {
     },
     coverageReporters: ['json', 'lcov', 'text', 'clover'],
   };
-  

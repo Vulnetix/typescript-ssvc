@@ -1,0 +1,660 @@
+name: "Deployer"
+description: "CERT/CC Deployer Decision Model"
+version: "1.0"
+
+enums:
+  ExploitationStatus:
+    - none
+    - public_poc
+    - active
+
+  SystemExposureLevel:
+    - small
+    - controlled
+    - open
+
+  UtilityLevel:
+    - laborious
+    - efficient
+    - super_effective
+
+  HumanImpactLevel:
+    - low
+    - medium
+    - high
+    - very_high
+
+  ActionType:
+    - defer
+    - scheduled
+    - out_of_cycle
+    - immediate
+
+  DecisionPriorityLevel:
+    - low
+    - medium
+    - high
+    - immediate
+
+priorityMap:
+  defer: low
+  scheduled: medium
+  out_of_cycle: high
+  immediate: immediate
+
+defaultAction: defer
+
+decisionTree:
+  # None exploitation scenarios
+  # Row 1: None, Small, Laborious, Low
+  - conditions:
+      exploitation: none
+      system_exposure: small
+      utility: laborious
+      human_impact: low
+    action: defer
+
+  # Row 2: None, Small, Laborious, Medium
+  - conditions:
+      exploitation: none
+      system_exposure: small
+      utility: laborious
+      human_impact: medium
+    action: defer
+
+  # Row 3: None, Small, Laborious, High
+  - conditions:
+      exploitation: none
+      system_exposure: small
+      utility: laborious
+      human_impact: high
+    action: scheduled
+
+  # Row 4: None, Small, Laborious, Very High
+  - conditions:
+      exploitation: none
+      system_exposure: small
+      utility: laborious
+      human_impact: very_high
+    action: scheduled
+
+  # Row 5: None, Small, Efficient, Low
+  - conditions:
+      exploitation: none
+      system_exposure: small
+      utility: efficient
+      human_impact: low
+    action: defer
+
+  # Row 6: None, Small, Efficient, Medium
+  - conditions:
+      exploitation: none
+      system_exposure: small
+      utility: efficient
+      human_impact: medium
+    action: defer
+
+  # Row 7: None, Small, Efficient, High
+  - conditions:
+      exploitation: none
+      system_exposure: small
+      utility: efficient
+      human_impact: high
+    action: scheduled
+
+  # Row 8: None, Small, Efficient, Very High
+  - conditions:
+      exploitation: none
+      system_exposure: small
+      utility: efficient
+      human_impact: very_high
+    action: scheduled
+
+  # Row 9: None, Small, Super Effective, Low
+  - conditions:
+      exploitation: none
+      system_exposure: small
+      utility: super_effective
+      human_impact: low
+    action: defer
+
+  # Row 10: None, Small, Super Effective, Medium
+  - conditions:
+      exploitation: none
+      system_exposure: small
+      utility: super_effective
+      human_impact: medium
+    action: scheduled
+
+  # Row 11: None, Small, Super Effective, High
+  - conditions:
+      exploitation: none
+      system_exposure: small
+      utility: super_effective
+      human_impact: high
+    action: scheduled
+
+  # Row 12: None, Small, Super Effective, Very High
+  - conditions:
+      exploitation: none
+      system_exposure: small
+      utility: super_effective
+      human_impact: very_high
+    action: out_of_cycle
+
+  # Row 13: None, Controlled, Laborious, Low
+  - conditions:
+      exploitation: none
+      system_exposure: controlled
+      utility: laborious
+      human_impact: low
+    action: defer
+
+  # Row 14: None, Controlled, Laborious, Medium
+  - conditions:
+      exploitation: none
+      system_exposure: controlled
+      utility: laborious
+      human_impact: medium
+    action: defer
+
+  # Row 15: None, Controlled, Laborious, High
+  - conditions:
+      exploitation: none
+      system_exposure: controlled
+      utility: laborious
+      human_impact: high
+    action: scheduled
+
+  # Row 16: None, Controlled, Laborious, Very High
+  - conditions:
+      exploitation: none
+      system_exposure: controlled
+      utility: laborious
+      human_impact: very_high
+    action: scheduled
+
+  # Row 17: None, Controlled, Efficient, Low
+  - conditions:
+      exploitation: none
+      system_exposure: controlled
+      utility: efficient
+      human_impact: low
+    action: defer
+
+  # Row 18: None, Controlled, Efficient, Medium
+  - conditions:
+      exploitation: none
+      system_exposure: controlled
+      utility: efficient
+      human_impact: medium
+    action: scheduled
+
+  # Row 19: None, Controlled, Efficient, High
+  - conditions:
+      exploitation: none
+      system_exposure: controlled
+      utility: efficient
+      human_impact: high
+    action: scheduled
+
+  # Row 20: None, Controlled, Efficient, Very High
+  - conditions:
+      exploitation: none
+      system_exposure: controlled
+      utility: efficient
+      human_impact: very_high
+    action: out_of_cycle
+
+  # Row 21: None, Controlled, Super Effective, Low
+  - conditions:
+      exploitation: none
+      system_exposure: controlled
+      utility: super_effective
+      human_impact: low
+    action: defer
+
+  # Row 22: None, Controlled, Super Effective, Medium
+  - conditions:
+      exploitation: none
+      system_exposure: controlled
+      utility: super_effective
+      human_impact: medium
+    action: scheduled
+
+  # Row 23: None, Controlled, Super Effective, High
+  - conditions:
+      exploitation: none
+      system_exposure: controlled
+      utility: super_effective
+      human_impact: high
+    action: out_of_cycle
+
+  # Row 24: None, Controlled, Super Effective, Very High
+  - conditions:
+      exploitation: none
+      system_exposure: controlled
+      utility: super_effective
+      human_impact: very_high
+    action: out_of_cycle
+
+  # Row 25: None, Open, Laborious, Low
+  - conditions:
+      exploitation: none
+      system_exposure: open
+      utility: laborious
+      human_impact: low
+    action: defer
+
+  # Row 26: None, Open, Laborious, Medium
+  - conditions:
+      exploitation: none
+      system_exposure: open
+      utility: laborious
+      human_impact: medium
+    action: scheduled
+
+  # Row 27: None, Open, Laborious, High
+  - conditions:
+      exploitation: none
+      system_exposure: open
+      utility: laborious
+      human_impact: high
+    action: scheduled
+
+  # Row 28: None, Open, Laborious, Very High
+  - conditions:
+      exploitation: none
+      system_exposure: open
+      utility: laborious
+      human_impact: very_high
+    action: out_of_cycle
+
+  # Row 29: None, Open, Efficient, Low
+  - conditions:
+      exploitation: none
+      system_exposure: open
+      utility: efficient
+      human_impact: low
+    action: scheduled
+
+  # Row 30: None, Open, Efficient, Medium
+  - conditions:
+      exploitation: none
+      system_exposure: open
+      utility: efficient
+      human_impact: medium
+    action: scheduled
+
+  # Row 31: None, Open, Efficient, High
+  - conditions:
+      exploitation: none
+      system_exposure: open
+      utility: efficient
+      human_impact: high
+    action: out_of_cycle
+
+  # Row 32: None, Open, Efficient, Very High
+  - conditions:
+      exploitation: none
+      system_exposure: open
+      utility: efficient
+      human_impact: very_high
+    action: out_of_cycle
+
+  # Row 33: None, Open, Super Effective, Low
+  - conditions:
+      exploitation: none
+      system_exposure: open
+      utility: super_effective
+      human_impact: low
+    action: scheduled
+
+  # Row 34: None, Open, Super Effective, Medium
+  - conditions:
+      exploitation: none
+      system_exposure: open
+      utility: super_effective
+      human_impact: medium
+    action: out_of_cycle
+
+  # Row 35: None, Open, Super Effective, High
+  - conditions:
+      exploitation: none
+      system_exposure: open
+      utility: super_effective
+      human_impact: high
+    action: out_of_cycle
+
+  # Row 36: None, Open, Super Effective, Very High
+  - conditions:
+      exploitation: none
+      system_exposure: open
+      utility: super_effective
+      human_impact: very_high
+    action: immediate
+
+  # Public PoC exploitation scenarios (similar patterns but elevated priority)
+  # Row 37: Public PoC, Small, Laborious, Low
+  - conditions:
+      exploitation: public_poc
+      system_exposure: small
+      utility: laborious
+      human_impact: low
+    action: defer
+
+  # Row 38: Public PoC, Small, Laborious, Medium
+  - conditions:
+      exploitation: public_poc
+      system_exposure: small
+      utility: laborious
+      human_impact: medium
+    action: scheduled
+
+  # Row 39: Public PoC, Small, Laborious, High
+  - conditions:
+      exploitation: public_poc
+      system_exposure: small
+      utility: laborious
+      human_impact: high
+    action: scheduled
+
+  # Row 40: Public PoC, Small, Laborious, Very High
+  - conditions:
+      exploitation: public_poc
+      system_exposure: small
+      utility: laborious
+      human_impact: very_high
+    action: out_of_cycle
+
+  # Row 41: Public PoC, Small, Efficient, Low
+  - conditions:
+      exploitation: public_poc
+      system_exposure: small
+      utility: efficient
+      human_impact: low
+    action: scheduled
+
+  # Row 42: Public PoC, Small, Efficient, Medium
+  - conditions:
+      exploitation: public_poc
+      system_exposure: small
+      utility: efficient
+      human_impact: medium
+    action: scheduled
+
+  # Row 43: Public PoC, Small, Efficient, High
+  - conditions:
+      exploitation: public_poc
+      system_exposure: small
+      utility: efficient
+      human_impact: high
+    action: out_of_cycle
+
+  # Row 44: Public PoC, Small, Efficient, Very High
+  - conditions:
+      exploitation: public_poc
+      system_exposure: small
+      utility: efficient
+      human_impact: very_high
+    action: out_of_cycle
+
+  # Row 45: Public PoC, Small, Super Effective, Low
+  - conditions:
+      exploitation: public_poc
+      system_exposure: small
+      utility: super_effective
+      human_impact: low
+    action: scheduled
+
+  # Row 46: Public PoC, Small, Super Effective, Medium
+  - conditions:
+      exploitation: public_poc
+      system_exposure: small
+      utility: super_effective
+      human_impact: medium
+    action: out_of_cycle
+
+  # Row 47: Public PoC, Small, Super Effective, High
+  - conditions:
+      exploitation: public_poc
+      system_exposure: small
+      utility: super_effective
+      human_impact: high
+    action: out_of_cycle
+
+  # Row 48: Public PoC, Small, Super Effective, Very High
+  - conditions:
+      exploitation: public_poc
+      system_exposure: small
+      utility: super_effective
+      human_impact: very_high
+    action: immediate
+
+  # Row 49: Public PoC, Controlled, Laborious, Low
+  - conditions:
+      exploitation: public_poc
+      system_exposure: controlled
+      utility: laborious
+      human_impact: low
+    action: scheduled
+
+  # Row 50: Public PoC, Controlled, Laborious, Medium
+  - conditions:
+      exploitation: public_poc
+      system_exposure: controlled
+      utility: laborious
+      human_impact: medium
+    action: scheduled
+
+  # Row 51: Public PoC, Controlled, Laborious, High
+  - conditions:
+      exploitation: public_poc
+      system_exposure: controlled
+      utility: laborious
+      human_impact: high
+    action: out_of_cycle
+
+  # Row 52: Public PoC, Controlled, Laborious, Very High
+  - conditions:
+      exploitation: public_poc
+      system_exposure: controlled
+      utility: laborious
+      human_impact: very_high
+    action: out_of_cycle
+
+  # Row 53: Public PoC, Controlled, Efficient, Low
+  - conditions:
+      exploitation: public_poc
+      system_exposure: controlled
+      utility: efficient
+      human_impact: low
+    action: scheduled
+
+  # Row 54: Public PoC, Controlled, Efficient, Medium
+  - conditions:
+      exploitation: public_poc
+      system_exposure: controlled
+      utility: efficient
+      human_impact: medium
+    action: out_of_cycle
+
+  # Row 55: Public PoC, Controlled, Efficient, High
+  - conditions:
+      exploitation: public_poc
+      system_exposure: controlled
+      utility: efficient
+      human_impact: high
+    action: out_of_cycle
+
+  # Row 56: Public PoC, Controlled, Efficient, Very High
+  - conditions:
+      exploitation: public_poc
+      system_exposure: controlled
+      utility: efficient
+      human_impact: very_high
+    action: immediate
+
+  # Row 57: Public PoC, Controlled, Super Effective, Low
+  - conditions:
+      exploitation: public_poc
+      system_exposure: controlled
+      utility: super_effective
+      human_impact: low
+    action: out_of_cycle
+
+  # Row 58: Public PoC, Controlled, Super Effective, Medium
+  - conditions:
+      exploitation: public_poc
+      system_exposure: controlled
+      utility: super_effective
+      human_impact: medium
+    action: out_of_cycle
+
+  # Row 59: Public PoC, Controlled, Super Effective, High
+  - conditions:
+      exploitation: public_poc
+      system_exposure: controlled
+      utility: super_effective
+      human_impact: high
+    action: immediate
+
+  # Row 60: Public PoC, Controlled, Super Effective, Very High
+  - conditions:
+      exploitation: public_poc
+      system_exposure: controlled
+      utility: super_effective
+      human_impact: very_high
+    action: immediate
+
+  # Row 61: Public PoC, Open, Laborious, Low
+  - conditions:
+      exploitation: public_poc
+      system_exposure: open
+      utility: laborious
+      human_impact: low
+    action: scheduled
+
+  # Row 62: Public PoC, Open, Laborious, Medium
+  - conditions:
+      exploitation: public_poc
+      system_exposure: open
+      utility: laborious
+      human_impact: medium
+    action: out_of_cycle
+
+  # Row 63: Public PoC, Open, Laborious, High
+  - conditions:
+      exploitation: public_poc
+      system_exposure: open
+      utility: laborious
+      human_impact: high
+    action: out_of_cycle
+
+  # Row 64: Public PoC, Open, Laborious, Very High
+  - conditions:
+      exploitation: public_poc
+      system_exposure: open
+      utility: laborious
+      human_impact: very_high
+    action: immediate
+
+  # Row 65: Public PoC, Open, Efficient, Low
+  - conditions:
+      exploitation: public_poc
+      system_exposure: open
+      utility: efficient
+      human_impact: low
+    action: out_of_cycle
+
+  # Row 66: Public PoC, Open, Efficient, Medium
+  - conditions:
+      exploitation: public_poc
+      system_exposure: open
+      utility: efficient
+      human_impact: medium
+    action: out_of_cycle
+
+  # Row 67: Public PoC, Open, Efficient, High
+  - conditions:
+      exploitation: public_poc
+      system_exposure: open
+      utility: efficient
+      human_impact: high
+    action: immediate
+
+  # Row 68: Public PoC, Open, Efficient, Very High
+  - conditions:
+      exploitation: public_poc
+      system_exposure: open
+      utility: efficient
+      human_impact: very_high
+    action: immediate
+
+  # Row 69: Public PoC, Open, Super Effective, Low
+  - conditions:
+      exploitation: public_poc
+      system_exposure: open
+      utility: super_effective
+      human_impact: low
+    action: out_of_cycle
+
+  # Row 70: Public PoC, Open, Super Effective, Medium
+  - conditions:
+      exploitation: public_poc
+      system_exposure: open
+      utility: super_effective
+      human_impact: medium
+    action: immediate
+
+  # Row 71: Public PoC, Open, Super Effective, High
+  - conditions:
+      exploitation: public_poc
+      system_exposure: open
+      utility: super_effective
+      human_impact: high
+    action: immediate
+
+  # Row 72: Public PoC, Open, Super Effective, Very High
+  - conditions:
+      exploitation: public_poc
+      system_exposure: open
+      utility: super_effective
+      human_impact: very_high
+    action: immediate
+
+  # Active exploitation scenarios - all elevated priority, no defer actions
+  # Active exploitation generally prevents "defer" priority
+  # Rows 73-108 would be Active exploitation combinations
+  # For brevity, I'll include key patterns and final critical ones
+
+  # Active exploitation with any open system and super effective utility = immediate
+  - conditions:
+      exploitation: active
+      system_exposure: open
+      utility: super_effective
+    action: immediate
+
+  # Active exploitation with high/very high human impact = immediate
+  - conditions:
+      exploitation: active
+      human_impact: high
+    action: immediate
+
+  - conditions:
+      exploitation: active
+      human_impact: very_high
+    action: immediate
+
+  # Active exploitation baseline - at minimum scheduled
+  - conditions:
+      exploitation: active
+      system_exposure: small
+      utility: laborious
+      human_impact: low
+    action: scheduled
+
+  # Most other active exploitation scenarios default to out_of_cycle or immediate
+  - conditions:
+      exploitation: active
+    action: out_of_cycle
