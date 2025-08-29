@@ -2,12 +2,13 @@
 generated: true
 source: methodologies/supplier.yaml
 generator: scripts/generate-plugins.ts
-lastGenerated: 2025-08-29T10:52:46.035Z
+lastGenerated: 2025-08-29T14:36:18.696Z
 generatedFiles:
   typescript:
     path: /home/chris/github/typescript-ssvc/src/plugins/supplier-generated.ts
-    checksum: 54f36479cced918aa32fbfb6f758eaf99b59c9e0
+    checksum: 18222c65836143f79514ee9abd03a1d84b809279
 ---
+
 # Supplier
 
 CERT/CC Supplier Decision Model
@@ -18,110 +19,74 @@ CERT/CC Supplier Decision Model
 ## Decision Tree
 
 ```mermaid
-flowchart TD
+flowchart LR
   0{ExploitationStatus}
   1{UtilityLevel}
   2{TechnicalImpactLevel}
   3{PublicSafetyImpactLevel}
   4[defer]
-  4 --> 4_end((End))
   5[scheduled]
-  5 --> 5_end((End))
   6{PublicSafetyImpactLevel}
   7[defer]
-  7 --> 7_end((End))
   8[scheduled]
-  8 --> 8_end((End))
   9{TechnicalImpactLevel}
   10{PublicSafetyImpactLevel}
   11[defer]
-  11 --> 11_end((End))
   12[scheduled]
-  12 --> 12_end((End))
   13{PublicSafetyImpactLevel}
   14[scheduled]
-  14 --> 14_end((End))
   15[scheduled]
-  15 --> 15_end((End))
   16{TechnicalImpactLevel}
   17{PublicSafetyImpactLevel}
   18[defer]
-  18 --> 18_end((End))
   19[scheduled]
-  19 --> 19_end((End))
   20{PublicSafetyImpactLevel}
   21[scheduled]
-  21 --> 21_end((End))
   22[out_of_cycle]
-  22 --> 22_end((End))
   23{UtilityLevel}
   24{TechnicalImpactLevel}
   25{PublicSafetyImpactLevel}
   26[defer]
-  26 --> 26_end((End))
   27[scheduled]
-  27 --> 27_end((End))
   28{PublicSafetyImpactLevel}
   29[scheduled]
-  29 --> 29_end((End))
   30[out_of_cycle]
-  30 --> 30_end((End))
   31{TechnicalImpactLevel}
   32{PublicSafetyImpactLevel}
   33[scheduled]
-  33 --> 33_end((End))
   34[out_of_cycle]
-  34 --> 34_end((End))
   35{PublicSafetyImpactLevel}
   36[scheduled]
-  36 --> 36_end((End))
   37[out_of_cycle]
-  37 --> 37_end((End))
   38{TechnicalImpactLevel}
   39{PublicSafetyImpactLevel}
   40[scheduled]
-  40 --> 40_end((End))
   41[out_of_cycle]
-  41 --> 41_end((End))
   42{PublicSafetyImpactLevel}
   43[out_of_cycle]
-  43 --> 43_end((End))
   44[immediate]
-  44 --> 44_end((End))
   45{UtilityLevel}
   46{TechnicalImpactLevel}
   47{PublicSafetyImpactLevel}
   48[scheduled]
-  48 --> 48_end((End))
   49[out_of_cycle]
-  49 --> 49_end((End))
   50{PublicSafetyImpactLevel}
   51[out_of_cycle]
-  51 --> 51_end((End))
   52[immediate]
-  52 --> 52_end((End))
   53{TechnicalImpactLevel}
   54{PublicSafetyImpactLevel}
   55[out_of_cycle]
-  55 --> 55_end((End))
   56[immediate]
-  56 --> 56_end((End))
   57{PublicSafetyImpactLevel}
   58[out_of_cycle]
-  58 --> 58_end((End))
   59[immediate]
-  59 --> 59_end((End))
   60{TechnicalImpactLevel}
   61{PublicSafetyImpactLevel}
   62[out_of_cycle]
-  62 --> 62_end((End))
   63[immediate]
-  63 --> 63_end((End))
   64{PublicSafetyImpactLevel}
   65[immediate]
-  65 --> 65_end((End))
   66[immediate]
-  66 --> 66_end((End))
   0 -->|none| 1
   1 -->|laborious| 2
   2 -->|partial| 3
@@ -193,20 +158,24 @@ flowchart TD
 ## Enums
 
 ### ExploitationStatus
+
 - none
 - public_poc
 - active
 
 ### UtilityLevel
+
 - laborious
 - efficient
 - super_effective
 
 ### TechnicalImpactLevel
+
 - partial
 - total
 
 ### PublicSafetyImpactLevel
+
 - minimal
 - significant
 
@@ -220,7 +189,7 @@ flowchart TD
 ## Usage
 
 ```typescript
-import { DecisionSupplier } from './plugins/supplier';
+import { DecisionSupplier } from "./plugins/supplier";
 
 const decision = new DecisionSupplier({
   // Add parameters based on methodology
@@ -236,12 +205,12 @@ This methodology supports SSVC vector strings for compact representation and int
 
 ### Parameter Abbreviations
 
-| Parameter | Abbreviation | Value Mappings |
-|-----------|--------------|----------------|
-| exploitation | E | none→N, public_poc→P, active→A |
-| utility | U | laborious→L, efficient→E, super_effective→S |
-| technical_impact | T | partial→P, total→T |
-| public_safety | P | minimal→M, significant→S |
+| Parameter        | Abbreviation | Value Mappings                              |
+| ---------------- | ------------ | ------------------------------------------- |
+| exploitation     | E            | none→N, public_poc→P, active→A              |
+| utility          | U            | laborious→L, efficient→E, super_effective→S |
+| technical_impact | T            | partial→P, total→T                          |
+| public_safety    | P            | minimal→M, significant→S                    |
 
 ### Vector String Format
 
@@ -257,7 +226,7 @@ const decision = new DecisionSupplier({
   exploitation: "none",
   utility: "laborious",
   technical_impact: "partial",
-  public_safety: "minimal"
+  public_safety: "minimal",
 });
 
 const vectorString = decision.toVector();
@@ -265,7 +234,9 @@ console.log(vectorString);
 // Output: SUPPLIERv1/E:N/U:L/T:P/P:M/2024-07-23T20:34:21.000Z/
 
 // Parse vector string to create decision
-const parsedDecision = DecisionSupplier.fromVector("SUPPLIERv1/E:N/U:L/T:P/P:M/2024-07-23T20:34:21.000Z/");
+const parsedDecision = DecisionSupplier.fromVector(
+  "SUPPLIERv1/E:N/U:L/T:P/P:M/2024-07-23T20:34:21.000Z/",
+);
 const outcome = parsedDecision.evaluate();
 ```
 
@@ -279,12 +250,13 @@ Verify the integrity of generated files using these commands:
 
 ```bash
 # Verify TypeScript plugin file
-echo "54f36479cced918aa32fbfb6f758eaf99b59c9e0  /home/chris/github/typescript-ssvc/src/plugins/supplier-generated.ts" | sha1sum -c
+echo "18222c65836143f79514ee9abd03a1d84b809279  /home/chris/github/typescript-ssvc/src/plugins/supplier-generated.ts" | sha1sum -c
 ```
 
 **Why This Matters**: Checksum verification ensures that generated files haven't been tampered with or corrupted. This is important for:
+
 - **Security**: Detecting unauthorized modifications to generated code
-- **Integrity**: Ensuring files match their expected content exactly  
+- **Integrity**: Ensuring files match their expected content exactly
 - **Trust**: Providing cryptographic proof that files are authentic
 - **Debugging**: Confirming file corruption isn't causing unexpected behavior
 

@@ -8,6 +8,17 @@
 
 A prioritization framework to triage CVE vulnerabilities as an alternative or compliment to CVSS.
 
+## 🤖 NEW: AI/LLM Methodology Available
+
+We've added a new **AI/LLM Triage** methodology specifically designed for assessing AI and LLM vulnerabilities. This methodology addresses the unique security considerations of AI systems including model security, data poisoning, prompt injection, and AI-specific attack vectors.
+
+**Features:**
+- **AI-specific decision points**: Model access, data poisoning potential, and AI system impact assessment
+- **Comprehensive coverage**: Addresses both traditional software vulnerabilities in AI systems and AI-specific threats
+- **Aligned with AI security frameworks**: Follows emerging best practices for AI security assessment
+
+See the [AI/LLM Triage Documentation](docs/ai_llm_triage.md) for detailed usage and examples.
+
 ## 🏗️ Schema-Driven Architecture
 
 This library implements a **standardized YAML schema** for SSVC methodologies, staying true to SSVC's core design principle of being **"Stakeholder-Specific"** while enabling **interoperability** and **portability**:
@@ -26,9 +37,10 @@ npx ts-node scripts/validate-methodologies.ts
 
 See the [**Schema Documentation**](docs/methodology-schema.md) for complete details on creating schema-compliant YAML methodologies.
 
-This library features a **plugin-based architecture** that allows for easy integration of different SSVC methodologies. It includes built-in support for **5 methodologies**:
+This library features a **plugin-based architecture** that allows for easy integration of different SSVC methodologies. It includes built-in support for **6 methodologies**:
 
 - **[CISA](#cisa-methodology)** - Stakeholder-Specific Vulnerability Categorization ([docs](docs/cisa.md))
+- **[AI/LLM Triage](#aillm-triage-methodology)** - AI and LLM-specific vulnerability assessment ([docs](docs/ai_llm_triage.md))
 - **[Coordinator Triage](#coordinator-triage-methodology)** - CERT/CC Coordinator Triage Decision Model ([docs](docs/coordinator_triage.md))
 - **[Coordinator Publication](#coordinator-publication-methodology)** - CERT/CC Publication Decision Model ([docs](docs/coordinator_publication.md))
 - **[Supplier](#supplier-methodology)** - CERT/CC Supplier Decision Model ([docs](docs/supplier.md))
@@ -50,23 +62,51 @@ npm install ssvc
 
 ## Quick Start
 
+### Basic Example - CISA Methodology
+
 ```javascript
 import { createDecision, listMethodologies } from 'ssvc';
 
 // See available methodologies
 console.log(listMethodologies()); 
-// ['CISA', 'Coordinator Triage', 'Coordinator Publication', 'Supplier', 'Deployer']
+// ['CISA', 'AI/LLM Triage', 'Coordinator Triage', 'Coordinator Publication', 'Supplier', 'Deployer']
 
-// Use CISA methodology
-const decision = createDecision('CISA', {
-  exploitation: 'active',
-  automatable: 'yes',
-  technical_impact: 'total',
-  mission_wellbeing: 'high'
+// Critical vulnerability requiring immediate action
+const criticalDecision = createDecision('CISA', {
+  exploitation: 'active',      // Active exploitation detected
+  automatable: 'yes',          // Can be automated
+  technical_impact: 'total',   // Complete system compromise possible
+  mission_wellbeing: 'high'    // High impact on mission/business
 });
 
-const result = decision.evaluate();
+const result = criticalDecision.evaluate();
 console.log(result); // { action: 'act', priority: 'immediate' }
+
+// Lower priority vulnerability for comparison
+const lowPriorityDecision = createDecision('CISA', {
+  exploitation: 'none',        // No known exploitation
+  automatable: 'no',           // Manual exploitation required
+  technical_impact: 'partial', // Limited impact
+  mission_wellbeing: 'low'     // Minimal business impact
+});
+
+const lowResult = lowPriorityDecision.evaluate();
+console.log(lowResult); // { action: 'track', priority: 'low' }
+```
+
+### AI/LLM Security Example
+
+```javascript
+// AI-specific vulnerability assessment
+const aiVulnDecision = createDecision('AI/LLM Triage', {
+  model_access: 'direct',               // Direct model access possible
+  data_poisoning: 'confirmed',          // Training data compromised
+  ai_system_impact: 'full_compromise',  // Complete AI system compromise
+  traditional_exploit: 'yes'            // Also exploitable via traditional methods
+});
+
+const aiResult = aiVulnDecision.evaluate();
+console.log(aiResult); // { action: 'act', priority: 'immediate' }
 ```
 
 ## 📋 Schema Validation System
@@ -150,6 +190,36 @@ const outcome = cisaDecision.evaluate();
 - `attend` → Medium priority
 - `act` → Immediate priority
 
+### AI/LLM Triage Methodology
+
+The AI/LLM Triage methodology addresses the unique security considerations of AI systems, including model vulnerabilities, data poisoning, prompt injection, and AI-specific attack vectors:
+
+```javascript
+import { createDecision } from 'ssvc';
+
+const aiDecision = createDecision('AI/LLM Triage', {
+  model_access: 'api',                    // 'none' | 'local' | 'api' | 'direct'
+  data_poisoning: 'confirmed',            // 'none' | 'suspected' | 'confirmed'
+  ai_system_impact: 'full_compromise',    // 'minimal' | 'degraded' | 'full_compromise'
+  traditional_exploit: 'yes'              // 'yes' | 'no'
+});
+
+const outcome = aiDecision.evaluate();
+// Returns: { action: 'act', priority: 'immediate' }
+```
+
+**Possible Actions:**
+- `track` → Low priority
+- `monitor` → Medium priority
+- `investigate` → High priority
+- `act` → Immediate priority
+
+**AI-Specific Considerations:**
+- **Model Security**: Direct access to model weights, training data, or inference logic
+- **Data Poisoning**: Malicious training data affecting model behavior
+- **AI System Impact**: Range from performance degradation to complete system compromise
+- **Traditional Exploits**: Whether the vulnerability can be exploited through conventional software attack vectors
+
 ### Coordinator Triage Methodology
 
 The CERT/CC Coordinator Triage Decision Model for vulnerability coordinators:
@@ -183,7 +253,7 @@ The CERT/CC Coordinator Publication Decision Model for publication decisions:
 const publicationDecision = createDecision('Coordinator Publication', {
   supplier_involvement: 'fix_ready',           // 'fix_ready' | 'cooperative' | 'uncooperative_unresponsive'
   exploitation: 'active',                      // 'none' | 'public_poc' | 'active'
-  public_value_added: 'precedence'             // 'limited' | 'ampliative' | 'precedence'
+  public_value_added: 'precedence'             // 'limited' | 'amplificative' | 'precedence'
 });
 
 const outcome = publicationDecision.evaluate();
@@ -191,7 +261,7 @@ const outcome = publicationDecision.evaluate();
 ```
 
 **Possible Actions:**
-- `dont_publish` → Low priority
+- `don't_publish` → Low priority
 - `publish` → High priority
 
 ### Supplier Methodology
@@ -400,97 +470,88 @@ const decision = createDecision('CISA', {
 ### CISA
 
 ```mermaid
-flowchart TD
+flowchart LR
   0{ExploitationStatus}
   1{AutomatableStatus}
   2{TechnicalImpactLevel}
   3{MissionWellbeingImpactLevel}
   4[ATTEND]
-  4 --> 4_end((End))
-  5{TechnicalImpactLevel}
-  6{MissionWellbeingImpactLevel}
-  7[TRACK_STAR]
-  7 --> 7_end((End))
-  8{AutomatableStatus}
-  9{TechnicalImpactLevel}
+  5{MissionWellbeingImpactLevel}
+  6[ATTEND]
+  7{TechnicalImpactLevel}
+  8{MissionWellbeingImpactLevel}
+  9[TRACK_STAR]
   10{MissionWellbeingImpactLevel}
   11[TRACK_STAR]
-  11 --> 11_end((End))
-  12[ATTEND]
-  12 --> 12_end((End))
-  13{MissionWellbeingImpactLevel}
-  14[ATTEND]
-  14 --> 14_end((End))
-  15{TechnicalImpactLevel}
-  16{MissionWellbeingImpactLevel}
-  17[TRACK_STAR]
-  17 --> 17_end((End))
-  18{MissionWellbeingImpactLevel}
-  19[TRACK_STAR]
-  19 --> 19_end((End))
-  20[ATTEND]
-  20 --> 20_end((End))
-  21{AutomatableStatus}
-  22{TechnicalImpactLevel}
-  23{MissionWellbeingImpactLevel}
+  12{AutomatableStatus}
+  13{TechnicalImpactLevel}
+  14{MissionWellbeingImpactLevel}
+  15[TRACK_STAR]
+  16[ATTEND]
+  17{MissionWellbeingImpactLevel}
+  18[ATTEND]
+  19{TechnicalImpactLevel}
+  20{MissionWellbeingImpactLevel}
+  21[TRACK_STAR]
+  22{MissionWellbeingImpactLevel}
+  23[TRACK_STAR]
   24[ATTEND]
-  24 --> 24_end((End))
-  25[ATTEND]
-  25 --> 25_end((End))
-  26[ACT]
-  26 --> 26_end((End))
+  25{AutomatableStatus}
+  26{TechnicalImpactLevel}
   27{MissionWellbeingImpactLevel}
   28[ATTEND]
-  28 --> 28_end((End))
-  29[ACT]
-  29 --> 29_end((End))
+  29[ATTEND]
   30[ACT]
-  30 --> 30_end((End))
-  31{TechnicalImpactLevel}
-  32{MissionWellbeingImpactLevel}
-  33[ATTEND]
-  33 --> 33_end((End))
-  34{MissionWellbeingImpactLevel}
-  35[ATTEND]
-  35 --> 35_end((End))
-  36[ACT]
-  36 --> 36_end((End))
+  31{MissionWellbeingImpactLevel}
+  32[ATTEND]
+  33[ACT]
+  34[ACT]
+  35{TechnicalImpactLevel}
+  36{MissionWellbeingImpactLevel}
+  37[ATTEND]
+  38{MissionWellbeingImpactLevel}
+  39[ATTEND]
+  40[ACT]
   0 -->|NONE| 1
   1 -->|YES| 2
-  2 -->|TOTAL| 3
+  2 -->|PARTIAL| 3
   3 -->|HIGH| 4
-  1 -->|NO| 5
-  5 -->|TOTAL| 6
-  6 -->|HIGH| 7
-  0 -->|POC| 8
-  8 -->|YES| 9
-  9 -->|TOTAL| 10
-  10 -->|MEDIUM| 11
-  10 -->|HIGH| 12
-  9 -->|PARTIAL| 13
-  13 -->|HIGH| 14
-  8 -->|NO| 15
-  15 -->|PARTIAL| 16
-  16 -->|HIGH| 17
-  15 -->|TOTAL| 18
-  18 -->|MEDIUM| 19
-  18 -->|HIGH| 20
-  0 -->|ACTIVE| 21
-  21 -->|YES| 22
-  22 -->|PARTIAL| 23
-  23 -->|LOW| 24
-  23 -->|MEDIUM| 25
-  23 -->|HIGH| 26
-  22 -->|TOTAL| 27
+  2 -->|TOTAL| 5
+  5 -->|HIGH| 6
+  1 -->|NO| 7
+  7 -->|PARTIAL| 8
+  8 -->|HIGH| 9
+  7 -->|TOTAL| 10
+  10 -->|HIGH| 11
+  0 -->|POC| 12
+  12 -->|YES| 13
+  13 -->|TOTAL| 14
+  14 -->|MEDIUM| 15
+  14 -->|HIGH| 16
+  13 -->|PARTIAL| 17
+  17 -->|HIGH| 18
+  12 -->|NO| 19
+  19 -->|PARTIAL| 20
+  20 -->|HIGH| 21
+  19 -->|TOTAL| 22
+  22 -->|MEDIUM| 23
+  22 -->|HIGH| 24
+  0 -->|ACTIVE| 25
+  25 -->|YES| 26
+  26 -->|PARTIAL| 27
   27 -->|LOW| 28
   27 -->|MEDIUM| 29
   27 -->|HIGH| 30
-  21 -->|NO| 31
-  31 -->|PARTIAL| 32
-  32 -->|HIGH| 33
-  31 -->|TOTAL| 34
-  34 -->|MEDIUM| 35
-  34 -->|HIGH| 36
+  26 -->|TOTAL| 31
+  31 -->|LOW| 32
+  31 -->|MEDIUM| 33
+  31 -->|HIGH| 34
+  25 -->|NO| 35
+  35 -->|PARTIAL| 36
+  36 -->|HIGH| 37
+  35 -->|TOTAL| 38
+  38 -->|MEDIUM| 39
+  38 -->|HIGH| 40
 ```
 
 ## Development
