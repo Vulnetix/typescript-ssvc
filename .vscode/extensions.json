@@ -1,0 +1,17 @@
+{
+    "recommendations": [
+        "ms-vscode.vscode-typescript-next",
+        "esbenp.prettier-vscode",
+        "ms-vscode.vscode-json",
+        "ms-vscode.test-adapter-converter",
+        "ms-vscode.js-debug",
+        "orta.vscode-jest",
+        "redhat.vscode-yaml",
+        "skellock.just",
+        "ms-vsliveshare.vsliveshare",
+        "eamodio.gitlens"
+    ],
+    "unwantedRecommendations": [
+        "ms-vscode.vscode-typescript"
+    ]
+}

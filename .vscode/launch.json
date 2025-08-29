@@ -1,0 +1,76 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug Jest Tests",
+            "type": "node",
+            "request": "launch",
+            "program": "${workspaceFolder}/node_modules/.bin/jest",
+            "args": [
+                "--runInBand",
+                "--coverage",
+                "--no-cache"
+            ],
+            "console": "integratedTerminal",
+            "internalConsoleOptions": "neverOpen",
+            "disableOptimisticBPs": true,
+            "env": {
+                "NODE_ENV": "test"
+            }
+        },
+        {
+            "name": "Debug Current Jest Test",
+            "type": "node",
+            "request": "launch",
+            "program": "${workspaceFolder}/node_modules/.bin/jest",
+            "args": [
+                "--runInBand",
+                "--no-cache",
+                "${relativeFile}"
+            ],
+            "console": "integratedTerminal",
+            "internalConsoleOptions": "neverOpen",
+            "disableOptimisticBPs": true,
+            "env": {
+                "NODE_ENV": "test"
+            }
+        },
+        {
+            "name": "Debug TypeScript File",
+            "type": "node",
+            "request": "launch",
+            "program": "${workspaceFolder}/node_modules/.bin/ts-node",
+            "args": [
+                "${relativeFile}"
+            ],
+            "console": "integratedTerminal",
+            "internalConsoleOptions": "neverOpen",
+            "env": {
+                "NODE_ENV": "development"
+            }
+        },
+        {
+            "name": "Debug Plugin Generator",
+            "type": "node",
+            "request": "launch",
+            "program": "${workspaceFolder}/node_modules/.bin/ts-node",
+            "args": [
+                "scripts/generate-plugins.ts"
+            ],
+            "console": "integratedTerminal",
+            "internalConsoleOptions": "neverOpen",
+            "env": {
+                "NODE_ENV": "development"
+            }
+        },
+        {
+            "name": "Attach to Node Process",
+            "type": "node",
+            "request": "attach",
+            "port": 9229,
+            "restart": true,
+            "localRoot": "${workspaceFolder}",
+            "remoteRoot": "/workspace"
+        }
+    ]
+}
