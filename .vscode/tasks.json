@@ -1,0 +1,116 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "build",
+            "type": "shell",
+            "command": "npx",
+            "args": ["tsc", "--pretty"],
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "silent",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": false
+            },
+            "problemMatcher": "$tsc"
+        },
+        {
+            "label": "test",
+            "type": "shell",
+            "command": "npx",
+            "args": ["jest", "--coverage"],
+            "group": "test",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": true,
+                "panel": "shared"
+            }
+        },
+        {
+            "label": "test-watch",
+            "type": "shell",
+            "command": "npx",
+            "args": ["jest", "--watch"],
+            "group": "test",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": true,
+                "panel": "dedicated"
+            },
+            "isBackground": true,
+            "problemMatcher": {
+                "owner": "jest",
+                "fileLocation": "relative",
+                "pattern": {
+                    "regexp": "^\\s*at\\s+.*\\((.*):(\\d+):(\\d+)\\)$",
+                    "file": 1,
+                    "line": 2,
+                    "column": 3
+                },
+                "background": {
+                    "activeOnStart": true,
+                    "beginsPattern": "^\\s*RUNS\\s",
+                    "endsPattern": "^\\s*(PASS|FAIL)\\s"
+                }
+            }
+        },
+        {
+            "label": "generate-plugins",
+            "type": "shell",
+            "command": "npx",
+            "args": ["ts-node", "scripts/generate-plugins.ts"],
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            }
+        },
+        {
+            "label": "container-build",
+            "type": "shell",
+            "command": "just",
+            "args": ["container-build"],
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            }
+        },
+        {
+            "label": "container-dev",
+            "type": "shell",
+            "command": "just",
+            "args": ["container-dev"],
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": true,
+                "panel": "dedicated"
+            },
+            "isBackground": true
+        },
+        {
+            "label": "sarif-scan",
+            "type": "shell",
+            "command": "just",
+            "args": ["sarif"],
+            "group": "test",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            }
+        }
+    ]
+}

@@ -1,0 +1,71 @@
+{
+    "name": "SSVC Development Environment",
+    "build": {
+        "dockerfile": "../Containerfile",
+        "context": ".."
+    },
+    "workspaceFolder": "/workspace",
+    "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached",
+    "runArgs": [
+        "--name=ssvc-devcontainer"
+    ],
+    "forwardPorts": [3000, 5000, 8000, 9229],
+    "portsAttributes": {
+        "3000": {
+            "label": "Development Server",
+            "onAutoForward": "notify"
+        },
+        "5000": {
+            "label": "Application Port",
+            "onAutoForward": "notify"
+        },
+        "8000": {
+            "label": "HTTP Server",
+            "onAutoForward": "notify"
+        },
+        "9229": {
+            "label": "Node.js Debug",
+            "onAutoForward": "silent"
+        }
+    },
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "ms-vscode.vscode-typescript-next",
+                "esbenp.prettier-vscode",
+                "ms-vscode.vscode-json",
+                "bradlc.vscode-tailwindcss",
+                "ms-vscode.test-adapter-converter",
+                "ms-vscode.js-debug",
+                "orta.vscode-jest",
+                "redhat.vscode-yaml",
+                "ms-vsliveshare.vsliveshare",
+                "skellock.just",
+                "GitLab.gitlab-workflow"
+            ],
+            "settings": {
+                "terminal.integrated.defaultProfile.linux": "sh",
+                "terminal.integrated.profiles.linux": {
+                    "sh": {
+                        "path": "/bin/sh"
+                    }
+                },
+                "typescript.preferences.npmLocation": "npm",
+                "eslint.workingDirectories": ["./"],
+                "files.watcherExclude": {
+                    "**/node_modules/**": true,
+                    "**/dist/**": true,
+                    "**/coverage/**": true
+                }
+            }
+        }
+    },
+    "initializeCommand": "chmod -R 755 ${localWorkspaceFolder} 2>/dev/null || true",
+    "postCreateCommand": "yarn config set --home enableTelemetry 0 && yarn install --immutable",
+    "remoteUser": "node",
+    "containerUser": "node",
+    "updateRemoteUserUID": true,
+    "containerEnv": {
+        "NODE_ENV": "development"
+    }
+}

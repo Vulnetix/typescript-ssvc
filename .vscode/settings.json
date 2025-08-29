@@ -1,0 +1,53 @@
+{
+    "dev.containers.dockerPath": "podman",
+    "typescript.preferences.importModuleSpecifier": "relative",
+    "typescript.suggest.autoImports": true,
+    "typescript.updateImportsOnFileMove.enabled": "always",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+        "source.fixAll": "explicit",
+        "source.organizeImports": "explicit"
+    },
+    "files.associations": {
+        "*.yaml": "yaml",
+        "*.yml": "yaml",
+        "justfile": "just"
+    },
+    "search.exclude": {
+        "**/node_modules": true,
+        "**/dist": true,
+        "**/coverage": true,
+        "**/*.log": true,
+        "**/.git": true,
+        "**/*.sarif.json": true,
+        "**/*.cdx.json": true,
+        "**/*.spdx.json": true
+    },
+    "files.watcherExclude": {
+        "**/node_modules/**": true,
+        "**/dist/**": true,
+        "**/coverage/**": true
+    },
+    "typescript.preferences.npmLocation": "npm",
+    "npm.packageManager": "yarn",
+    "jest.jestCommandLine": "npx jest",
+    "jest.autoRun": {
+        "watch": false,
+        "onStartup": ["all-tests"]
+    },
+    "terminal.integrated.defaultProfile.linux": "bash",
+    "terminal.integrated.profiles.linux": {
+        "bash": {
+            "path": "/bin/bash",
+            "args": ["-l"]
+        }
+    },
+    "yaml.schemas": {
+        "./schemas/methodology.schema.json": "methodologies/*.yaml"
+    },
+    "files.exclude": {
+        "**/node_modules": true,
+        "**/dist": true,
+        "**/coverage": true
+    }
+}
