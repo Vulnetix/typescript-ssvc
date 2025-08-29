@@ -198,6 +198,11 @@ The validator performs these checks:
 - **Coverage**: 100% (all combinations explicitly defined)  
 - **Structure**: Fully enumerated hierarchical tree
 
+### AI/LLM Triage (Complete Tree)
+- **Depth**: 4 levels consistently
+- **Coverage**: 100% (all combinations explicitly defined)
+- **Structure**: Fully enumerated hierarchical tree for AI-specific vulnerability assessment
+
 ## Integration with Build Process
 
 The validation is integrated into the build process:
