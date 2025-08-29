@@ -72,8 +72,12 @@ watch:
 build:
     npx tsc --pretty
 
+# Validate YAML methodology files against schema
+validate-methodologies:
+    npx ts-node scripts/validate-methodologies.ts
+
 # Generate SSVC plugins from YAML configurations
-generate-plugins:
+generate-plugins: validate-methodologies
     npx ts-node scripts/generate-plugins.ts
 
 # Run full development cycle: generate plugins, build, test

@@ -1,4 +1,5 @@
 import { CISAPlugin } from './cisa';
+import { Decision, PluginRegistry } from '../core';
 import {
   DecisionCisa,
   OutcomeCisa,
@@ -7,7 +8,7 @@ import {
   TechnicalImpactLevel,
   MissionWellbeingImpactLevel,
   ActionType,
-  DecisionPriorityLevel
+  PriorityLevel
 } from './cisa-generated';
 
 describe('CISAPlugin', () => {
@@ -15,6 +16,8 @@ describe('CISAPlugin', () => {
   
   beforeEach(() => {
     plugin = new CISAPlugin();
+    // Register plugin for vector string tests
+    PluginRegistry.getInstance().register(plugin);
   });
   
   describe('plugin properties', () => {
@@ -41,8 +44,8 @@ describe('CISAPlugin', () => {
       });
       
       const outcome = decision.evaluate();
-      expect(outcome.action).toBe('act');
-      expect(outcome.priority).toBe('immediate');
+      expect(outcome.action).toBe('ACT');
+      expect(outcome.priority).toBe('IMMEDIATE');
     });
     
     it('should create decision with alternative parameter names', () => {
@@ -54,8 +57,8 @@ describe('CISAPlugin', () => {
       });
       
       const outcome = decision.evaluate();
-      expect(outcome.action).toBe('act');
-      expect(outcome.priority).toBe('immediate');
+      expect(outcome.action).toBe('ACT');
+      expect(outcome.priority).toBe('IMMEDIATE');
     });
     
     it('should handle enum values directly', () => {
@@ -67,8 +70,8 @@ describe('CISAPlugin', () => {
       });
       
       const outcome = decision.evaluate();
-      expect(outcome.action).toBe('act');
-      expect(outcome.priority).toBe('immediate');
+      expect(outcome.action).toBe('ACT');
+      expect(outcome.priority).toBe('IMMEDIATE');
     });
     
     it('should handle mixed string and enum values', () => {
@@ -80,8 +83,8 @@ describe('CISAPlugin', () => {
       });
       
       const outcome = decision.evaluate();
-      expect(outcome.action).toBe('act');
-      expect(outcome.priority).toBe('immediate');
+      expect(outcome.action).toBe('ACT');
+      expect(outcome.priority).toBe('IMMEDIATE');
     });
     
     it('should handle case variations in string values', () => {
@@ -93,8 +96,8 @@ describe('CISAPlugin', () => {
       });
       
       const outcome = decision.evaluate();
-      expect(outcome.action).toBe('act');
-      expect(outcome.priority).toBe('immediate');
+      expect(outcome.action).toBe('ACT');
+      expect(outcome.priority).toBe('IMMEDIATE');
     });
     
     it('should handle undefined values gracefully', () => {
@@ -125,8 +128,8 @@ describe('CISAPlugin', () => {
       });
       
       const outcome = decision.evaluate();
-      expect(outcome.action).toBe('act');
-      expect(outcome.priority).toBe('immediate');
+      expect(outcome.action).toBe('ACT');
+      expect(outcome.priority).toBe('IMMEDIATE');
     });
     
     it('should return ATTEND for medium-high severity', () => {
@@ -138,8 +141,8 @@ describe('CISAPlugin', () => {
       });
       
       const outcome = decision.evaluate();
-      expect(outcome.action).toBe('attend');
-      expect(outcome.priority).toBe('medium');
+      expect(outcome.action).toBe('ATTEND');
+      expect(outcome.priority).toBe('MEDIUM');
     });
     
     it('should return TRACK_STAR for medium severity', () => {
@@ -151,8 +154,8 @@ describe('CISAPlugin', () => {
       });
       
       const outcome = decision.evaluate();
-      expect(outcome.action).toBe('track_star');
-      expect(outcome.priority).toBe('medium');
+      expect(outcome.action).toBe('TRACK_STAR');
+      expect(outcome.priority).toBe('MEDIUM');
     });
     
     it('should return TRACK for low severity (none exploitation)', () => {
@@ -164,8 +167,8 @@ describe('CISAPlugin', () => {
       });
       
       const outcome = decision.evaluate();
-      expect(outcome.action).toBe('track');
-      expect(outcome.priority).toBe('low');
+      expect(outcome.action).toBe('TRACK');
+      expect(outcome.priority).toBe('LOW');
     });
     
     it('should handle all exploitation levels', () => {
@@ -180,21 +183,21 @@ describe('CISAPlugin', () => {
         ...baseParams,
         exploitation: 'none'
       });
-      expect(decision.evaluate().action).toBe('attend');
+      expect(decision.evaluate().action).toBe('ATTEND');
       
       // Test POC
       decision = plugin.createDecision({
         ...baseParams,
         exploitation: 'poc'
       });
-      expect(decision.evaluate().action).toBe('attend');
+      expect(decision.evaluate().action).toBe('ATTEND');
       
       // Test ACTIVE
       decision = plugin.createDecision({
         ...baseParams,
         exploitation: 'active'
       });
-      expect(decision.evaluate().action).toBe('act');
+      expect(decision.evaluate().action).toBe('ACT');
     });
     
     it('should handle both automatable values', () => {
@@ -205,7 +208,7 @@ describe('CISAPlugin', () => {
         technical_impact: 'partial',
         mission_wellbeing: 'high'
       });
-      expect(decision.evaluate().action).toBe('act');
+      expect(decision.evaluate().action).toBe('ACT');
       
       // Test NO
       decision = plugin.createDecision({
@@ -214,7 +217,7 @@ describe('CISAPlugin', () => {
         technical_impact: 'partial',
         mission_wellbeing: 'high'
       });
-      expect(decision.evaluate().action).toBe('attend');
+      expect(decision.evaluate().action).toBe('ATTEND');
     });
     
     it('should handle both technical impact levels', () => {
@@ -229,14 +232,14 @@ describe('CISAPlugin', () => {
         ...baseParams,
         technical_impact: 'partial'
       });
-      expect(decision.evaluate().action).toBe('attend');
+      expect(decision.evaluate().action).toBe('ATTEND');
       
       // Test TOTAL
       decision = plugin.createDecision({
         ...baseParams,
         technical_impact: 'total'
       });
-      expect(decision.evaluate().action).toBe('attend');
+      expect(decision.evaluate().action).toBe('ATTEND');
     });
     
     it('should handle all mission wellbeing levels', () => {
@@ -251,21 +254,21 @@ describe('CISAPlugin', () => {
         ...baseParams,
         mission_wellbeing: 'low'
       });
-      expect(decision.evaluate().action).toBe('track');
+      expect(decision.evaluate().action).toBe('TRACK');
       
       // Test MEDIUM - not explicitly mapped, defaults to 'track'
       decision = plugin.createDecision({
         ...baseParams,
         mission_wellbeing: 'medium'
       });
-      expect(decision.evaluate().action).toBe('track');
+      expect(decision.evaluate().action).toBe('TRACK');
       
       // Test HIGH
       decision = plugin.createDecision({
         ...baseParams,
         mission_wellbeing: 'high'
       });
-      expect(decision.evaluate().action).toBe('attend');
+      expect(decision.evaluate().action).toBe('ATTEND');
     });
   });
   
@@ -275,11 +278,11 @@ describe('CISAPlugin', () => {
       const testCases = [
         {
           params: { exploitation: 'active', automatable: 'yes', technical_impact: 'total', mission_wellbeing: 'high' },
-          expected: 'act'
+          expected: 'ACT'
         },
         {
           params: { exploitationStatus: 'active', automatableStatus: 'yes', technicalImpactLevel: 'total', missionWellbeingImpactLevel: 'high' },
-          expected: 'act'
+          expected: 'ACT'
         }
       ];
       
@@ -313,12 +316,12 @@ describe('CISAPlugin', () => {
       const noneOutcome = noneDecision.evaluate();
       const activeOutcome = activeDecision.evaluate();
       
-      expect(noneOutcome.action).toBe('track');
+      expect(noneOutcome.action).toBe('TRACK');
       // ACTIVE, NO, PARTIAL, LOW is not explicitly mapped, defaults to 'track'
-      expect(activeOutcome.action).toBe('track');
+      expect(activeOutcome.action).toBe('TRACK');
       
       // Both scenarios result in same priority since they both default to 'track'
-      expect(activeOutcome.priority).toBe('low');
+      expect(activeOutcome.priority).toBe('LOW');
     });
     
     it('should escalate with automatability', () => {
@@ -341,8 +344,8 @@ describe('CISAPlugin', () => {
       const noOutcome = noDecision.evaluate();
       const yesOutcome = yesDecision.evaluate();
       
-      expect(noOutcome.action).toBe('attend');
-      expect(yesOutcome.action).toBe('act');
+      expect(noOutcome.action).toBe('ATTEND');
+      expect(yesOutcome.action).toBe('ACT');
     });
     
     it('should escalate with technical impact', () => {
@@ -365,8 +368,8 @@ describe('CISAPlugin', () => {
       const partialOutcome = partialDecision.evaluate();
       const totalOutcome = totalDecision.evaluate();
       
-      expect(partialOutcome.action).toBe('track_star');
-      expect(totalOutcome.action).toBe('attend');
+      expect(partialOutcome.action).toBe('TRACK_STAR');
+      expect(totalOutcome.action).toBe('ATTEND');
     });
     
     it('should escalate with mission wellbeing impact', () => {
@@ -395,11 +398,11 @@ describe('CISAPlugin', () => {
       const mediumOutcome = mediumDecision.evaluate();
       const highOutcome = highDecision.evaluate();
       
-      expect(lowOutcome.action).toBe('track');
+      expect(lowOutcome.action).toBe('TRACK');
       // NONE, NO, PARTIAL, MEDIUM is not explicitly mapped, defaults to 'track'
-      expect(mediumOutcome.action).toBe('track');
+      expect(mediumOutcome.action).toBe('TRACK');
       // NONE, NO, PARTIAL, HIGH is not explicitly mapped, defaults to 'track'  
-      expect(highOutcome.action).toBe('track');
+      expect(highOutcome.action).toBe('TRACK');
     });
     
     it('should handle private report scenarios', () => {
@@ -412,7 +415,7 @@ describe('CISAPlugin', () => {
             technical_impact: 'total',
             mission_wellbeing: 'high'
           },
-          expectedAction: 'attend'
+          expectedAction: 'ATTEND'
         },
         {
           params: {
@@ -421,7 +424,7 @@ describe('CISAPlugin', () => {
             technical_impact: 'total',
             mission_wellbeing: 'high'
           },
-          expectedAction: 'track_star'
+          expectedAction: 'TRACK_STAR'
         }
       ];
       
@@ -445,7 +448,7 @@ describe('CISAPlugin', () => {
             exploitation: 'none',
             automatable: 'yes'
           },
-          expectedAction: 'track' // NONE, YES, PARTIAL, HIGH not mapped, defaults to track
+          expectedAction: 'TRACK' // NONE, YES, PARTIAL, HIGH not mapped, defaults to track
         },
         {
           params: {
@@ -453,7 +456,7 @@ describe('CISAPlugin', () => {
             exploitation: 'none',
             automatable: 'no'
           },
-          expectedAction: 'track' // NONE, NO, PARTIAL, HIGH not mapped, defaults to track
+          expectedAction: 'TRACK' // NONE, NO, PARTIAL, HIGH not mapped, defaults to track
         }
       ];
       
@@ -477,21 +480,21 @@ describe('CISAPlugin', () => {
             ...baseParams,
             mission_wellbeing: 'low'
           },
-          expectedAction: 'track' // NONE, NO, PARTIAL, LOW not mapped, defaults to track
+          expectedAction: 'TRACK' // NONE, NO, PARTIAL, LOW not mapped, defaults to track
         },
         {
           params: {
             ...baseParams,
             mission_wellbeing: 'medium'
           },
-          expectedAction: 'track' // NONE, NO, PARTIAL, MEDIUM not mapped, defaults to track
+          expectedAction: 'TRACK' // NONE, NO, PARTIAL, MEDIUM not mapped, defaults to track
         },
         {
           params: {
             ...baseParams,
             mission_wellbeing: 'high'
           },
-          expectedAction: 'track' // NONE, NO, PARTIAL, HIGH not mapped, defaults to track
+          expectedAction: 'TRACK' // NONE, NO, PARTIAL, HIGH not mapped, defaults to track
         }
       ];
       
@@ -515,7 +518,7 @@ describe('CISAPlugin', () => {
             exploitation: 'none',
             automatable: 'yes'
           },
-          expectedAction: 'track' // NONE, YES, PARTIAL, HIGH not mapped, defaults to track
+          expectedAction: 'TRACK' // NONE, YES, PARTIAL, HIGH not mapped, defaults to track
         },
         {
           params: {
@@ -523,7 +526,7 @@ describe('CISAPlugin', () => {
             exploitation: 'none',
             automatable: 'no'
           },
-          expectedAction: 'track' // NONE, NO, PARTIAL, HIGH not mapped, defaults to track
+          expectedAction: 'TRACK' // NONE, NO, PARTIAL, HIGH not mapped, defaults to track
         }
       ];
       
@@ -561,7 +564,7 @@ describe('Generated CISA Components', () => {
       });
       
       expect(decision.outcome).toBeDefined();
-      expect(decision.outcome?.action).toBe('act');
+      expect(decision.outcome?.action).toBe('ACT');
     });
     
     it('should convert string values to enums', () => {
@@ -620,16 +623,16 @@ describe('Generated CISA Components', () => {
   describe('OutcomeCisa', () => {
     it('should create outcome with correct priority mapping', () => {
       const outcome = new OutcomeCisa(ActionType.ACT);
-      expect(outcome.action).toBe('act');
-      expect(outcome.priority).toBe('immediate');
+      expect(outcome.action).toBe('ACT');
+      expect(outcome.priority).toBe('IMMEDIATE');
     });
     
     it('should handle all action types', () => {
       const testCases = [
-        { action: ActionType.TRACK, expectedPriority: 'low' },
-        { action: ActionType.TRACK_STAR, expectedPriority: 'medium' },
-        { action: ActionType.ATTEND, expectedPriority: 'medium' },
-        { action: ActionType.ACT, expectedPriority: 'immediate' }
+        { action: ActionType.TRACK, expectedPriority: 'LOW' },
+        { action: ActionType.TRACK_STAR, expectedPriority: 'MEDIUM' },
+        { action: ActionType.ATTEND, expectedPriority: 'MEDIUM' },
+        { action: ActionType.ACT, expectedPriority: 'IMMEDIATE' }
       ];
       
       testCases.forEach(({ action, expectedPriority }) => {
@@ -641,23 +644,23 @@ describe('Generated CISA Components', () => {
     it('should create outcome with correct priority mapping for all actions', () => {
       // Test track action
       const trackOutcome = new OutcomeCisa(ActionType.TRACK);
-      expect(trackOutcome.action).toBe('track');
-      expect(trackOutcome.priority).toBe('low');
+      expect(trackOutcome.action).toBe('TRACK');
+      expect(trackOutcome.priority).toBe('LOW');
       
       // Test track_star action
       const trackStarOutcome = new OutcomeCisa(ActionType.TRACK_STAR);
-      expect(trackStarOutcome.action).toBe('track_star');
-      expect(trackStarOutcome.priority).toBe('medium');
+      expect(trackStarOutcome.action).toBe('TRACK_STAR');
+      expect(trackStarOutcome.priority).toBe('MEDIUM');
       
       // Test attend action
       const attendOutcome = new OutcomeCisa(ActionType.ATTEND);
-      expect(attendOutcome.action).toBe('attend');
-      expect(attendOutcome.priority).toBe('medium');
+      expect(attendOutcome.action).toBe('ATTEND');
+      expect(attendOutcome.priority).toBe('MEDIUM');
       
       // Test act action
       const actOutcome = new OutcomeCisa(ActionType.ACT);
-      expect(actOutcome.action).toBe('act');
-      expect(actOutcome.priority).toBe('immediate');
+      expect(actOutcome.action).toBe('ACT');
+      expect(actOutcome.priority).toBe('IMMEDIATE');
     });
   });
   
@@ -707,31 +710,212 @@ describe('Generated CISA Components', () => {
     });
     
     it('should have correct ActionType values', () => {
-      expect(ActionType.TRACK).toBe('track');
-      expect(ActionType.TRACK_STAR).toBe('track_star');
-      expect(ActionType.ATTEND).toBe('attend');
-      expect(ActionType.ACT).toBe('act');
+      expect(ActionType.TRACK).toBe('TRACK');
+      expect(ActionType.TRACK_STAR).toBe('TRACK_STAR');
+      expect(ActionType.ATTEND).toBe('ATTEND');
+      expect(ActionType.ACT).toBe('ACT');
     });
     
     it('should have all ActionType values', () => {
-      expect(ActionType.TRACK).toBe('track');
-      expect(ActionType.TRACK_STAR).toBe('track_star');
-      expect(ActionType.ATTEND).toBe('attend');
-      expect(ActionType.ACT).toBe('act');
+      expect(ActionType.TRACK).toBe('TRACK');
+      expect(ActionType.TRACK_STAR).toBe('TRACK_STAR');
+      expect(ActionType.ATTEND).toBe('ATTEND');
+      expect(ActionType.ACT).toBe('ACT');
     });
     
-    it('should have correct DecisionPriorityLevel values', () => {
-      expect(DecisionPriorityLevel.LOW).toBe('low');
-      expect(DecisionPriorityLevel.MEDIUM).toBe('medium');
-      expect(DecisionPriorityLevel.HIGH).toBe('high');
-      expect(DecisionPriorityLevel.IMMEDIATE).toBe('immediate');
+    it('should have correct PriorityLevel values', () => {
+      expect(PriorityLevel.LOW).toBe('LOW');
+      expect(PriorityLevel.MEDIUM).toBe('MEDIUM');
+      expect(PriorityLevel.IMMEDIATE).toBe('IMMEDIATE');
     });
     
-    it('should have all DecisionPriorityLevel values', () => {
-      expect(DecisionPriorityLevel.LOW).toBe('low');
-      expect(DecisionPriorityLevel.MEDIUM).toBe('medium');
-      expect(DecisionPriorityLevel.HIGH).toBe('high');
-      expect(DecisionPriorityLevel.IMMEDIATE).toBe('immediate');
+    it('should have all PriorityLevel values', () => {
+      expect(PriorityLevel.LOW).toBe('LOW');
+      expect(PriorityLevel.MEDIUM).toBe('MEDIUM');
+      expect(PriorityLevel.IMMEDIATE).toBe('IMMEDIATE');
+    });
+  });
+});
+
+describe('Vector String Support', () => {
+  describe('DecisionCisa vector string methods', () => {
+    it('should generate vector string from decision parameters', () => {
+      const decision = new DecisionCisa({
+        exploitation: ExploitationStatus.ACTIVE,
+        automatable: AutomatableStatus.YES,
+        technicalImpact: TechnicalImpactLevel.TOTAL,
+        missionWellbeingImpact: MissionWellbeingImpactLevel.HIGH
+      });
+      
+      const vectorString = decision.toVector();
+      
+      expect(vectorString).toMatch(/^CISAv1\/E:A\/A:Y\/T:T\/M:H\/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z\/$/);
+      expect(vectorString).toContain('E:A');
+      expect(vectorString).toContain('A:Y');
+      expect(vectorString).toContain('T:T');
+      expect(vectorString).toContain('M:H');
+    });
+    
+    it('should parse vector string to create decision', () => {
+      const vectorString = 'CISAv1/E:A/A:Y/T:T/M:H/2024-07-23T20:34:21.000Z/';
+      
+      const decision = DecisionCisa.fromVector(vectorString);
+      
+      expect(decision.exploitation).toBe(ExploitationStatus.ACTIVE);
+      expect(decision.automatable).toBe(AutomatableStatus.YES);
+      expect(decision.technicalImpact).toBe(TechnicalImpactLevel.TOTAL);
+      expect(decision.missionWellbeingImpact).toBe(MissionWellbeingImpactLevel.HIGH);
+    });
+    
+    it('should round-trip vector strings correctly', () => {
+      const originalDecision = new DecisionCisa({
+        exploitation: ExploitationStatus.POC,
+        automatable: AutomatableStatus.NO,
+        technicalImpact: TechnicalImpactLevel.PARTIAL,
+        missionWellbeingImpact: MissionWellbeingImpactLevel.MEDIUM
+      });
+      
+      const vectorString = originalDecision.toVector();
+      const parsedDecision = DecisionCisa.fromVector(vectorString);
+      
+      expect(parsedDecision.exploitation).toBe(originalDecision.exploitation);
+      expect(parsedDecision.automatable).toBe(originalDecision.automatable);
+      expect(parsedDecision.technicalImpact).toBe(originalDecision.technicalImpact);
+      expect(parsedDecision.missionWellbeingImpact).toBe(originalDecision.missionWellbeingImpact);
+      
+      const originalOutcome = originalDecision.evaluate();
+      const parsedOutcome = parsedDecision.evaluate();
+      
+      expect(parsedOutcome.action).toBe(originalOutcome.action);
+      expect(parsedOutcome.priority).toBe(originalOutcome.priority);
+    });
+    
+    it('should handle all parameter combinations', () => {
+      const testCases = [
+        {
+          params: {
+            exploitation: ExploitationStatus.NONE,
+            automatable: AutomatableStatus.YES,
+            technicalImpact: TechnicalImpactLevel.TOTAL,
+            missionWellbeingImpact: MissionWellbeingImpactLevel.HIGH
+          },
+          expectedVector: /E:N\/A:Y\/T:T\/M:H/
+        },
+        {
+          params: {
+            exploitation: ExploitationStatus.ACTIVE,
+            automatable: AutomatableStatus.NO,
+            technicalImpact: TechnicalImpactLevel.PARTIAL,
+            missionWellbeingImpact: MissionWellbeingImpactLevel.LOW
+          },
+          expectedVector: /E:A\/A:N\/T:P\/M:L/
+        }
+      ];
+      
+      testCases.forEach(({ params, expectedVector }) => {
+        const decision = new DecisionCisa(params);
+        const vectorString = decision.toVector();
+        expect(vectorString).toMatch(expectedVector);
+        
+        const parsedDecision = DecisionCisa.fromVector(vectorString);
+        expect(parsedDecision.exploitation).toBe(params.exploitation);
+        expect(parsedDecision.automatable).toBe(params.automatable);
+        expect(parsedDecision.technicalImpact).toBe(params.technicalImpact);
+        expect(parsedDecision.missionWellbeingImpact).toBe(params.missionWellbeingImpact);
+      });
+    });
+    
+    it('should throw error for invalid vector string format', () => {
+      const invalidVectors = [
+        'invalid',
+        'CISAv1/',
+        'CISAv1/E:A/',
+        'CISAv2/E:A/A:Y/T:T/M:H/2024-07-23T20:34:21.000Z/',
+        'CISA/E:A/A:Y/T:T/M:H/2024-07-23T20:34:21.000Z/'
+      ];
+      
+      invalidVectors.forEach(vectorString => {
+        expect(() => DecisionCisa.fromVector(vectorString))
+          .toThrow('Invalid vector string format for CISA');
+      });
+    });
+  });
+  
+  describe('CISAPlugin vector string methods', () => {
+    let plugin: CISAPlugin;
+    
+    beforeEach(() => {
+      plugin = new CISAPlugin();
+    });
+    
+    it('should create decision from vector string via plugin', () => {
+      const vectorString = 'CISAv1/E:A/A:Y/T:T/M:H/2024-07-23T20:34:21.000Z/';
+      
+      const decision = plugin.fromVector!(vectorString);
+      const outcome = decision.evaluate();
+      
+      expect(outcome.action).toBe('ACT');
+      expect(outcome.priority).toBe('IMMEDIATE');
+    });
+    
+    it('should generate vector string via plugin decision wrapper', () => {
+      const decision = plugin.createDecision({
+        exploitation: 'active',
+        automatable: 'yes',
+        technical_impact: 'total',
+        mission_wellbeing: 'high'
+      });
+      
+      const vectorString = decision.toVector!();
+      
+      expect(vectorString).toMatch(/^CISAv1\/E:A\/A:Y\/T:T\/M:H\/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z\/$/);
+    });
+  });
+  
+  describe('Core Decision class vector string methods', () => {
+    it('should create decision from vector string via static method', () => {
+      const vectorString = 'CISAv1/E:A/A:Y/T:T/M:H/2024-07-23T20:34:21.000Z/';
+      
+      const decision = Decision.fromVector(vectorString);
+      const outcome = decision.evaluate();
+      
+      expect(outcome.action).toBe('ACT');
+      expect(outcome.priority).toBe('IMMEDIATE');
+    });
+    
+    it('should generate vector string via Decision instance', () => {
+      const decision = new Decision('CISA', {
+        exploitation: 'active',
+        automatable: 'yes',
+        technical_impact: 'total',
+        mission_wellbeing: 'high'
+      });
+      
+      const vectorString = decision.toVector();
+      
+      expect(vectorString).toMatch(/^CISAv1\/E:A\/A:Y\/T:T\/M:H\/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z\/$/);
+    });
+    
+    it('should handle vector strings with different methodology prefixes', () => {
+      // This test assumes we have plugins registered for different methodologies
+      const cisaVector = 'CISAv1/E:A/A:Y/T:T/M:H/2024-07-23T20:34:21.000Z/';
+      
+      expect(() => Decision.fromVector(cisaVector)).not.toThrow();
+    });
+    
+    it('should throw error for unknown methodology in vector string', () => {
+      const unknownVector = 'UNKNOWNv1/E:A/A:Y/T:T/M:H/2024-07-23T20:34:21.000Z/';
+      
+      expect(() => Decision.fromVector(unknownVector))
+        .toThrow('No plugin found that can parse vector string');
+    });
+    
+    it('should throw error for methodology without vector support', () => {
+      // Create a decision for a methodology that doesn't support vectors
+      const decision = new Decision('NonExistentMethodology', {});
+      
+      expect(() => decision.toVector())
+        .toThrow('Unknown methodology: NonExistentMethodology');
     });
   });
 });

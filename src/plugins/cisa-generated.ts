@@ -27,25 +27,24 @@ export enum MissionWellbeingImpactLevel {
   HIGH = "high"
 }
 
-export enum DecisionPriorityLevel {
-  LOW = "low",
-  MEDIUM = "medium",
-  HIGH = "high",
-  IMMEDIATE = "immediate"
+export enum ActionType {
+  TRACK = 'TRACK',
+  TRACK_STAR = 'TRACK_STAR',
+  ATTEND = 'ATTEND',
+  ACT = 'ACT'
 }
 
-export enum ActionType {
-  TRACK = "track",
-  TRACK_STAR = "track_star",
-  ATTEND = "attend",
-  ACT = "act"
+export enum PriorityLevel {
+  LOW = 'LOW',
+  MEDIUM = 'MEDIUM',
+  IMMEDIATE = 'IMMEDIATE'
 }
 
 export const priorityMap = {
-  [ActionType.TRACK]: DecisionPriorityLevel.LOW,
-  [ActionType.TRACK_STAR]: DecisionPriorityLevel.MEDIUM,
-  [ActionType.ATTEND]: DecisionPriorityLevel.MEDIUM,
-  [ActionType.ACT]: DecisionPriorityLevel.IMMEDIATE
+  [ActionType.TRACK]: PriorityLevel.LOW,
+  [ActionType.TRACK_STAR]: PriorityLevel.MEDIUM,
+  [ActionType.ATTEND]: PriorityLevel.MEDIUM,
+  [ActionType.ACT]: PriorityLevel.IMMEDIATE
 };
 
 export class OutcomeCisa {
@@ -104,6 +103,51 @@ export class DecisionCisa {
     const action = this.traverseTree();
     this.outcome = new OutcomeCisa(action);
     return this.outcome;
+  }
+
+  toVector(): string {
+    if (!this.outcome) {
+      this.evaluate();
+    }
+    
+    const exploitationVector = {"none":"N","poc":"P","active":"A"}[this.exploitation?.toString?.() ?? ''] || this.exploitation || '';
+    const automatableVector = {"yes":"Y","no":"N"}[this.automatable?.toString?.() ?? ''] || this.automatable || '';
+    const technical_impactVector = {"partial":"P","total":"T"}[this.technicalImpact?.toString?.() ?? ''] || this.technicalImpact || '';
+    const mission_wellbeingVector = {"low":"L","medium":"M","high":"H"}[this.missionWellbeingImpact?.toString?.() ?? ''] || this.missionWellbeingImpact || '';
+    const timestamp = new Date().toISOString();
+    return `CISAv1/E:${exploitationVector}/A:${automatableVector}/T:${technical_impactVector}/M:${mission_wellbeingVector}/${timestamp}/`;
+  }
+
+  static fromVector(vectorString: string): DecisionCisa {
+    const regex = /^CISAv1\/(.+)\/([0-9T:\-\.Z]+)\/?$/;
+    const match = vectorString.match(regex);
+    
+    if (!match) {
+      throw new Error(`Invalid vector string format for CISA: ${vectorString}`);
+    }
+    
+    const paramsString = match[1];
+    const params = new Map<string, string>();
+    
+    const paramPairs = paramsString.split('/');
+    for (const pair of paramPairs) {
+      const [key, value] = pair.split(':');
+      if (key && value !== undefined) {
+        params.set(key, value);
+      }
+    }
+    
+    const exploitationMatch = params.get('E');
+    const automatableMatch = params.get('A');
+    const technical_impactMatch = params.get('T');
+    const mission_wellbeingMatch = params.get('M');
+    
+    return new DecisionCisa({
+      exploitation: {"N":"none","P":"poc","A":"active"}[exploitationMatch || ''] || exploitationMatch,
+      automatable: {"Y":"yes","N":"no"}[automatableMatch || ''] || automatableMatch,
+      technicalImpact: {"P":"partial","T":"total"}[technical_impactMatch || ''] || technical_impactMatch,
+      missionWellbeingImpact: {"L":"low","M":"medium","H":"high"}[mission_wellbeingMatch || ''] || mission_wellbeingMatch,
+    });
   }
 
   private traverseTree(): any {

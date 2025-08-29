@@ -57,7 +57,6 @@ export {
   SupplierContactedStatus,
   ReportCredibilityLevel,
   SupplierCardinalityLevel,
-  SupplierEngagementLevel,
   UtilityLevel as CoordinatorUtilityLevel,
   PublicSafetyImpactLevel,
   DecisionCoordinatorTriage,

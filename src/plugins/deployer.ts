@@ -70,6 +70,10 @@ export class DeployerPlugin extends SSVCPlugin {
 
     return new DecisionDeployer(params);
   }
+  
+  fromVector(vectorString: string): SSVCDecision {
+    return DecisionDeployer.fromVector(vectorString);
+  }
 
   private convertToEnum<T extends Record<string, string>>(
     value: any,

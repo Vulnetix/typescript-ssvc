@@ -24,18 +24,18 @@ export enum PublicValueAddedLevel {
 }
 
 export enum ActionType {
-  publish = "publish",
-  dont_publish = "dont_publish"
+  publish = 'publish',
+  dont_publish = 'dont_publish'
 }
 
-export enum DecisionPriorityLevel {
-  low = "low",
-  high = "high"
+export enum PriorityLevel {
+  HIGH = 'high',
+  LOW = 'low'
 }
 
 export const priorityMap = {
-  [ActionType.publish]: DecisionPriorityLevel.high,
-  [ActionType.dont_publish]: DecisionPriorityLevel.low
+  [ActionType.publish]: PriorityLevel.HIGH,
+  [ActionType.dont_publish]: PriorityLevel.LOW
 };
 
 export class OutcomeCoordinatorPublication {
@@ -89,73 +89,153 @@ export class DecisionCoordinatorPublication {
     return this.outcome;
   }
 
+  toVector(): string {
+    if (!this.outcome) {
+      this.evaluate();
+    }
+    
+    const supplier_involvementVector = {"fix_ready":"F","cooperative":"C","uncooperative_unresponsive":"U"}[this.supplierInvolvement?.toString?.()?.toUpperCase?.() ?? ''] || this.supplierInvolvement || '';
+    const exploitationVector = {"none":"N","public_poc":"P","active":"A"}[this.exploitation?.toString?.()?.toUpperCase?.() ?? ''] || this.exploitation || '';
+    const public_value_addedVector = {"limited":"L","ampliative":"A","precedence":"P"}[this.publicValueAdded?.toString?.()?.toUpperCase?.() ?? ''] || this.publicValueAdded || '';
+    const timestamp = new Date().toISOString();
+    return `COORD_PUBv1/SI:${supplier_involvementVector}/E:${exploitationVector}/PV:${public_value_addedVector}/${timestamp}/`;
+  }
+
+  static fromVector(vectorString: string): DecisionCoordinatorPublication {
+    const regex = /^COORD_PUBv1\/(.+)\/([0-9T:\-\.Z]+)\/?$/;
+    const match = vectorString.match(regex);
+    
+    if (!match) {
+      throw new Error(`Invalid vector string format for Coordinator Publication: ${vectorString}`);
+    }
+    
+    const paramsString = match[1];
+    const params = new Map<string, string>();
+    
+    const paramPairs = paramsString.split('/');
+    for (const pair of paramPairs) {
+      const [key, value] = pair.split(':');
+      if (key && value !== undefined) {
+        params.set(key, value);
+      }
+    }
+    
+    const supplier_involvementMatch = params.get('SI');
+    const exploitationMatch = params.get('E');
+    const public_value_addedMatch = params.get('PV');
+    
+    return new DecisionCoordinatorPublication({
+      supplierInvolvement: {"F":"fix_ready","C":"cooperative","U":"uncooperative_unresponsive"}[supplier_involvementMatch || ''] || supplier_involvementMatch,
+      exploitation: {"N":"none","P":"public_poc","A":"active"}[exploitationMatch || ''] || exploitationMatch,
+      publicValueAdded: {"L":"limited","A":"ampliative","P":"precedence"}[public_value_addedMatch || ''] || public_value_addedMatch,
+    });
+  }
+
   private traverseTree(): any {
     // Traverse the decision tree to determine the outcome
-    
-    // Uncooperative/Unresponsive supplier scenarios
-    if (this.supplierInvolvement === SupplierInvolvementLevel.uncooperative_unresponsive) {
-      // Active exploitation always leads to publish
-      if (this.exploitation === ExploitationStatus.active) {
-        return ActionType.publish;
-      }
-      
-      // Public PoC with any value added level leads to publish
-      if (this.exploitation === ExploitationStatus.public_poc) {
-        return ActionType.publish;
-      }
-      
-      // None exploitation with precedence value added leads to publish
-      if (this.exploitation === ExploitationStatus.none && 
-          this.publicValueAdded === PublicValueAddedLevel.precedence) {
-        return ActionType.publish;
-      }
-      
-      // None or Public PoC with limited or ampliative value added leads to dont_publish
-      if ((this.exploitation === ExploitationStatus.none || this.exploitation === ExploitationStatus.public_poc) &&
-          (this.publicValueAdded === PublicValueAddedLevel.limited || this.publicValueAdded === PublicValueAddedLevel.ampliative)) {
-        return ActionType.dont_publish;
-      }
-    }
-    
-    // Cooperative supplier scenarios
-    if (this.supplierInvolvement === SupplierInvolvementLevel.cooperative) {
-      // Active exploitation always leads to publish
-      if (this.exploitation === ExploitationStatus.active) {
-        return ActionType.publish;
-      }
-      
-      // None exploitation with precedence value added leads to publish
-      if (this.exploitation === ExploitationStatus.none && 
-          this.publicValueAdded === PublicValueAddedLevel.precedence) {
-        return ActionType.publish;
-      }
-      
-      // Public PoC with ampliative or precedence value added leads to publish
-      if (this.exploitation === ExploitationStatus.public_poc && 
-          (this.publicValueAdded === PublicValueAddedLevel.ampliative || this.publicValueAdded === PublicValueAddedLevel.precedence)) {
-        return ActionType.publish;
-      }
-      
-      // Other combinations lead to dont_publish
-      return ActionType.dont_publish;
-    }
-    
-    // Fix Ready supplier scenarios
     if (this.supplierInvolvement === SupplierInvolvementLevel.fix_ready) {
-      // Active exploitation always leads to publish
-      if (this.exploitation === ExploitationStatus.active) {
-        return ActionType.publish;
+      if (this.exploitation === ExploitationStatus.none) {
+        if (this.publicValueAdded === PublicValueAddedLevel.limited) {
+          return ActionType.dont_publish;
+        }
+        else if (this.publicValueAdded === PublicValueAddedLevel.ampliative) {
+          return ActionType.publish;
+        }
+        else if (this.publicValueAdded === PublicValueAddedLevel.precedence) {
+          return ActionType.publish;
+        }
       }
-      
-      // Any exploitation with ampliative or precedence value added leads to publish
-      if ((this.publicValueAdded === PublicValueAddedLevel.ampliative || this.publicValueAdded === PublicValueAddedLevel.precedence)) {
-        return ActionType.publish;
+      else if (this.exploitation === ExploitationStatus.public_poc) {
+        if (this.publicValueAdded === PublicValueAddedLevel.limited) {
+          return ActionType.dont_publish;
+        }
+        else if (this.publicValueAdded === PublicValueAddedLevel.ampliative) {
+          return ActionType.publish;
+        }
+        else if (this.publicValueAdded === PublicValueAddedLevel.precedence) {
+          return ActionType.publish;
+        }
       }
-      
-      // None or Public PoC with limited value added leads to dont_publish
-      if ((this.exploitation === ExploitationStatus.none || this.exploitation === ExploitationStatus.public_poc) &&
-          this.publicValueAdded === PublicValueAddedLevel.limited) {
-        return ActionType.dont_publish;
+      else if (this.exploitation === ExploitationStatus.active) {
+        if (this.publicValueAdded === PublicValueAddedLevel.limited) {
+          return ActionType.publish;
+        }
+        else if (this.publicValueAdded === PublicValueAddedLevel.ampliative) {
+          return ActionType.publish;
+        }
+        else if (this.publicValueAdded === PublicValueAddedLevel.precedence) {
+          return ActionType.publish;
+        }
+      }
+    }
+    else if (this.supplierInvolvement === SupplierInvolvementLevel.cooperative) {
+      if (this.exploitation === ExploitationStatus.none) {
+        if (this.publicValueAdded === PublicValueAddedLevel.limited) {
+          return ActionType.dont_publish;
+        }
+        else if (this.publicValueAdded === PublicValueAddedLevel.ampliative) {
+          return ActionType.dont_publish;
+        }
+        else if (this.publicValueAdded === PublicValueAddedLevel.precedence) {
+          return ActionType.publish;
+        }
+      }
+      else if (this.exploitation === ExploitationStatus.public_poc) {
+        if (this.publicValueAdded === PublicValueAddedLevel.limited) {
+          return ActionType.dont_publish;
+        }
+        else if (this.publicValueAdded === PublicValueAddedLevel.ampliative) {
+          return ActionType.publish;
+        }
+        else if (this.publicValueAdded === PublicValueAddedLevel.precedence) {
+          return ActionType.publish;
+        }
+      }
+      else if (this.exploitation === ExploitationStatus.active) {
+        if (this.publicValueAdded === PublicValueAddedLevel.limited) {
+          return ActionType.publish;
+        }
+        else if (this.publicValueAdded === PublicValueAddedLevel.ampliative) {
+          return ActionType.publish;
+        }
+        else if (this.publicValueAdded === PublicValueAddedLevel.precedence) {
+          return ActionType.publish;
+        }
+      }
+    }
+    else if (this.supplierInvolvement === SupplierInvolvementLevel.uncooperative_unresponsive) {
+      if (this.exploitation === ExploitationStatus.none) {
+        if (this.publicValueAdded === PublicValueAddedLevel.limited) {
+          return ActionType.dont_publish;
+        }
+        else if (this.publicValueAdded === PublicValueAddedLevel.ampliative) {
+          return ActionType.dont_publish;
+        }
+        else if (this.publicValueAdded === PublicValueAddedLevel.precedence) {
+          return ActionType.publish;
+        }
+      }
+      else if (this.exploitation === ExploitationStatus.public_poc) {
+        if (this.publicValueAdded === PublicValueAddedLevel.limited) {
+          return ActionType.publish;
+        }
+        else if (this.publicValueAdded === PublicValueAddedLevel.ampliative) {
+          return ActionType.publish;
+        }
+        else if (this.publicValueAdded === PublicValueAddedLevel.precedence) {
+          return ActionType.publish;
+        }
+      }
+      else if (this.exploitation === ExploitationStatus.active) {
+        if (this.publicValueAdded === PublicValueAddedLevel.limited) {
+          return ActionType.publish;
+        }
+        else if (this.publicValueAdded === PublicValueAddedLevel.ampliative) {
+          return ActionType.publish;
+        }
+        else if (this.publicValueAdded === PublicValueAddedLevel.precedence) {
+          return ActionType.publish;
+        }
       }
     }
     

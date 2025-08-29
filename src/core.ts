@@ -15,11 +15,13 @@ export abstract class SSVCPlugin {
   abstract readonly version: string;
   
   abstract createDecision(options: Record<string, any>): SSVCDecision;
+  abstract fromVector?(vectorString: string): SSVCDecision;
 }
 
 export interface SSVCDecision {
   evaluate(): SSVCOutcome;
   outcome?: SSVCOutcome;
+  toVector?(): string;
 }
 
 export class PluginRegistry {
@@ -75,5 +77,53 @@ export class Decision {
   
   static createDecision(methodology: string, options: Record<string, any> = {}): Decision {
     return new Decision(methodology, options);
+  }
+  
+  static fromVector(vectorString: string): Decision {
+    const registry = PluginRegistry.getInstance();
+    
+    // Parse the methodology name from vector string
+    const match = vectorString.match(/^([A-Z_]+)v?\d*/);
+    if (!match) {
+      throw new Error(`Invalid vector string format: ${vectorString}`);
+    }
+    
+    const methodologyPrefix = match[1];
+    
+    // Find plugin by matching vector prefix
+    for (const plugin of registry.list()) {
+      if (plugin.fromVector) {
+        try {
+          const parsedDecision = plugin.fromVector(vectorString);
+          // Create a Decision that wraps the parsed decision
+          const decision = new Decision(plugin.name.toLowerCase(), {});
+          decision.outcome = parsedDecision.evaluate();
+          // Override the evaluate method to return the parsed decision's outcome
+          decision.evaluate = () => parsedDecision.evaluate();
+          return decision;
+        } catch (error) {
+          // Try next plugin
+          continue;
+        }
+      }
+    }
+    
+    throw new Error(`No plugin found that can parse vector string: ${vectorString}`);
+  }
+  
+  toVector(): string {
+    const registry = PluginRegistry.getInstance();
+    const plugin = registry.get(this.methodology);
+    
+    if (!plugin) {
+      throw new Error(`Unknown methodology: ${this.methodology}`);
+    }
+    
+    const decision = plugin.createDecision(this.options);
+    if (decision.toVector) {
+      return decision.toVector();
+    }
+    
+    throw new Error(`Vector string generation not supported for methodology: ${this.methodology}`);
   }
 }

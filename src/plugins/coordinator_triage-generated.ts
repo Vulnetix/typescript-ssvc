@@ -25,11 +25,6 @@ export enum SupplierCardinalityLevel {
   MULTIPLE = "multiple"
 }
 
-export enum SupplierEngagementLevel {
-  ACTIVE = "active",
-  UNRESPONSIVE = "unresponsive"
-}
-
 export enum UtilityLevel {
   LABORIOUS = "laborious",
   EFFICIENT = "efficient",
@@ -42,21 +37,21 @@ export enum PublicSafetyImpactLevel {
 }
 
 export enum ActionType {
-  DECLINE = "decline",
-  TRACK = "track",
-  COORDINATE = "coordinate"
+  DECLINE = 'DECLINE',
+  TRACK = 'TRACK',
+  COORDINATE = 'COORDINATE'
 }
 
-export enum DecisionPriorityLevel {
-  LOW = "low",
-  MEDIUM = "medium",
-  HIGH = "high"
+export enum PriorityLevel {
+  LOW = 'LOW',
+  MEDIUM = 'MEDIUM',
+  HIGH = 'HIGH'
 }
 
 export const priorityMap = {
-  [ActionType.DECLINE]: DecisionPriorityLevel.LOW,
-  [ActionType.TRACK]: DecisionPriorityLevel.MEDIUM,
-  [ActionType.COORDINATE]: DecisionPriorityLevel.HIGH
+  [ActionType.DECLINE]: PriorityLevel.LOW,
+  [ActionType.TRACK]: PriorityLevel.MEDIUM,
+  [ActionType.COORDINATE]: PriorityLevel.HIGH
 };
 
 export class OutcomeCoordinatorTriage {
@@ -74,7 +69,6 @@ interface DecisionCoordinatorTriageOptions {
   supplierContacted?: SupplierContactedStatus | string;
   reportCredibility?: ReportCredibilityLevel | string;
   supplierCardinality?: SupplierCardinalityLevel | string;
-  supplierEngagement?: SupplierEngagementLevel | string;
   utility?: UtilityLevel | string;
   publicSafetyImpact?: PublicSafetyImpactLevel | string;
 }
@@ -84,7 +78,6 @@ export class DecisionCoordinatorTriage {
   supplierContacted?: SupplierContactedStatus;
   reportCredibility?: ReportCredibilityLevel;
   supplierCardinality?: SupplierCardinalityLevel;
-  supplierEngagement?: SupplierEngagementLevel;
   utility?: UtilityLevel;
   publicSafetyImpact?: PublicSafetyImpactLevel;
   outcome?: OutcomeCoordinatorTriage;
@@ -110,11 +103,6 @@ export class DecisionCoordinatorTriage {
     } else {
       this.supplierCardinality = options.supplierCardinality;
     }
-    if (typeof options.supplierEngagement === 'string') {
-      this.supplierEngagement = Object.values(SupplierEngagementLevel).find(v => v === options.supplierEngagement) as SupplierEngagementLevel || undefined;
-    } else {
-      this.supplierEngagement = options.supplierEngagement;
-    }
     if (typeof options.utility === 'string') {
       this.utility = Object.values(UtilityLevel).find(v => v === options.utility) as UtilityLevel || undefined;
     } else {
@@ -127,7 +115,7 @@ export class DecisionCoordinatorTriage {
     }
     
     // Always try to evaluate if we have the minimum required parameters
-    if (this.reportPublic !== undefined && this.supplierContacted !== undefined && this.reportCredibility !== undefined && this.supplierCardinality !== undefined && this.supplierEngagement !== undefined && this.utility !== undefined && this.publicSafetyImpact !== undefined) {
+    if (this.reportPublic !== undefined && this.supplierContacted !== undefined && this.reportCredibility !== undefined && this.supplierCardinality !== undefined && this.utility !== undefined && this.publicSafetyImpact !== undefined) {
       this.outcome = this.evaluate();
     }
   }
@@ -136,6 +124,57 @@ export class DecisionCoordinatorTriage {
     const action = this.traverseTree();
     this.outcome = new OutcomeCoordinatorTriage(action);
     return this.outcome;
+  }
+
+  toVector(): string {
+    if (!this.outcome) {
+      this.evaluate();
+    }
+    
+    const report_publicVector = {"YES":"Y","NO":"N"}[this.reportPublic?.toString?.()?.toUpperCase?.() ?? ''] || this.reportPublic || '';
+    const supplier_contactedVector = {"YES":"Y","NO":"N"}[this.supplierContacted?.toString?.()?.toUpperCase?.() ?? ''] || this.supplierContacted || '';
+    const report_credibilityVector = {"CREDIBLE":"C","NOT_CREDIBLE":"N"}[this.reportCredibility?.toString?.()?.toUpperCase?.() ?? ''] || this.reportCredibility || '';
+    const supplier_cardinalityVector = {"ONE":"O","MULTIPLE":"M"}[this.supplierCardinality?.toString?.()?.toUpperCase?.() ?? ''] || this.supplierCardinality || '';
+    const utilityVector = {"LABORIOUS":"L","EFFICIENT":"E","SUPER_EFFECTIVE":"S"}[this.utility?.toString?.()?.toUpperCase?.() ?? ''] || this.utility || '';
+    const public_safetyVector = {"MINIMAL":"M","SIGNIFICANT":"S"}[this.publicSafetyImpact?.toString?.()?.toUpperCase?.() ?? ''] || this.publicSafetyImpact || '';
+    const timestamp = new Date().toISOString();
+    return `COORD_TRIAGEv1/RP:${report_publicVector}/SC:${supplier_contactedVector}/RC:${report_credibilityVector}/CA:${supplier_cardinalityVector}/U:${utilityVector}/PS:${public_safetyVector}/${timestamp}/`;
+  }
+
+  static fromVector(vectorString: string): DecisionCoordinatorTriage {
+    const regex = /^COORD_TRIAGEv1\/(.+)\/([0-9T:\-\.Z]+)\/?$/;
+    const match = vectorString.match(regex);
+    
+    if (!match) {
+      throw new Error(`Invalid vector string format for Coordinator Triage: ${vectorString}`);
+    }
+    
+    const paramsString = match[1];
+    const params = new Map<string, string>();
+    
+    const paramPairs = paramsString.split('/');
+    for (const pair of paramPairs) {
+      const [key, value] = pair.split(':');
+      if (key && value !== undefined) {
+        params.set(key, value);
+      }
+    }
+    
+    const report_publicMatch = params.get('RP');
+    const supplier_contactedMatch = params.get('SC');
+    const report_credibilityMatch = params.get('RC');
+    const supplier_cardinalityMatch = params.get('CA');
+    const utilityMatch = params.get('U');
+    const public_safetyMatch = params.get('PS');
+    
+    return new DecisionCoordinatorTriage({
+      reportPublic: {"Y":"YES","N":"NO"}[report_publicMatch || ''] || report_publicMatch,
+      supplierContacted: {"Y":"YES","N":"NO"}[supplier_contactedMatch || ''] || supplier_contactedMatch,
+      reportCredibility: {"C":"CREDIBLE","N":"NOT_CREDIBLE"}[report_credibilityMatch || ''] || report_credibilityMatch,
+      supplierCardinality: {"O":"ONE","M":"MULTIPLE"}[supplier_cardinalityMatch || ''] || supplier_cardinalityMatch,
+      utility: {"L":"LABORIOUS","E":"EFFICIENT","S":"SUPER_EFFECTIVE"}[utilityMatch || ''] || utilityMatch,
+      publicSafetyImpact: {"M":"MINIMAL","S":"SIGNIFICANT"}[public_safetyMatch || ''] || public_safetyMatch,
+    });
   }
 
   private traverseTree(): any {
@@ -161,7 +200,12 @@ export class DecisionCoordinatorTriage {
               }
             }
             else if (this.utility === UtilityLevel.LABORIOUS) {
-              return ActionType.DECLINE;
+              if (this.publicSafetyImpact === PublicSafetyImpactLevel.SIGNIFICANT) {
+                return ActionType.DECLINE;
+              }
+              else if (this.publicSafetyImpact === PublicSafetyImpactLevel.MINIMAL) {
+                return ActionType.DECLINE;
+              }
             }
           }
           else if (this.supplierCardinality === SupplierCardinalityLevel.ONE) {
@@ -174,36 +218,186 @@ export class DecisionCoordinatorTriage {
               }
             }
             else if (this.utility === UtilityLevel.EFFICIENT) {
-              return ActionType.DECLINE;
+              if (this.publicSafetyImpact === PublicSafetyImpactLevel.SIGNIFICANT) {
+                return ActionType.DECLINE;
+              }
+              else if (this.publicSafetyImpact === PublicSafetyImpactLevel.MINIMAL) {
+                return ActionType.DECLINE;
+              }
             }
             else if (this.utility === UtilityLevel.LABORIOUS) {
-              return ActionType.DECLINE;
+              if (this.publicSafetyImpact === PublicSafetyImpactLevel.SIGNIFICANT) {
+                return ActionType.DECLINE;
+              }
+              else if (this.publicSafetyImpact === PublicSafetyImpactLevel.MINIMAL) {
+                return ActionType.DECLINE;
+              }
             }
           }
         }
         else if (this.reportCredibility === ReportCredibilityLevel.NOT_CREDIBLE) {
-          return ActionType.DECLINE;
+          if (this.supplierCardinality === SupplierCardinalityLevel.MULTIPLE) {
+            if (this.utility === UtilityLevel.SUPER_EFFECTIVE) {
+              if (this.publicSafetyImpact === PublicSafetyImpactLevel.SIGNIFICANT) {
+                return ActionType.DECLINE;
+              }
+              else if (this.publicSafetyImpact === PublicSafetyImpactLevel.MINIMAL) {
+                return ActionType.DECLINE;
+              }
+            }
+            else if (this.utility === UtilityLevel.EFFICIENT) {
+              if (this.publicSafetyImpact === PublicSafetyImpactLevel.SIGNIFICANT) {
+                return ActionType.DECLINE;
+              }
+              else if (this.publicSafetyImpact === PublicSafetyImpactLevel.MINIMAL) {
+                return ActionType.DECLINE;
+              }
+            }
+            else if (this.utility === UtilityLevel.LABORIOUS) {
+              if (this.publicSafetyImpact === PublicSafetyImpactLevel.SIGNIFICANT) {
+                return ActionType.DECLINE;
+              }
+              else if (this.publicSafetyImpact === PublicSafetyImpactLevel.MINIMAL) {
+                return ActionType.DECLINE;
+              }
+            }
+          }
+          else if (this.supplierCardinality === SupplierCardinalityLevel.ONE) {
+            if (this.utility === UtilityLevel.SUPER_EFFECTIVE) {
+              if (this.publicSafetyImpact === PublicSafetyImpactLevel.SIGNIFICANT) {
+                return ActionType.DECLINE;
+              }
+              else if (this.publicSafetyImpact === PublicSafetyImpactLevel.MINIMAL) {
+                return ActionType.DECLINE;
+              }
+            }
+            else if (this.utility === UtilityLevel.EFFICIENT) {
+              if (this.publicSafetyImpact === PublicSafetyImpactLevel.SIGNIFICANT) {
+                return ActionType.DECLINE;
+              }
+              else if (this.publicSafetyImpact === PublicSafetyImpactLevel.MINIMAL) {
+                return ActionType.DECLINE;
+              }
+            }
+            else if (this.utility === UtilityLevel.LABORIOUS) {
+              if (this.publicSafetyImpact === PublicSafetyImpactLevel.SIGNIFICANT) {
+                return ActionType.DECLINE;
+              }
+              else if (this.publicSafetyImpact === PublicSafetyImpactLevel.MINIMAL) {
+                return ActionType.DECLINE;
+              }
+            }
+          }
         }
       }
       else if (this.supplierContacted === SupplierContactedStatus.NO) {
-        if (this.supplierCardinality === SupplierCardinalityLevel.MULTIPLE) {
-          if (this.utility === UtilityLevel.SUPER_EFFECTIVE) {
-            if (this.publicSafetyImpact === PublicSafetyImpactLevel.SIGNIFICANT) {
-              return ActionType.COORDINATE;
+        if (this.reportCredibility === ReportCredibilityLevel.CREDIBLE) {
+          if (this.supplierCardinality === SupplierCardinalityLevel.MULTIPLE) {
+            if (this.utility === UtilityLevel.SUPER_EFFECTIVE) {
+              if (this.publicSafetyImpact === PublicSafetyImpactLevel.SIGNIFICANT) {
+                return ActionType.COORDINATE;
+              }
+              else if (this.publicSafetyImpact === PublicSafetyImpactLevel.MINIMAL) {
+                return ActionType.TRACK;
+              }
             }
-            else if (this.publicSafetyImpact === PublicSafetyImpactLevel.MINIMAL) {
-              return ActionType.TRACK;
+            else if (this.utility === UtilityLevel.EFFICIENT) {
+              if (this.publicSafetyImpact === PublicSafetyImpactLevel.SIGNIFICANT) {
+                return ActionType.DECLINE;
+              }
+              else if (this.publicSafetyImpact === PublicSafetyImpactLevel.MINIMAL) {
+                return ActionType.DECLINE;
+              }
+            }
+            else if (this.utility === UtilityLevel.LABORIOUS) {
+              if (this.publicSafetyImpact === PublicSafetyImpactLevel.SIGNIFICANT) {
+                return ActionType.DECLINE;
+              }
+              else if (this.publicSafetyImpact === PublicSafetyImpactLevel.MINIMAL) {
+                return ActionType.DECLINE;
+              }
             }
           }
-          else if (this.utility === UtilityLevel.EFFICIENT) {
-            return ActionType.DECLINE;
-          }
-          else if (this.utility === UtilityLevel.LABORIOUS) {
-            return ActionType.DECLINE;
+          else if (this.supplierCardinality === SupplierCardinalityLevel.ONE) {
+            if (this.utility === UtilityLevel.SUPER_EFFECTIVE) {
+              if (this.publicSafetyImpact === PublicSafetyImpactLevel.SIGNIFICANT) {
+                return ActionType.DECLINE;
+              }
+              else if (this.publicSafetyImpact === PublicSafetyImpactLevel.MINIMAL) {
+                return ActionType.DECLINE;
+              }
+            }
+            else if (this.utility === UtilityLevel.EFFICIENT) {
+              if (this.publicSafetyImpact === PublicSafetyImpactLevel.SIGNIFICANT) {
+                return ActionType.DECLINE;
+              }
+              else if (this.publicSafetyImpact === PublicSafetyImpactLevel.MINIMAL) {
+                return ActionType.DECLINE;
+              }
+            }
+            else if (this.utility === UtilityLevel.LABORIOUS) {
+              if (this.publicSafetyImpact === PublicSafetyImpactLevel.SIGNIFICANT) {
+                return ActionType.DECLINE;
+              }
+              else if (this.publicSafetyImpact === PublicSafetyImpactLevel.MINIMAL) {
+                return ActionType.DECLINE;
+              }
+            }
           }
         }
-        else if (this.supplierCardinality === SupplierCardinalityLevel.ONE) {
-          return ActionType.DECLINE;
+        else if (this.reportCredibility === ReportCredibilityLevel.NOT_CREDIBLE) {
+          if (this.supplierCardinality === SupplierCardinalityLevel.MULTIPLE) {
+            if (this.utility === UtilityLevel.SUPER_EFFECTIVE) {
+              if (this.publicSafetyImpact === PublicSafetyImpactLevel.SIGNIFICANT) {
+                return ActionType.DECLINE;
+              }
+              else if (this.publicSafetyImpact === PublicSafetyImpactLevel.MINIMAL) {
+                return ActionType.DECLINE;
+              }
+            }
+            else if (this.utility === UtilityLevel.EFFICIENT) {
+              if (this.publicSafetyImpact === PublicSafetyImpactLevel.SIGNIFICANT) {
+                return ActionType.DECLINE;
+              }
+              else if (this.publicSafetyImpact === PublicSafetyImpactLevel.MINIMAL) {
+                return ActionType.DECLINE;
+              }
+            }
+            else if (this.utility === UtilityLevel.LABORIOUS) {
+              if (this.publicSafetyImpact === PublicSafetyImpactLevel.SIGNIFICANT) {
+                return ActionType.DECLINE;
+              }
+              else if (this.publicSafetyImpact === PublicSafetyImpactLevel.MINIMAL) {
+                return ActionType.DECLINE;
+              }
+            }
+          }
+          else if (this.supplierCardinality === SupplierCardinalityLevel.ONE) {
+            if (this.utility === UtilityLevel.SUPER_EFFECTIVE) {
+              if (this.publicSafetyImpact === PublicSafetyImpactLevel.SIGNIFICANT) {
+                return ActionType.DECLINE;
+              }
+              else if (this.publicSafetyImpact === PublicSafetyImpactLevel.MINIMAL) {
+                return ActionType.DECLINE;
+              }
+            }
+            else if (this.utility === UtilityLevel.EFFICIENT) {
+              if (this.publicSafetyImpact === PublicSafetyImpactLevel.SIGNIFICANT) {
+                return ActionType.DECLINE;
+              }
+              else if (this.publicSafetyImpact === PublicSafetyImpactLevel.MINIMAL) {
+                return ActionType.DECLINE;
+              }
+            }
+            else if (this.utility === UtilityLevel.LABORIOUS) {
+              if (this.publicSafetyImpact === PublicSafetyImpactLevel.SIGNIFICANT) {
+                return ActionType.DECLINE;
+              }
+              else if (this.publicSafetyImpact === PublicSafetyImpactLevel.MINIMAL) {
+                return ActionType.DECLINE;
+              }
+            }
+          }
         }
       }
     }
@@ -211,89 +405,221 @@ export class DecisionCoordinatorTriage {
       if (this.supplierContacted === SupplierContactedStatus.YES) {
         if (this.reportCredibility === ReportCredibilityLevel.CREDIBLE) {
           if (this.supplierCardinality === SupplierCardinalityLevel.MULTIPLE) {
-            if (this.supplierEngagement === SupplierEngagementLevel.ACTIVE) {
-              if (this.utility === UtilityLevel.SUPER_EFFECTIVE) {
-                if (this.publicSafetyImpact === PublicSafetyImpactLevel.SIGNIFICANT) {
-                  return ActionType.COORDINATE;
-                }
-                else if (this.publicSafetyImpact === PublicSafetyImpactLevel.MINIMAL) {
-                  return ActionType.TRACK;
-                }
+            if (this.utility === UtilityLevel.SUPER_EFFECTIVE) {
+              if (this.publicSafetyImpact === PublicSafetyImpactLevel.SIGNIFICANT) {
+                return ActionType.COORDINATE;
               }
-              else if (this.utility === UtilityLevel.EFFICIENT) {
-                if (this.publicSafetyImpact === PublicSafetyImpactLevel.SIGNIFICANT) {
-                  return ActionType.TRACK;
-                }
-                else if (this.publicSafetyImpact === PublicSafetyImpactLevel.MINIMAL) {
-                  return ActionType.TRACK;
-                }
-              }
-              else if (this.utility === UtilityLevel.LABORIOUS) {
+              else if (this.publicSafetyImpact === PublicSafetyImpactLevel.MINIMAL) {
                 return ActionType.TRACK;
               }
             }
-            else if (this.supplierEngagement === SupplierEngagementLevel.UNRESPONSIVE) {
-              if (this.utility === UtilityLevel.SUPER_EFFECTIVE) {
-                if (this.publicSafetyImpact === PublicSafetyImpactLevel.SIGNIFICANT) {
-                  return ActionType.COORDINATE;
-                }
-                else if (this.publicSafetyImpact === PublicSafetyImpactLevel.MINIMAL) {
-                  return ActionType.TRACK;
-                }
-              }
-              else if (this.utility === UtilityLevel.EFFICIENT) {
+            else if (this.utility === UtilityLevel.EFFICIENT) {
+              if (this.publicSafetyImpact === PublicSafetyImpactLevel.SIGNIFICANT) {
                 return ActionType.TRACK;
               }
-              else if (this.utility === UtilityLevel.LABORIOUS) {
+              else if (this.publicSafetyImpact === PublicSafetyImpactLevel.MINIMAL) {
+                return ActionType.TRACK;
+              }
+            }
+            else if (this.utility === UtilityLevel.LABORIOUS) {
+              if (this.publicSafetyImpact === PublicSafetyImpactLevel.SIGNIFICANT) {
+                return ActionType.TRACK;
+              }
+              else if (this.publicSafetyImpact === PublicSafetyImpactLevel.MINIMAL) {
                 return ActionType.DECLINE;
               }
             }
           }
           else if (this.supplierCardinality === SupplierCardinalityLevel.ONE) {
-            if (this.supplierEngagement === SupplierEngagementLevel.ACTIVE) {
-              if (this.utility === UtilityLevel.SUPER_EFFECTIVE) {
-                if (this.publicSafetyImpact === PublicSafetyImpactLevel.SIGNIFICANT) {
-                  return ActionType.TRACK;
-                }
-                else if (this.publicSafetyImpact === PublicSafetyImpactLevel.MINIMAL) {
-                  return ActionType.TRACK;
-                }
-              }
-              else if (this.utility === UtilityLevel.EFFICIENT) {
+            if (this.utility === UtilityLevel.SUPER_EFFECTIVE) {
+              if (this.publicSafetyImpact === PublicSafetyImpactLevel.SIGNIFICANT) {
                 return ActionType.TRACK;
               }
-              else if (this.utility === UtilityLevel.LABORIOUS) {
+              else if (this.publicSafetyImpact === PublicSafetyImpactLevel.MINIMAL) {
+                return ActionType.TRACK;
+              }
+            }
+            else if (this.utility === UtilityLevel.EFFICIENT) {
+              if (this.publicSafetyImpact === PublicSafetyImpactLevel.SIGNIFICANT) {
+                return ActionType.TRACK;
+              }
+              else if (this.publicSafetyImpact === PublicSafetyImpactLevel.MINIMAL) {
                 return ActionType.DECLINE;
               }
             }
-            else if (this.supplierEngagement === SupplierEngagementLevel.UNRESPONSIVE) {
-              return ActionType.DECLINE;
+            else if (this.utility === UtilityLevel.LABORIOUS) {
+              if (this.publicSafetyImpact === PublicSafetyImpactLevel.SIGNIFICANT) {
+                return ActionType.DECLINE;
+              }
+              else if (this.publicSafetyImpact === PublicSafetyImpactLevel.MINIMAL) {
+                return ActionType.DECLINE;
+              }
             }
           }
         }
         else if (this.reportCredibility === ReportCredibilityLevel.NOT_CREDIBLE) {
-          return ActionType.DECLINE;
+          if (this.supplierCardinality === SupplierCardinalityLevel.MULTIPLE) {
+            if (this.utility === UtilityLevel.SUPER_EFFECTIVE) {
+              if (this.publicSafetyImpact === PublicSafetyImpactLevel.SIGNIFICANT) {
+                return ActionType.DECLINE;
+              }
+              else if (this.publicSafetyImpact === PublicSafetyImpactLevel.MINIMAL) {
+                return ActionType.DECLINE;
+              }
+            }
+            else if (this.utility === UtilityLevel.EFFICIENT) {
+              if (this.publicSafetyImpact === PublicSafetyImpactLevel.SIGNIFICANT) {
+                return ActionType.DECLINE;
+              }
+              else if (this.publicSafetyImpact === PublicSafetyImpactLevel.MINIMAL) {
+                return ActionType.DECLINE;
+              }
+            }
+            else if (this.utility === UtilityLevel.LABORIOUS) {
+              if (this.publicSafetyImpact === PublicSafetyImpactLevel.SIGNIFICANT) {
+                return ActionType.DECLINE;
+              }
+              else if (this.publicSafetyImpact === PublicSafetyImpactLevel.MINIMAL) {
+                return ActionType.DECLINE;
+              }
+            }
+          }
+          else if (this.supplierCardinality === SupplierCardinalityLevel.ONE) {
+            if (this.utility === UtilityLevel.SUPER_EFFECTIVE) {
+              if (this.publicSafetyImpact === PublicSafetyImpactLevel.SIGNIFICANT) {
+                return ActionType.DECLINE;
+              }
+              else if (this.publicSafetyImpact === PublicSafetyImpactLevel.MINIMAL) {
+                return ActionType.DECLINE;
+              }
+            }
+            else if (this.utility === UtilityLevel.EFFICIENT) {
+              if (this.publicSafetyImpact === PublicSafetyImpactLevel.SIGNIFICANT) {
+                return ActionType.DECLINE;
+              }
+              else if (this.publicSafetyImpact === PublicSafetyImpactLevel.MINIMAL) {
+                return ActionType.DECLINE;
+              }
+            }
+            else if (this.utility === UtilityLevel.LABORIOUS) {
+              if (this.publicSafetyImpact === PublicSafetyImpactLevel.SIGNIFICANT) {
+                return ActionType.DECLINE;
+              }
+              else if (this.publicSafetyImpact === PublicSafetyImpactLevel.MINIMAL) {
+                return ActionType.DECLINE;
+              }
+            }
+          }
         }
       }
       else if (this.supplierContacted === SupplierContactedStatus.NO) {
-        if (this.supplierCardinality === SupplierCardinalityLevel.MULTIPLE) {
-          if (this.utility === UtilityLevel.SUPER_EFFECTIVE) {
-            if (this.publicSafetyImpact === PublicSafetyImpactLevel.SIGNIFICANT) {
-              return ActionType.COORDINATE;
+        if (this.reportCredibility === ReportCredibilityLevel.CREDIBLE) {
+          if (this.supplierCardinality === SupplierCardinalityLevel.MULTIPLE) {
+            if (this.utility === UtilityLevel.SUPER_EFFECTIVE) {
+              if (this.publicSafetyImpact === PublicSafetyImpactLevel.SIGNIFICANT) {
+                return ActionType.COORDINATE;
+              }
+              else if (this.publicSafetyImpact === PublicSafetyImpactLevel.MINIMAL) {
+                return ActionType.TRACK;
+              }
             }
-            else if (this.publicSafetyImpact === PublicSafetyImpactLevel.MINIMAL) {
-              return ActionType.TRACK;
+            else if (this.utility === UtilityLevel.EFFICIENT) {
+              if (this.publicSafetyImpact === PublicSafetyImpactLevel.SIGNIFICANT) {
+                return ActionType.DECLINE;
+              }
+              else if (this.publicSafetyImpact === PublicSafetyImpactLevel.MINIMAL) {
+                return ActionType.DECLINE;
+              }
+            }
+            else if (this.utility === UtilityLevel.LABORIOUS) {
+              if (this.publicSafetyImpact === PublicSafetyImpactLevel.SIGNIFICANT) {
+                return ActionType.DECLINE;
+              }
+              else if (this.publicSafetyImpact === PublicSafetyImpactLevel.MINIMAL) {
+                return ActionType.DECLINE;
+              }
             }
           }
-          else if (this.utility === UtilityLevel.EFFICIENT) {
-            return ActionType.DECLINE;
-          }
-          else if (this.utility === UtilityLevel.LABORIOUS) {
-            return ActionType.DECLINE;
+          else if (this.supplierCardinality === SupplierCardinalityLevel.ONE) {
+            if (this.utility === UtilityLevel.SUPER_EFFECTIVE) {
+              if (this.publicSafetyImpact === PublicSafetyImpactLevel.SIGNIFICANT) {
+                return ActionType.DECLINE;
+              }
+              else if (this.publicSafetyImpact === PublicSafetyImpactLevel.MINIMAL) {
+                return ActionType.DECLINE;
+              }
+            }
+            else if (this.utility === UtilityLevel.EFFICIENT) {
+              if (this.publicSafetyImpact === PublicSafetyImpactLevel.SIGNIFICANT) {
+                return ActionType.DECLINE;
+              }
+              else if (this.publicSafetyImpact === PublicSafetyImpactLevel.MINIMAL) {
+                return ActionType.DECLINE;
+              }
+            }
+            else if (this.utility === UtilityLevel.LABORIOUS) {
+              if (this.publicSafetyImpact === PublicSafetyImpactLevel.SIGNIFICANT) {
+                return ActionType.DECLINE;
+              }
+              else if (this.publicSafetyImpact === PublicSafetyImpactLevel.MINIMAL) {
+                return ActionType.DECLINE;
+              }
+            }
           }
         }
-        else if (this.supplierCardinality === SupplierCardinalityLevel.ONE) {
-          return ActionType.DECLINE;
+        else if (this.reportCredibility === ReportCredibilityLevel.NOT_CREDIBLE) {
+          if (this.supplierCardinality === SupplierCardinalityLevel.MULTIPLE) {
+            if (this.utility === UtilityLevel.SUPER_EFFECTIVE) {
+              if (this.publicSafetyImpact === PublicSafetyImpactLevel.SIGNIFICANT) {
+                return ActionType.DECLINE;
+              }
+              else if (this.publicSafetyImpact === PublicSafetyImpactLevel.MINIMAL) {
+                return ActionType.DECLINE;
+              }
+            }
+            else if (this.utility === UtilityLevel.EFFICIENT) {
+              if (this.publicSafetyImpact === PublicSafetyImpactLevel.SIGNIFICANT) {
+                return ActionType.DECLINE;
+              }
+              else if (this.publicSafetyImpact === PublicSafetyImpactLevel.MINIMAL) {
+                return ActionType.DECLINE;
+              }
+            }
+            else if (this.utility === UtilityLevel.LABORIOUS) {
+              if (this.publicSafetyImpact === PublicSafetyImpactLevel.SIGNIFICANT) {
+                return ActionType.DECLINE;
+              }
+              else if (this.publicSafetyImpact === PublicSafetyImpactLevel.MINIMAL) {
+                return ActionType.DECLINE;
+              }
+            }
+          }
+          else if (this.supplierCardinality === SupplierCardinalityLevel.ONE) {
+            if (this.utility === UtilityLevel.SUPER_EFFECTIVE) {
+              if (this.publicSafetyImpact === PublicSafetyImpactLevel.SIGNIFICANT) {
+                return ActionType.DECLINE;
+              }
+              else if (this.publicSafetyImpact === PublicSafetyImpactLevel.MINIMAL) {
+                return ActionType.DECLINE;
+              }
+            }
+            else if (this.utility === UtilityLevel.EFFICIENT) {
+              if (this.publicSafetyImpact === PublicSafetyImpactLevel.SIGNIFICANT) {
+                return ActionType.DECLINE;
+              }
+              else if (this.publicSafetyImpact === PublicSafetyImpactLevel.MINIMAL) {
+                return ActionType.DECLINE;
+              }
+            }
+            else if (this.utility === UtilityLevel.LABORIOUS) {
+              if (this.publicSafetyImpact === PublicSafetyImpactLevel.SIGNIFICANT) {
+                return ActionType.DECLINE;
+              }
+              else if (this.publicSafetyImpact === PublicSafetyImpactLevel.MINIMAL) {
+                return ActionType.DECLINE;
+              }
+            }
+          }
         }
       }
     }

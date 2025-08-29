@@ -6,7 +6,7 @@ import {
   ExploitationStatus,
   PublicValueAddedLevel,
   ActionType,
-  DecisionPriorityLevel
+  PriorityLevel
 } from './coordinator_publication-generated';
 
 describe('CoordinatorPublicationPlugin', () => {
@@ -501,14 +501,14 @@ describe('Generated Coordinator Publication Components', () => {
       expect(ActionType.publish).toBe('publish');
     });
     
-    it('should have correct DecisionPriorityLevel values', () => {
-      expect(DecisionPriorityLevel.low).toBe('low');
-      expect(DecisionPriorityLevel.high).toBe('high');
+    it('should have correct PriorityLevel values', () => {
+      expect(PriorityLevel.LOW).toBe('low');
+      expect(PriorityLevel.HIGH).toBe('high');
     });
     
-    it('should have all DecisionPriorityLevel values', () => {
-      expect(DecisionPriorityLevel.low).toBe('low');
-      expect(DecisionPriorityLevel.high).toBe('high');
+    it('should have all PriorityLevel values', () => {
+      expect(PriorityLevel.LOW).toBe('low');
+      expect(PriorityLevel.HIGH).toBe('high');
     });
   });
 });

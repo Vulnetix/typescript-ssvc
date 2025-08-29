@@ -70,6 +70,10 @@ export class SupplierPlugin extends SSVCPlugin {
 
     return new DecisionSupplier(params);
   }
+  
+  fromVector(vectorString: string): SSVCDecision {
+    return DecisionSupplier.fromVector(vectorString);
+  }
 
   private convertToEnum<T extends Record<string, string>>(
     value: any,

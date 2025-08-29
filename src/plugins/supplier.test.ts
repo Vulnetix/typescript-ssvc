@@ -7,7 +7,7 @@ import {
   TechnicalImpactLevel,
   PublicSafetyImpactLevel,
   ActionType,
-  DecisionPriorityLevel
+  PriorityLevel
 } from './supplier-generated';
 
 describe('SupplierPlugin', () => {
@@ -689,16 +689,16 @@ describe('Generated Supplier Components', () => {
       expect(actualValues.sort()).toEqual(expectedValues.sort());
     });
     
-    it('should have correct DecisionPriorityLevel values', () => {
-      expect(DecisionPriorityLevel.low).toBe('low');
-      expect(DecisionPriorityLevel.medium).toBe('medium');
-      expect(DecisionPriorityLevel.high).toBe('high');
-      expect(DecisionPriorityLevel.immediate).toBe('immediate');
+    it('should have correct PriorityLevel values', () => {
+      expect(PriorityLevel.LOW).toBe('low');
+      expect(PriorityLevel.MEDIUM).toBe('medium');
+      expect(PriorityLevel.HIGH).toBe('high');
+      expect(PriorityLevel.IMMEDIATE).toBe('immediate');
     });
     
-    it('should have all DecisionPriorityLevel values', () => {
+    it('should have all PriorityLevel values', () => {
       const expectedValues = ['low', 'medium', 'high', 'immediate'];
-      const actualValues = Object.values(DecisionPriorityLevel);
+      const actualValues = Object.values(PriorityLevel);
       expect(actualValues.sort()).toEqual(expectedValues.sort());
     });
   });

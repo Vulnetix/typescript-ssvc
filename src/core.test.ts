@@ -15,6 +15,10 @@ class MockPlugin extends SSVCPlugin {
   createDecision(options: Record<string, any>): SSVCDecision {
     return new MockDecision(options);
   }
+  
+  fromVector(vector: string): SSVCDecision {
+    return new MockDecision({});
+  }
 }
 
 class MockDecision implements SSVCDecision {
@@ -43,6 +47,10 @@ class AnotherMockPlugin extends SSVCPlugin {
   
   createDecision(options: Record<string, any>): SSVCDecision {
     return new MockDecision(options);
+  }
+  
+  fromVector(vector: string): SSVCDecision {
+    return new MockDecision({});
   }
 }
 
@@ -221,6 +229,10 @@ describe('SSVCPlugin abstract class', () => {
       
       createDecision(options: Record<string, any>): SSVCDecision {
         return new MockDecision(options);
+      }
+      
+      fromVector(vector: string): SSVCDecision {
+        return new MockDecision({});
       }
     }
     

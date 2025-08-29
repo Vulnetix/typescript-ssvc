@@ -31,24 +31,24 @@ export enum HumanImpactLevel {
 }
 
 export enum ActionType {
-  defer = "defer",
-  scheduled = "scheduled",
-  out_of_cycle = "out_of_cycle",
-  immediate = "immediate"
+  defer = 'defer',
+  scheduled = 'scheduled',
+  out_of_cycle = 'out_of_cycle',
+  immediate = 'immediate'
 }
 
-export enum DecisionPriorityLevel {
-  low = "low",
-  medium = "medium",
-  high = "high",
-  immediate = "immediate"
+export enum PriorityLevel {
+  LOW = 'low',
+  MEDIUM = 'medium',
+  HIGH = 'high',
+  IMMEDIATE = 'immediate'
 }
 
 export const priorityMap = {
-  [ActionType.defer]: DecisionPriorityLevel.low,
-  [ActionType.scheduled]: DecisionPriorityLevel.medium,
-  [ActionType.out_of_cycle]: DecisionPriorityLevel.high,
-  [ActionType.immediate]: DecisionPriorityLevel.immediate
+  [ActionType.defer]: PriorityLevel.LOW,
+  [ActionType.scheduled]: PriorityLevel.MEDIUM,
+  [ActionType.out_of_cycle]: PriorityLevel.HIGH,
+  [ActionType.immediate]: PriorityLevel.IMMEDIATE
 };
 
 export class OutcomeDeployer {
@@ -109,510 +109,453 @@ export class DecisionDeployer {
     return this.outcome;
   }
 
+  toVector(): string {
+    if (!this.outcome) {
+      this.evaluate();
+    }
+    
+    const exploitationVector = {"none":"N","public_poc":"P","active":"A"}[this.exploitation?.toString?.()?.toUpperCase?.() ?? ''] || this.exploitation || '';
+    const system_exposureVector = {"small":"S","controlled":"C","open":"O"}[this.systemExposure?.toString?.()?.toUpperCase?.() ?? ''] || this.systemExposure || '';
+    const utilityVector = {"laborious":"L","efficient":"E","super_effective":"S"}[this.utility?.toString?.()?.toUpperCase?.() ?? ''] || this.utility || '';
+    const human_impactVector = {"low":"L","medium":"M","high":"H","very_high":"V"}[this.humanImpact?.toString?.()?.toUpperCase?.() ?? ''] || this.humanImpact || '';
+    const timestamp = new Date().toISOString();
+    return `DEPLOYERv1/E:${exploitationVector}/SE:${system_exposureVector}/U:${utilityVector}/HI:${human_impactVector}/${timestamp}/`;
+  }
+
+  static fromVector(vectorString: string): DecisionDeployer {
+    const regex = /^DEPLOYERv1\/(.+)\/([0-9T:\-\.Z]+)\/?$/;
+    const match = vectorString.match(regex);
+    
+    if (!match) {
+      throw new Error(`Invalid vector string format for Deployer: ${vectorString}`);
+    }
+    
+    const paramsString = match[1];
+    const params = new Map<string, string>();
+    
+    const paramPairs = paramsString.split('/');
+    for (const pair of paramPairs) {
+      const [key, value] = pair.split(':');
+      if (key && value !== undefined) {
+        params.set(key, value);
+      }
+    }
+    
+    const exploitationMatch = params.get('E');
+    const system_exposureMatch = params.get('SE');
+    const utilityMatch = params.get('U');
+    const human_impactMatch = params.get('HI');
+    
+    return new DecisionDeployer({
+      exploitation: {"N":"none","P":"public_poc","A":"active"}[exploitationMatch || ''] || exploitationMatch,
+      systemExposure: {"S":"small","C":"controlled","O":"open"}[system_exposureMatch || ''] || system_exposureMatch,
+      utility: {"L":"laborious","E":"efficient","S":"super_effective"}[utilityMatch || ''] || utilityMatch,
+      humanImpact: {"L":"low","M":"medium","H":"high","V":"very_high"}[human_impactMatch || ''] || human_impactMatch,
+    });
+  }
+
   private traverseTree(): any {
     // Traverse the decision tree to determine the outcome
-    // Handle Active exploitation scenarios
-    if (this.exploitation === ExploitationStatus.active) {
-      // Active exploitation with any open system and super effective utility = immediate
-      if (this.systemExposure === SystemExposureLevel.open && this.utility === UtilityLevel.super_effective) {
-        return ActionType.immediate;
-      }
-      
-      // Active exploitation with high/very high human impact = immediate
-      if (this.humanImpact === HumanImpactLevel.high || this.humanImpact === HumanImpactLevel.very_high) {
-        return ActionType.immediate;
-      }
-      
-      // Most other active exploitation scenarios default to out_of_cycle or immediate
-      return ActionType.out_of_cycle;
-    }
-    
-    // Handle Public PoC exploitation scenarios
-    if (this.exploitation === ExploitationStatus.public_poc) {
-      // Public PoC, Open, Super Effective, Very High = immediate
-      if (this.systemExposure === SystemExposureLevel.open && 
-          this.utility === UtilityLevel.super_effective && 
-          this.humanImpact === HumanImpactLevel.very_high) {
-        return ActionType.immediate;
-      }
-      
-      // Public PoC, Open, Super Effective, High = immediate
-      if (this.systemExposure === SystemExposureLevel.open && 
-          this.utility === UtilityLevel.super_effective && 
-          this.humanImpact === HumanImpactLevel.high) {
-        return ActionType.immediate;
-      }
-      
-      // Public PoC, Open, Efficient, Very High = immediate
-      if (this.systemExposure === SystemExposureLevel.open && 
-          this.utility === UtilityLevel.efficient && 
-          this.humanImpact === HumanImpactLevel.very_high) {
-        return ActionType.immediate;
-      }
-      
-      // Public PoC, Open, Efficient, High = immediate
-      if (this.systemExposure === SystemExposureLevel.open && 
-          this.utility === UtilityLevel.efficient && 
-          this.humanImpact === HumanImpactLevel.high) {
-        return ActionType.immediate;
-      }
-      
-      // Public PoC, Controlled, Super Effective, Very High = immediate
-      if (this.systemExposure === SystemExposureLevel.controlled && 
-          this.utility === UtilityLevel.super_effective && 
-          this.humanImpact === HumanImpactLevel.very_high) {
-        return ActionType.immediate;
-      }
-      
-      // Public PoC, Controlled, Super Effective, High = immediate
-      if (this.systemExposure === SystemExposureLevel.controlled && 
-          this.utility === UtilityLevel.super_effective && 
-          this.humanImpact === HumanImpactLevel.high) {
-        return ActionType.immediate;
-      }
-      
-      // Public PoC, Controlled, Efficient, Very High = immediate
-      if (this.systemExposure === SystemExposureLevel.controlled && 
-          this.utility === UtilityLevel.efficient && 
-          this.humanImpact === HumanImpactLevel.very_high) {
-        return ActionType.immediate;
-      }
-      
-      // Public PoC, Small, Super Effective, Very High = immediate
-      if (this.systemExposure === SystemExposureLevel.small && 
-          this.utility === UtilityLevel.super_effective && 
-          this.humanImpact === HumanImpactLevel.very_high) {
-        return ActionType.immediate;
-      }
-      
-      // Public PoC, Open, Super Effective, Medium = immediate
-      if (this.systemExposure === SystemExposureLevel.open && 
-          this.utility === UtilityLevel.super_effective && 
-          this.humanImpact === HumanImpactLevel.medium) {
-        return ActionType.immediate;
-      }
-      
-      // Public PoC, Open, Super Effective, Low = out_of_cycle
-      if (this.systemExposure === SystemExposureLevel.open && 
-          this.utility === UtilityLevel.super_effective && 
-          this.humanImpact === HumanImpactLevel.low) {
-        return ActionType.out_of_cycle;
-      }
-      
-      // Public PoC, Open, Efficient, Medium = out_of_cycle
-      if (this.systemExposure === SystemExposureLevel.open && 
-          this.utility === UtilityLevel.efficient && 
-          this.humanImpact === HumanImpactLevel.medium) {
-        return ActionType.out_of_cycle;
-      }
-      
-      // Public PoC, Controlled, Super Effective, Medium = out_of_cycle
-      if (this.systemExposure === SystemExposureLevel.controlled && 
-          this.utility === UtilityLevel.super_effective && 
-          this.humanImpact === HumanImpactLevel.medium) {
-        return ActionType.out_of_cycle;
-      }
-      
-      // Public PoC, Controlled, Super Effective, Low = out_of_cycle
-      if (this.systemExposure === SystemExposureLevel.controlled && 
-          this.utility === UtilityLevel.super_effective && 
-          this.humanImpact === HumanImpactLevel.low) {
-        return ActionType.out_of_cycle;
-      }
-      
-      // Public PoC, Controlled, Efficient, High = out_of_cycle
-      if (this.systemExposure === SystemExposureLevel.controlled && 
-          this.utility === UtilityLevel.efficient && 
-          this.humanImpact === HumanImpactLevel.high) {
-        return ActionType.out_of_cycle;
-      }
-      
-      // Public PoC, Controlled, Efficient, Medium = out_of_cycle
-      if (this.systemExposure === SystemExposureLevel.controlled && 
-          this.utility === UtilityLevel.efficient && 
-          this.humanImpact === HumanImpactLevel.medium) {
-        return ActionType.out_of_cycle;
-      }
-      
-      // Public PoC, Controlled, Laborious, Very High = out_of_cycle
-      if (this.systemExposure === SystemExposureLevel.controlled && 
-          this.utility === UtilityLevel.laborious && 
-          this.humanImpact === HumanImpactLevel.very_high) {
-        return ActionType.out_of_cycle;
-      }
-      
-      // Public PoC, Small, Super Effective, High = out_of_cycle
-      if (this.systemExposure === SystemExposureLevel.small && 
-          this.utility === UtilityLevel.super_effective && 
-          this.humanImpact === HumanImpactLevel.high) {
-        return ActionType.out_of_cycle;
-      }
-      
-      // Public PoC, Small, Super Effective, Medium = out_of_cycle
-      if (this.systemExposure === SystemExposureLevel.small && 
-          this.utility === UtilityLevel.super_effective && 
-          this.humanImpact === HumanImpactLevel.medium) {
-        return ActionType.out_of_cycle;
-      }
-      
-      // Public PoC, Small, Efficient, Very High = out_of_cycle
-      if (this.systemExposure === SystemExposureLevel.small && 
-          this.utility === UtilityLevel.efficient && 
-          this.humanImpact === HumanImpactLevel.very_high) {
-        return ActionType.out_of_cycle;
-      }
-      
-      // Public PoC, Small, Efficient, High = out_of_cycle
-      if (this.systemExposure === SystemExposureLevel.small && 
-          this.utility === UtilityLevel.efficient && 
-          this.humanImpact === HumanImpactLevel.high) {
-        return ActionType.out_of_cycle;
-      }
-      
-      // Public PoC, Small, Efficient, Low = scheduled
-      if (this.systemExposure === SystemExposureLevel.small && 
-          this.utility === UtilityLevel.efficient && 
-          this.humanImpact === HumanImpactLevel.low) {
-        return ActionType.scheduled;
-      }
-      
-      // Public PoC, Small, Laborious, Very High = out_of_cycle
-      if (this.systemExposure === SystemExposureLevel.small && 
-          this.utility === UtilityLevel.laborious && 
-          this.humanImpact === HumanImpactLevel.very_high) {
-        return ActionType.out_of_cycle;
-      }
-      
-      // Public PoC, Small, Laborious, High = scheduled
-      if (this.systemExposure === SystemExposureLevel.small && 
-          this.utility === UtilityLevel.laborious && 
-          this.humanImpact === HumanImpactLevel.high) {
-        return ActionType.scheduled;
-      }
-      
-      // Public PoC, Small, Laborious, Medium = scheduled
-      if (this.systemExposure === SystemExposureLevel.small && 
-          this.utility === UtilityLevel.laborious && 
-          this.humanImpact === HumanImpactLevel.medium) {
-        return ActionType.scheduled;
-      }
-      
-      // Public PoC, Controlled, Laborious, High = scheduled
-      if (this.systemExposure === SystemExposureLevel.controlled && 
-          this.utility === UtilityLevel.laborious && 
-          this.humanImpact === HumanImpactLevel.high) {
-        return ActionType.scheduled;
-      }
-      
-      // Public PoC, Controlled, Laborious, Medium = scheduled
-      if (this.systemExposure === SystemExposureLevel.controlled && 
-          this.utility === UtilityLevel.laborious && 
-          this.humanImpact === HumanImpactLevel.medium) {
-        return ActionType.scheduled;
-      }
-      
-      // Public PoC, Controlled, Efficient, Low = scheduled
-      if (this.systemExposure === SystemExposureLevel.controlled && 
-          this.utility === UtilityLevel.efficient && 
-          this.humanImpact === HumanImpactLevel.low) {
-        return ActionType.scheduled;
-      }
-      
-      // Public PoC, Small, Efficient, Medium = scheduled
-      if (this.systemExposure === SystemExposureLevel.small && 
-          this.utility === UtilityLevel.efficient && 
-          this.humanImpact === HumanImpactLevel.medium) {
-        return ActionType.scheduled;
-      }
-      
-      // Public PoC, Small, Super Effective, Low = scheduled
-      if (this.systemExposure === SystemExposureLevel.small && 
-          this.utility === UtilityLevel.super_effective && 
-          this.humanImpact === HumanImpactLevel.low) {
-        return ActionType.scheduled;
-      }
-      
-      // Public PoC, Controlled, Laborious, Low = defer
-      if (this.systemExposure === SystemExposureLevel.controlled && 
-          this.utility === UtilityLevel.laborious && 
-          this.humanImpact === HumanImpactLevel.low) {
-        return ActionType.defer;
-      }
-      
-      // Public PoC, Small, Laborious, Low = defer
-      if (this.systemExposure === SystemExposureLevel.small && 
-          this.utility === UtilityLevel.laborious && 
-          this.humanImpact === HumanImpactLevel.low) {
-        return ActionType.defer;
-      }
-      
-      // Special case: Public PoC, Open, Laborious, Very High = immediate
-      if (this.systemExposure === SystemExposureLevel.open && 
-          this.utility === UtilityLevel.laborious && 
-          this.humanImpact === HumanImpactLevel.very_high) {
-        return ActionType.immediate;
-      }
-      
-      // Special case: Public PoC, Open, Laborious, High = out_of_cycle
-      if (this.systemExposure === SystemExposureLevel.open && 
-          this.utility === UtilityLevel.laborious && 
-          this.humanImpact === HumanImpactLevel.high) {
-        return ActionType.out_of_cycle;
-      }
-      
-      // Special case: Public PoC, Open, Laborious, Medium = out_of_cycle
-      if (this.systemExposure === SystemExposureLevel.open && 
-          this.utility === UtilityLevel.laborious && 
-          this.humanImpact === HumanImpactLevel.medium) {
-        return ActionType.out_of_cycle;
-      }
-    }
-    
-    // Handle None exploitation scenarios
     if (this.exploitation === ExploitationStatus.none) {
-      // None, Open, Super Effective, Very High = immediate
-      if (this.systemExposure === SystemExposureLevel.open && 
-          this.utility === UtilityLevel.super_effective && 
-          this.humanImpact === HumanImpactLevel.very_high) {
-        return ActionType.immediate;
+      if (this.systemExposure === SystemExposureLevel.small) {
+        if (this.utility === UtilityLevel.laborious) {
+          if (this.humanImpact === HumanImpactLevel.low) {
+            return ActionType.defer;
+          }
+          else if (this.humanImpact === HumanImpactLevel.medium) {
+            return ActionType.defer;
+          }
+          else if (this.humanImpact === HumanImpactLevel.high) {
+            return ActionType.scheduled;
+          }
+          else if (this.humanImpact === HumanImpactLevel.very_high) {
+            return ActionType.scheduled;
+          }
+        }
+        else if (this.utility === UtilityLevel.efficient) {
+          if (this.humanImpact === HumanImpactLevel.low) {
+            return ActionType.defer;
+          }
+          else if (this.humanImpact === HumanImpactLevel.medium) {
+            return ActionType.defer;
+          }
+          else if (this.humanImpact === HumanImpactLevel.high) {
+            return ActionType.scheduled;
+          }
+          else if (this.humanImpact === HumanImpactLevel.very_high) {
+            return ActionType.scheduled;
+          }
+        }
+        else if (this.utility === UtilityLevel.super_effective) {
+          if (this.humanImpact === HumanImpactLevel.low) {
+            return ActionType.defer;
+          }
+          else if (this.humanImpact === HumanImpactLevel.medium) {
+            return ActionType.scheduled;
+          }
+          else if (this.humanImpact === HumanImpactLevel.high) {
+            return ActionType.scheduled;
+          }
+          else if (this.humanImpact === HumanImpactLevel.very_high) {
+            return ActionType.out_of_cycle;
+          }
+        }
       }
-      
-      // None, Open, Super Effective, High = out_of_cycle
-      if (this.systemExposure === SystemExposureLevel.open && 
-          this.utility === UtilityLevel.super_effective && 
-          this.humanImpact === HumanImpactLevel.high) {
-        return ActionType.out_of_cycle;
+      else if (this.systemExposure === SystemExposureLevel.controlled) {
+        if (this.utility === UtilityLevel.laborious) {
+          if (this.humanImpact === HumanImpactLevel.low) {
+            return ActionType.defer;
+          }
+          else if (this.humanImpact === HumanImpactLevel.medium) {
+            return ActionType.defer;
+          }
+          else if (this.humanImpact === HumanImpactLevel.high) {
+            return ActionType.scheduled;
+          }
+          else if (this.humanImpact === HumanImpactLevel.very_high) {
+            return ActionType.scheduled;
+          }
+        }
+        else if (this.utility === UtilityLevel.efficient) {
+          if (this.humanImpact === HumanImpactLevel.low) {
+            return ActionType.defer;
+          }
+          else if (this.humanImpact === HumanImpactLevel.medium) {
+            return ActionType.scheduled;
+          }
+          else if (this.humanImpact === HumanImpactLevel.high) {
+            return ActionType.scheduled;
+          }
+          else if (this.humanImpact === HumanImpactLevel.very_high) {
+            return ActionType.out_of_cycle;
+          }
+        }
+        else if (this.utility === UtilityLevel.super_effective) {
+          if (this.humanImpact === HumanImpactLevel.low) {
+            return ActionType.defer;
+          }
+          else if (this.humanImpact === HumanImpactLevel.medium) {
+            return ActionType.scheduled;
+          }
+          else if (this.humanImpact === HumanImpactLevel.high) {
+            return ActionType.out_of_cycle;
+          }
+          else if (this.humanImpact === HumanImpactLevel.very_high) {
+            return ActionType.out_of_cycle;
+          }
+        }
       }
-      
-      // None, Open, Super Effective, Medium = out_of_cycle
-      if (this.systemExposure === SystemExposureLevel.open && 
-          this.utility === UtilityLevel.super_effective && 
-          this.humanImpact === HumanImpactLevel.medium) {
-        return ActionType.out_of_cycle;
+      else if (this.systemExposure === SystemExposureLevel.open) {
+        if (this.utility === UtilityLevel.laborious) {
+          if (this.humanImpact === HumanImpactLevel.low) {
+            return ActionType.defer;
+          }
+          else if (this.humanImpact === HumanImpactLevel.medium) {
+            return ActionType.scheduled;
+          }
+          else if (this.humanImpact === HumanImpactLevel.high) {
+            return ActionType.scheduled;
+          }
+          else if (this.humanImpact === HumanImpactLevel.very_high) {
+            return ActionType.out_of_cycle;
+          }
+        }
+        else if (this.utility === UtilityLevel.efficient) {
+          if (this.humanImpact === HumanImpactLevel.low) {
+            return ActionType.scheduled;
+          }
+          else if (this.humanImpact === HumanImpactLevel.medium) {
+            return ActionType.scheduled;
+          }
+          else if (this.humanImpact === HumanImpactLevel.high) {
+            return ActionType.out_of_cycle;
+          }
+          else if (this.humanImpact === HumanImpactLevel.very_high) {
+            return ActionType.out_of_cycle;
+          }
+        }
+        else if (this.utility === UtilityLevel.super_effective) {
+          if (this.humanImpact === HumanImpactLevel.low) {
+            return ActionType.scheduled;
+          }
+          else if (this.humanImpact === HumanImpactLevel.medium) {
+            return ActionType.out_of_cycle;
+          }
+          else if (this.humanImpact === HumanImpactLevel.high) {
+            return ActionType.out_of_cycle;
+          }
+          else if (this.humanImpact === HumanImpactLevel.very_high) {
+            return ActionType.immediate;
+          }
+        }
       }
-      
-      // None, Open, Super Effective, Low = scheduled
-      if (this.systemExposure === SystemExposureLevel.open && 
-          this.utility === UtilityLevel.super_effective && 
-          this.humanImpact === HumanImpactLevel.low) {
-        return ActionType.scheduled;
+    }
+    else if (this.exploitation === ExploitationStatus.public_poc) {
+      if (this.systemExposure === SystemExposureLevel.small) {
+        if (this.utility === UtilityLevel.laborious) {
+          if (this.humanImpact === HumanImpactLevel.low) {
+            return ActionType.defer;
+          }
+          else if (this.humanImpact === HumanImpactLevel.medium) {
+            return ActionType.scheduled;
+          }
+          else if (this.humanImpact === HumanImpactLevel.high) {
+            return ActionType.scheduled;
+          }
+          else if (this.humanImpact === HumanImpactLevel.very_high) {
+            return ActionType.out_of_cycle;
+          }
+        }
+        else if (this.utility === UtilityLevel.efficient) {
+          if (this.humanImpact === HumanImpactLevel.low) {
+            return ActionType.scheduled;
+          }
+          else if (this.humanImpact === HumanImpactLevel.medium) {
+            return ActionType.scheduled;
+          }
+          else if (this.humanImpact === HumanImpactLevel.high) {
+            return ActionType.out_of_cycle;
+          }
+          else if (this.humanImpact === HumanImpactLevel.very_high) {
+            return ActionType.out_of_cycle;
+          }
+        }
+        else if (this.utility === UtilityLevel.super_effective) {
+          if (this.humanImpact === HumanImpactLevel.low) {
+            return ActionType.scheduled;
+          }
+          else if (this.humanImpact === HumanImpactLevel.medium) {
+            return ActionType.out_of_cycle;
+          }
+          else if (this.humanImpact === HumanImpactLevel.high) {
+            return ActionType.out_of_cycle;
+          }
+          else if (this.humanImpact === HumanImpactLevel.very_high) {
+            return ActionType.immediate;
+          }
+        }
       }
-      
-      // None, Open, Efficient, Very High = out_of_cycle
-      if (this.systemExposure === SystemExposureLevel.open && 
-          this.utility === UtilityLevel.efficient && 
-          this.humanImpact === HumanImpactLevel.very_high) {
-        return ActionType.out_of_cycle;
+      else if (this.systemExposure === SystemExposureLevel.controlled) {
+        if (this.utility === UtilityLevel.laborious) {
+          if (this.humanImpact === HumanImpactLevel.low) {
+            return ActionType.scheduled;
+          }
+          else if (this.humanImpact === HumanImpactLevel.medium) {
+            return ActionType.scheduled;
+          }
+          else if (this.humanImpact === HumanImpactLevel.high) {
+            return ActionType.out_of_cycle;
+          }
+          else if (this.humanImpact === HumanImpactLevel.very_high) {
+            return ActionType.out_of_cycle;
+          }
+        }
+        else if (this.utility === UtilityLevel.efficient) {
+          if (this.humanImpact === HumanImpactLevel.low) {
+            return ActionType.scheduled;
+          }
+          else if (this.humanImpact === HumanImpactLevel.medium) {
+            return ActionType.out_of_cycle;
+          }
+          else if (this.humanImpact === HumanImpactLevel.high) {
+            return ActionType.out_of_cycle;
+          }
+          else if (this.humanImpact === HumanImpactLevel.very_high) {
+            return ActionType.immediate;
+          }
+        }
+        else if (this.utility === UtilityLevel.super_effective) {
+          if (this.humanImpact === HumanImpactLevel.low) {
+            return ActionType.out_of_cycle;
+          }
+          else if (this.humanImpact === HumanImpactLevel.medium) {
+            return ActionType.out_of_cycle;
+          }
+          else if (this.humanImpact === HumanImpactLevel.high) {
+            return ActionType.immediate;
+          }
+          else if (this.humanImpact === HumanImpactLevel.very_high) {
+            return ActionType.immediate;
+          }
+        }
       }
-      
-      // None, Open, Efficient, High = out_of_cycle
-      if (this.systemExposure === SystemExposureLevel.open && 
-          this.utility === UtilityLevel.efficient && 
-          this.humanImpact === HumanImpactLevel.high) {
-        return ActionType.out_of_cycle;
+      else if (this.systemExposure === SystemExposureLevel.open) {
+        if (this.utility === UtilityLevel.laborious) {
+          if (this.humanImpact === HumanImpactLevel.low) {
+            return ActionType.scheduled;
+          }
+          else if (this.humanImpact === HumanImpactLevel.medium) {
+            return ActionType.out_of_cycle;
+          }
+          else if (this.humanImpact === HumanImpactLevel.high) {
+            return ActionType.out_of_cycle;
+          }
+          else if (this.humanImpact === HumanImpactLevel.very_high) {
+            return ActionType.immediate;
+          }
+        }
+        else if (this.utility === UtilityLevel.efficient) {
+          if (this.humanImpact === HumanImpactLevel.low) {
+            return ActionType.out_of_cycle;
+          }
+          else if (this.humanImpact === HumanImpactLevel.medium) {
+            return ActionType.out_of_cycle;
+          }
+          else if (this.humanImpact === HumanImpactLevel.high) {
+            return ActionType.immediate;
+          }
+          else if (this.humanImpact === HumanImpactLevel.very_high) {
+            return ActionType.immediate;
+          }
+        }
+        else if (this.utility === UtilityLevel.super_effective) {
+          if (this.humanImpact === HumanImpactLevel.low) {
+            return ActionType.out_of_cycle;
+          }
+          else if (this.humanImpact === HumanImpactLevel.medium) {
+            return ActionType.immediate;
+          }
+          else if (this.humanImpact === HumanImpactLevel.high) {
+            return ActionType.immediate;
+          }
+          else if (this.humanImpact === HumanImpactLevel.very_high) {
+            return ActionType.immediate;
+          }
+        }
       }
-      
-      // None, Open, Efficient, Medium = scheduled
-      if (this.systemExposure === SystemExposureLevel.open && 
-          this.utility === UtilityLevel.efficient && 
-          this.humanImpact === HumanImpactLevel.medium) {
-        return ActionType.scheduled;
+    }
+    else if (this.exploitation === ExploitationStatus.active) {
+      if (this.systemExposure === SystemExposureLevel.small) {
+        if (this.utility === UtilityLevel.laborious) {
+          if (this.humanImpact === HumanImpactLevel.low) {
+            return ActionType.scheduled;
+          }
+          else if (this.humanImpact === HumanImpactLevel.medium) {
+            return ActionType.scheduled;
+          }
+          else if (this.humanImpact === HumanImpactLevel.high) {
+            return ActionType.out_of_cycle;
+          }
+          else if (this.humanImpact === HumanImpactLevel.very_high) {
+            return ActionType.immediate;
+          }
+        }
+        else if (this.utility === UtilityLevel.efficient) {
+          if (this.humanImpact === HumanImpactLevel.low) {
+            return ActionType.scheduled;
+          }
+          else if (this.humanImpact === HumanImpactLevel.medium) {
+            return ActionType.out_of_cycle;
+          }
+          else if (this.humanImpact === HumanImpactLevel.high) {
+            return ActionType.out_of_cycle;
+          }
+          else if (this.humanImpact === HumanImpactLevel.very_high) {
+            return ActionType.immediate;
+          }
+        }
+        else if (this.utility === UtilityLevel.super_effective) {
+          if (this.humanImpact === HumanImpactLevel.low) {
+            return ActionType.out_of_cycle;
+          }
+          else if (this.humanImpact === HumanImpactLevel.medium) {
+            return ActionType.out_of_cycle;
+          }
+          else if (this.humanImpact === HumanImpactLevel.high) {
+            return ActionType.immediate;
+          }
+          else if (this.humanImpact === HumanImpactLevel.very_high) {
+            return ActionType.immediate;
+          }
+        }
       }
-      
-      // None, Open, Efficient, Low = scheduled
-      if (this.systemExposure === SystemExposureLevel.open && 
-          this.utility === UtilityLevel.efficient && 
-          this.humanImpact === HumanImpactLevel.low) {
-        return ActionType.scheduled;
+      else if (this.systemExposure === SystemExposureLevel.controlled) {
+        if (this.utility === UtilityLevel.laborious) {
+          if (this.humanImpact === HumanImpactLevel.low) {
+            return ActionType.scheduled;
+          }
+          else if (this.humanImpact === HumanImpactLevel.medium) {
+            return ActionType.out_of_cycle;
+          }
+          else if (this.humanImpact === HumanImpactLevel.high) {
+            return ActionType.out_of_cycle;
+          }
+          else if (this.humanImpact === HumanImpactLevel.very_high) {
+            return ActionType.immediate;
+          }
+        }
+        else if (this.utility === UtilityLevel.efficient) {
+          if (this.humanImpact === HumanImpactLevel.low) {
+            return ActionType.out_of_cycle;
+          }
+          else if (this.humanImpact === HumanImpactLevel.medium) {
+            return ActionType.out_of_cycle;
+          }
+          else if (this.humanImpact === HumanImpactLevel.high) {
+            return ActionType.immediate;
+          }
+          else if (this.humanImpact === HumanImpactLevel.very_high) {
+            return ActionType.immediate;
+          }
+        }
+        else if (this.utility === UtilityLevel.super_effective) {
+          if (this.humanImpact === HumanImpactLevel.low) {
+            return ActionType.out_of_cycle;
+          }
+          else if (this.humanImpact === HumanImpactLevel.medium) {
+            return ActionType.immediate;
+          }
+          else if (this.humanImpact === HumanImpactLevel.high) {
+            return ActionType.immediate;
+          }
+          else if (this.humanImpact === HumanImpactLevel.very_high) {
+            return ActionType.immediate;
+          }
+        }
       }
-      
-      // None, Open, Laborious, Very High = out_of_cycle
-      if (this.systemExposure === SystemExposureLevel.open && 
-          this.utility === UtilityLevel.laborious && 
-          this.humanImpact === HumanImpactLevel.very_high) {
-        return ActionType.out_of_cycle;
-      }
-      
-      // None, Open, Laborious, High = scheduled
-      if (this.systemExposure === SystemExposureLevel.open && 
-          this.utility === UtilityLevel.laborious && 
-          this.humanImpact === HumanImpactLevel.high) {
-        return ActionType.scheduled;
-      }
-      
-      // None, Open, Laborious, Medium = scheduled
-      if (this.systemExposure === SystemExposureLevel.open && 
-          this.utility === UtilityLevel.laborious && 
-          this.humanImpact === HumanImpactLevel.medium) {
-        return ActionType.scheduled;
-      }
-      
-      // None, Controlled, Super Effective, Very High = out_of_cycle
-      if (this.systemExposure === SystemExposureLevel.controlled && 
-          this.utility === UtilityLevel.super_effective && 
-          this.humanImpact === HumanImpactLevel.very_high) {
-        return ActionType.out_of_cycle;
-      }
-      
-      // None, Controlled, Super Effective, High = out_of_cycle
-      if (this.systemExposure === SystemExposureLevel.controlled && 
-          this.utility === UtilityLevel.super_effective && 
-          this.humanImpact === HumanImpactLevel.high) {
-        return ActionType.out_of_cycle;
-      }
-      
-      // None, Controlled, Super Effective, Medium = scheduled
-      if (this.systemExposure === SystemExposureLevel.controlled && 
-          this.utility === UtilityLevel.super_effective && 
-          this.humanImpact === HumanImpactLevel.medium) {
-        return ActionType.scheduled;
-      }
-      
-      // None, Controlled, Super Effective, Low = defer
-      if (this.systemExposure === SystemExposureLevel.controlled && 
-          this.utility === UtilityLevel.super_effective && 
-          this.humanImpact === HumanImpactLevel.low) {
-        return ActionType.defer;
-      }
-      
-      // None, Controlled, Efficient, Very High = out_of_cycle
-      if (this.systemExposure === SystemExposureLevel.controlled && 
-          this.utility === UtilityLevel.efficient && 
-          this.humanImpact === HumanImpactLevel.very_high) {
-        return ActionType.out_of_cycle;
-      }
-      
-      // None, Controlled, Efficient, High = scheduled
-      if (this.systemExposure === SystemExposureLevel.controlled && 
-          this.utility === UtilityLevel.efficient && 
-          this.humanImpact === HumanImpactLevel.high) {
-        return ActionType.scheduled;
-      }
-      
-      // None, Controlled, Efficient, Medium = scheduled
-      if (this.systemExposure === SystemExposureLevel.controlled && 
-          this.utility === UtilityLevel.efficient && 
-          this.humanImpact === HumanImpactLevel.medium) {
-        return ActionType.scheduled;
-      }
-      
-      // None, Controlled, Efficient, Low = defer
-      if (this.systemExposure === SystemExposureLevel.controlled && 
-          this.utility === UtilityLevel.efficient && 
-          this.humanImpact === HumanImpactLevel.low) {
-        return ActionType.defer;
-      }
-      
-      // None, Controlled, Laborious, Very High = scheduled
-      if (this.systemExposure === SystemExposureLevel.controlled && 
-          this.utility === UtilityLevel.laborious && 
-          this.humanImpact === HumanImpactLevel.very_high) {
-        return ActionType.scheduled;
-      }
-      
-      // None, Controlled, Laborious, High = scheduled
-      if (this.systemExposure === SystemExposureLevel.controlled && 
-          this.utility === UtilityLevel.laborious && 
-          this.humanImpact === HumanImpactLevel.high) {
-        return ActionType.scheduled;
-      }
-      
-      // None, Controlled, Laborious, Medium = defer
-      if (this.systemExposure === SystemExposureLevel.controlled && 
-          this.utility === UtilityLevel.laborious && 
-          this.humanImpact === HumanImpactLevel.medium) {
-        return ActionType.defer;
-      }
-      
-      // None, Controlled, Laborious, Low = defer
-      if (this.systemExposure === SystemExposureLevel.controlled && 
-          this.utility === UtilityLevel.laborious && 
-          this.humanImpact === HumanImpactLevel.low) {
-        return ActionType.defer;
-      }
-      
-      // None, Small, Super Effective, Very High = out_of_cycle
-      if (this.systemExposure === SystemExposureLevel.small && 
-          this.utility === UtilityLevel.super_effective && 
-          this.humanImpact === HumanImpactLevel.very_high) {
-        return ActionType.out_of_cycle;
-      }
-      
-      // None, Small, Super Effective, High = scheduled
-      if (this.systemExposure === SystemExposureLevel.small && 
-          this.utility === UtilityLevel.super_effective && 
-          this.humanImpact === HumanImpactLevel.high) {
-        return ActionType.scheduled;
-      }
-      
-      // None, Small, Super Effective, Medium = scheduled
-      if (this.systemExposure === SystemExposureLevel.small && 
-          this.utility === UtilityLevel.super_effective && 
-          this.humanImpact === HumanImpactLevel.medium) {
-        return ActionType.scheduled;
-      }
-      
-      // None, Small, Super Effective, Low = defer
-      if (this.systemExposure === SystemExposureLevel.small && 
-          this.utility === UtilityLevel.super_effective && 
-          this.humanImpact === HumanImpactLevel.low) {
-        return ActionType.defer;
-      }
-      
-      // None, Small, Efficient, Very High = scheduled
-      if (this.systemExposure === SystemExposureLevel.small && 
-          this.utility === UtilityLevel.efficient && 
-          this.humanImpact === HumanImpactLevel.very_high) {
-        return ActionType.scheduled;
-      }
-      
-      // None, Small, Efficient, High = scheduled
-      if (this.systemExposure === SystemExposureLevel.small && 
-          this.utility === UtilityLevel.efficient && 
-          this.humanImpact === HumanImpactLevel.high) {
-        return ActionType.scheduled;
-      }
-      
-      // None, Small, Efficient, Medium = defer
-      if (this.systemExposure === SystemExposureLevel.small && 
-          this.utility === UtilityLevel.efficient && 
-          this.humanImpact === HumanImpactLevel.medium) {
-        return ActionType.defer;
-      }
-      
-      // None, Small, Efficient, Low = defer
-      if (this.systemExposure === SystemExposureLevel.small && 
-          this.utility === UtilityLevel.efficient && 
-          this.humanImpact === HumanImpactLevel.low) {
-        return ActionType.defer;
-      }
-      
-      // None, Small, Laborious, Very High = scheduled
-      if (this.systemExposure === SystemExposureLevel.small && 
-          this.utility === UtilityLevel.laborious && 
-          this.humanImpact === HumanImpactLevel.very_high) {
-        return ActionType.scheduled;
-      }
-      
-      // None, Small, Laborious, High = scheduled
-      if (this.systemExposure === SystemExposureLevel.small && 
-          this.utility === UtilityLevel.laborious && 
-          this.humanImpact === HumanImpactLevel.high) {
-        return ActionType.scheduled;
-      }
-      
-      // None, Small, Laborious, Medium = defer
-      if (this.systemExposure === SystemExposureLevel.small && 
-          this.utility === UtilityLevel.laborious && 
-          this.humanImpact === HumanImpactLevel.medium) {
-        return ActionType.defer;
-      }
-      
-      // None, Small, Laborious, Low = defer
-      if (this.systemExposure === SystemExposureLevel.small && 
-          this.utility === UtilityLevel.laborious && 
-          this.humanImpact === HumanImpactLevel.low) {
-        return ActionType.defer;
+      else if (this.systemExposure === SystemExposureLevel.open) {
+        if (this.utility === UtilityLevel.laborious) {
+          if (this.humanImpact === HumanImpactLevel.low) {
+            return ActionType.out_of_cycle;
+          }
+          else if (this.humanImpact === HumanImpactLevel.medium) {
+            return ActionType.out_of_cycle;
+          }
+          else if (this.humanImpact === HumanImpactLevel.high) {
+            return ActionType.immediate;
+          }
+          else if (this.humanImpact === HumanImpactLevel.very_high) {
+            return ActionType.immediate;
+          }
+        }
+        else if (this.utility === UtilityLevel.efficient) {
+          if (this.humanImpact === HumanImpactLevel.low) {
+            return ActionType.out_of_cycle;
+          }
+          else if (this.humanImpact === HumanImpactLevel.medium) {
+            return ActionType.immediate;
+          }
+          else if (this.humanImpact === HumanImpactLevel.high) {
+            return ActionType.immediate;
+          }
+          else if (this.humanImpact === HumanImpactLevel.very_high) {
+            return ActionType.immediate;
+          }
+        }
+        else if (this.utility === UtilityLevel.super_effective) {
+          if (this.humanImpact === HumanImpactLevel.low) {
+            return ActionType.immediate;
+          }
+          else if (this.humanImpact === HumanImpactLevel.medium) {
+            return ActionType.immediate;
+          }
+          else if (this.humanImpact === HumanImpactLevel.high) {
+            return ActionType.immediate;
+          }
+          else if (this.humanImpact === HumanImpactLevel.very_high) {
+            return ActionType.immediate;
+          }
+        }
       }
     }
     
