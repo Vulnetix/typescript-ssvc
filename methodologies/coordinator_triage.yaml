@@ -224,8 +224,8 @@ decisionTree:
                     LABORIOUS:
                       type: PublicSafetyImpactLevel
                       children:
-                        SIGNIFICANT: TRACK
-                        MINIMAL: DECLINE
+                        SIGNIFICANT: COORDINATE
+                        MINIMAL: COORDINATE
                 ONE:
                   type: UtilityLevel
                   children:
@@ -242,7 +242,7 @@ decisionTree:
                     LABORIOUS:
                       type: PublicSafetyImpactLevel
                       children:
-                        SIGNIFICANT: DECLINE
+                        SIGNIFICANT: COORDINATE
                         MINIMAL: DECLINE
             NOT_CREDIBLE:
               type: SupplierCardinalityLevel
@@ -253,7 +253,7 @@ decisionTree:
                     SUPER_EFFECTIVE:
                       type: PublicSafetyImpactLevel
                       children:
-                        SIGNIFICANT: DECLINE
+                        SIGNIFICANT: COORDINATE
                         MINIMAL: DECLINE
                     EFFICIENT:
                       type: PublicSafetyImpactLevel

@@ -80,6 +80,10 @@ validate-methodologies:
 generate-plugins: validate-methodologies
     npx ts-node scripts/generate-plugins.ts
 
+# Verify checksums of all generated files from documentation metadata
+verify-checksums:
+    ./scripts/verify-checksums.sh
+
 # Run full development cycle: generate plugins, build, test
 dev: generate-plugins build test
 

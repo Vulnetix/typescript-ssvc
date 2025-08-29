@@ -1,3 +1,13 @@
+---
+generated: true
+source: methodologies/coordinator_publication.yaml
+generator: scripts/generate-plugins.ts
+lastGenerated: 2025-08-29T10:52:46.003Z
+generatedFiles:
+  typescript:
+    path: /home/chris/github/typescript-ssvc/src/plugins/coordinator_publication-generated.ts
+    checksum: 087bc850ed2915623cb8430cd1a7cc0aec06e549
+---
 # Coordinator Publication
 
 CERT/CC Coordinator Publication Decision Model
@@ -188,3 +198,24 @@ console.log(vectorString);
 const parsedDecision = DecisionCoordinatorPublication.fromVector("COORD_PUBv1/SI:F/E:N/PV:L/2024-07-23T20:34:21.000Z/");
 const outcome = parsedDecision.evaluate();
 ```
+
+## File Integrity Verification
+
+The generated files in this methodology have SHA1 checksums for verification:
+
+### Checksum Verification Commands
+
+Verify the integrity of generated files using these commands:
+
+```bash
+# Verify TypeScript plugin file
+echo "087bc850ed2915623cb8430cd1a7cc0aec06e549  /home/chris/github/typescript-ssvc/src/plugins/coordinator_publication-generated.ts" | sha1sum -c
+```
+
+**Why This Matters**: Checksum verification ensures that generated files haven't been tampered with or corrupted. This is important for:
+- **Security**: Detecting unauthorized modifications to generated code
+- **Integrity**: Ensuring files match their expected content exactly  
+- **Trust**: Providing cryptographic proof that files are authentic
+- **Debugging**: Confirming file corruption isn't causing unexpected behavior
+
+Always verify checksums before deploying or using generated files in production environments.

@@ -1,3 +1,13 @@
+---
+generated: true
+source: methodologies/coordinator_triage.yaml
+generator: scripts/generate-plugins.ts
+lastGenerated: 2025-08-29T10:52:46.020Z
+generatedFiles:
+  typescript:
+    path: /home/chris/github/typescript-ssvc/src/plugins/coordinator_triage-generated.ts
+    checksum: b69ee0e1d70991d7f5d880e711c93191e95011c8
+---
 # Coordinator Triage
 
 CERT/CC Coordinator Triage Decision Model
@@ -160,9 +170,9 @@ flowchart TD
   97[TRACK]
   97 --> 97_end((End))
   98{PublicSafetyImpactLevel}
-  99[TRACK]
+  99[COORDINATE]
   99 --> 99_end((End))
-  100[DECLINE]
+  100[COORDINATE]
   100 --> 100_end((End))
   101{UtilityLevel}
   102{PublicSafetyImpactLevel}
@@ -176,14 +186,14 @@ flowchart TD
   107[DECLINE]
   107 --> 107_end((End))
   108{PublicSafetyImpactLevel}
-  109[DECLINE]
+  109[COORDINATE]
   109 --> 109_end((End))
   110[DECLINE]
   110 --> 110_end((End))
   111{SupplierCardinalityLevel}
   112{UtilityLevel}
   113{PublicSafetyImpactLevel}
-  114[DECLINE]
+  114[COORDINATE]
   114 --> 114_end((End))
   115[DECLINE]
   115 --> 115_end((End))
@@ -544,3 +554,24 @@ console.log(vectorString);
 const parsedDecision = DecisionCoordinatorTriage.fromVector("COORD_TRIAGEv1/RP:Y/SC:Y/RC:C/CA:O/U:L/PS:M/2024-07-23T20:34:21.000Z/");
 const outcome = parsedDecision.evaluate();
 ```
+
+## File Integrity Verification
+
+The generated files in this methodology have SHA1 checksums for verification:
+
+### Checksum Verification Commands
+
+Verify the integrity of generated files using these commands:
+
+```bash
+# Verify TypeScript plugin file
+echo "b69ee0e1d70991d7f5d880e711c93191e95011c8  /home/chris/github/typescript-ssvc/src/plugins/coordinator_triage-generated.ts" | sha1sum -c
+```
+
+**Why This Matters**: Checksum verification ensures that generated files haven't been tampered with or corrupted. This is important for:
+- **Security**: Detecting unauthorized modifications to generated code
+- **Integrity**: Ensuring files match their expected content exactly  
+- **Trust**: Providing cryptographic proof that files are authentic
+- **Debugging**: Confirming file corruption isn't causing unexpected behavior
+
+Always verify checksums before deploying or using generated files in production environments.
