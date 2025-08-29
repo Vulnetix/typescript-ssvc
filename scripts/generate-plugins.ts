@@ -10,6 +10,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as yaml from 'yaml';
 import { createHash } from 'crypto';
+import { execSync } from 'child_process';
 
 interface EnumDefinition {
   [enumName: string]: string[];
@@ -73,26 +74,30 @@ class SSVCPluginGenerator {
     const pluginName = path.basename(yamlFile, path.extname(yamlFile));
     
     // Generate TypeScript plugin
-    const tsCode = this.generateTypeScriptPlugin(config, pluginName);
+    let tsCode = this.generateTypeScriptPlugin(config, pluginName);
     const tsFile = path.join(this.outputDir, `${pluginName}-generated.ts`);
     
     if (!fs.existsSync(this.outputDir)) {
       fs.mkdirSync(this.outputDir, { recursive: true });
     }
     
+    // Format TypeScript code before writing and calculating checksum
+    tsCode = this.formatTypeScript(tsCode);
     fs.writeFileSync(tsFile, tsCode);
     
-    // Calculate checksum for generated TypeScript file
+    // Calculate checksum for formatted TypeScript file
     const tsChecksum = this.calculateSHA1(tsCode);
     
     // Generate markdown documentation with checksum
-    const markdownCode = this.generateMarkdownDocs(config, pluginName, tsFile, tsChecksum);
+    let markdownCode = this.generateMarkdownDocs(config, pluginName, tsFile, tsChecksum);
     const docsFile = path.join(this.docsDir, `${pluginName}.md`);
     
     if (!fs.existsSync(this.docsDir)) {
       fs.mkdirSync(this.docsDir, { recursive: true });
     }
     
+    // Format markdown code before writing
+    markdownCode = this.formatMarkdown(markdownCode);
     fs.writeFileSync(docsFile, markdownCode);
     
     console.log(`Generated ${tsFile} and ${docsFile}`);
@@ -553,9 +558,8 @@ const outcome = parsedDecision.evaluate();
       const currentId = nodeId++;
       
       if (typeof node === 'string') {
-        // Leaf node
+        // Leaf node (action) - terminal point, no need for additional end node
         nodes.push(`  ${currentId}[${node}]`);
-        nodes.push(`  ${currentId} --> ${currentId}_end((End))`);
         
         if (parentId !== undefined && edgeLabel) {
           edges.push(`  ${parentId} -->|${edgeLabel}| ${currentId}`);
@@ -585,7 +589,7 @@ const outcome = parsedDecision.evaluate();
 
     processNode(tree);
 
-    return `flowchart TD\n${nodes.join('\n')}\n${edges.join('\n')}`;
+    return `flowchart LR\n${nodes.join('\n')}\n${edges.join('\n')}`;
   }
 
   private enumToParamName(enumName: string): string {
@@ -598,6 +602,54 @@ const outcome = parsedDecision.evaluate();
 
   private toPascalCase(str: string): string {
     return str.replace(/(^\w|_\w)/g, (match) => match.replace('_', '').toUpperCase());
+  }
+
+  private formatTypeScript(code: string): string {
+    try {
+      // Write to temporary file for prettier formatting
+      const tempFile = path.join(__dirname, 'temp.ts');
+      fs.writeFileSync(tempFile, code);
+      
+      // Format with prettier
+      const formattedCode = execSync(`npx prettier --parser typescript "${tempFile}"`, { 
+        encoding: 'utf8',
+        stdio: ['pipe', 'pipe', 'inherit']
+      });
+      
+      // Clean up temp file
+      if (fs.existsSync(tempFile)) {
+        fs.unlinkSync(tempFile);
+      }
+      
+      return formattedCode;
+    } catch (error) {
+      console.warn('Warning: Failed to format TypeScript code with prettier, using original code');
+      return code;
+    }
+  }
+
+  private formatMarkdown(code: string): string {
+    try {
+      // Write to temporary file for prettier formatting
+      const tempFile = path.join(__dirname, 'temp.md');
+      fs.writeFileSync(tempFile, code);
+      
+      // Format with prettier
+      const formattedCode = execSync(`npx prettier --parser markdown "${tempFile}"`, { 
+        encoding: 'utf8',
+        stdio: ['pipe', 'pipe', 'inherit']
+      });
+      
+      // Clean up temp file
+      if (fs.existsSync(tempFile)) {
+        fs.unlinkSync(tempFile);
+      }
+      
+      return formattedCode;
+    } catch (error) {
+      console.warn('Warning: Failed to format Markdown code with prettier, using original code');
+      return code;
+    }
   }
 
   private getExportList(config: PluginConfig, pluginName: string): string {

@@ -2,12 +2,13 @@
 generated: true
 source: methodologies/coordinator_triage.yaml
 generator: scripts/generate-plugins.ts
-lastGenerated: 2025-08-29T10:52:46.020Z
+lastGenerated: 2025-08-29T14:35:57.018Z
 generatedFiles:
   typescript:
     path: /home/chris/github/typescript-ssvc/src/plugins/coordinator_triage-generated.ts
-    checksum: b69ee0e1d70991d7f5d880e711c93191e95011c8
+    checksum: 6476a51c2270e28d58192541b78b51e97a4264c3
 ---
+
 # Coordinator Triage
 
 CERT/CC Coordinator Triage Decision Model
@@ -18,7 +19,7 @@ CERT/CC Coordinator Triage Decision Model
 ## Decision Tree
 
 ```mermaid
-flowchart TD
+flowchart LR
   0{ReportPublicStatus}
   1{SupplierContactedStatus}
   2{ReportCredibilityLevel}
@@ -26,270 +27,174 @@ flowchart TD
   4{UtilityLevel}
   5{PublicSafetyImpactLevel}
   6[COORDINATE]
-  6 --> 6_end((End))
   7[TRACK]
-  7 --> 7_end((End))
   8{PublicSafetyImpactLevel}
   9[TRACK]
-  9 --> 9_end((End))
   10[DECLINE]
-  10 --> 10_end((End))
   11{PublicSafetyImpactLevel}
   12[DECLINE]
-  12 --> 12_end((End))
   13[DECLINE]
-  13 --> 13_end((End))
   14{UtilityLevel}
   15{PublicSafetyImpactLevel}
   16[TRACK]
-  16 --> 16_end((End))
   17[DECLINE]
-  17 --> 17_end((End))
   18{PublicSafetyImpactLevel}
   19[DECLINE]
-  19 --> 19_end((End))
   20[DECLINE]
-  20 --> 20_end((End))
   21{PublicSafetyImpactLevel}
   22[DECLINE]
-  22 --> 22_end((End))
   23[DECLINE]
-  23 --> 23_end((End))
   24{SupplierCardinalityLevel}
   25{UtilityLevel}
   26{PublicSafetyImpactLevel}
   27[DECLINE]
-  27 --> 27_end((End))
   28[DECLINE]
-  28 --> 28_end((End))
   29{PublicSafetyImpactLevel}
   30[DECLINE]
-  30 --> 30_end((End))
   31[DECLINE]
-  31 --> 31_end((End))
   32{PublicSafetyImpactLevel}
   33[DECLINE]
-  33 --> 33_end((End))
   34[DECLINE]
-  34 --> 34_end((End))
   35{UtilityLevel}
   36{PublicSafetyImpactLevel}
   37[DECLINE]
-  37 --> 37_end((End))
   38[DECLINE]
-  38 --> 38_end((End))
   39{PublicSafetyImpactLevel}
   40[DECLINE]
-  40 --> 40_end((End))
   41[DECLINE]
-  41 --> 41_end((End))
   42{PublicSafetyImpactLevel}
   43[DECLINE]
-  43 --> 43_end((End))
   44[DECLINE]
-  44 --> 44_end((End))
   45{ReportCredibilityLevel}
   46{SupplierCardinalityLevel}
   47{UtilityLevel}
   48{PublicSafetyImpactLevel}
   49[COORDINATE]
-  49 --> 49_end((End))
   50[TRACK]
-  50 --> 50_end((End))
   51{PublicSafetyImpactLevel}
   52[DECLINE]
-  52 --> 52_end((End))
   53[DECLINE]
-  53 --> 53_end((End))
   54{PublicSafetyImpactLevel}
   55[DECLINE]
-  55 --> 55_end((End))
   56[DECLINE]
-  56 --> 56_end((End))
   57{UtilityLevel}
   58{PublicSafetyImpactLevel}
   59[DECLINE]
-  59 --> 59_end((End))
   60[DECLINE]
-  60 --> 60_end((End))
   61{PublicSafetyImpactLevel}
   62[DECLINE]
-  62 --> 62_end((End))
   63[DECLINE]
-  63 --> 63_end((End))
   64{PublicSafetyImpactLevel}
   65[DECLINE]
-  65 --> 65_end((End))
   66[DECLINE]
-  66 --> 66_end((End))
   67{SupplierCardinalityLevel}
   68{UtilityLevel}
   69{PublicSafetyImpactLevel}
   70[DECLINE]
-  70 --> 70_end((End))
   71[DECLINE]
-  71 --> 71_end((End))
   72{PublicSafetyImpactLevel}
   73[DECLINE]
-  73 --> 73_end((End))
   74[DECLINE]
-  74 --> 74_end((End))
   75{PublicSafetyImpactLevel}
   76[DECLINE]
-  76 --> 76_end((End))
   77[DECLINE]
-  77 --> 77_end((End))
   78{UtilityLevel}
   79{PublicSafetyImpactLevel}
   80[DECLINE]
-  80 --> 80_end((End))
   81[DECLINE]
-  81 --> 81_end((End))
   82{PublicSafetyImpactLevel}
   83[DECLINE]
-  83 --> 83_end((End))
   84[DECLINE]
-  84 --> 84_end((End))
   85{PublicSafetyImpactLevel}
   86[DECLINE]
-  86 --> 86_end((End))
   87[DECLINE]
-  87 --> 87_end((End))
   88{SupplierContactedStatus}
   89{ReportCredibilityLevel}
   90{SupplierCardinalityLevel}
   91{UtilityLevel}
   92{PublicSafetyImpactLevel}
   93[COORDINATE]
-  93 --> 93_end((End))
   94[TRACK]
-  94 --> 94_end((End))
   95{PublicSafetyImpactLevel}
   96[TRACK]
-  96 --> 96_end((End))
   97[TRACK]
-  97 --> 97_end((End))
   98{PublicSafetyImpactLevel}
   99[COORDINATE]
-  99 --> 99_end((End))
   100[COORDINATE]
-  100 --> 100_end((End))
   101{UtilityLevel}
   102{PublicSafetyImpactLevel}
   103[TRACK]
-  103 --> 103_end((End))
   104[TRACK]
-  104 --> 104_end((End))
   105{PublicSafetyImpactLevel}
   106[TRACK]
-  106 --> 106_end((End))
   107[DECLINE]
-  107 --> 107_end((End))
   108{PublicSafetyImpactLevel}
   109[COORDINATE]
-  109 --> 109_end((End))
   110[DECLINE]
-  110 --> 110_end((End))
   111{SupplierCardinalityLevel}
   112{UtilityLevel}
   113{PublicSafetyImpactLevel}
   114[COORDINATE]
-  114 --> 114_end((End))
   115[DECLINE]
-  115 --> 115_end((End))
   116{PublicSafetyImpactLevel}
   117[DECLINE]
-  117 --> 117_end((End))
   118[DECLINE]
-  118 --> 118_end((End))
   119{PublicSafetyImpactLevel}
   120[DECLINE]
-  120 --> 120_end((End))
   121[DECLINE]
-  121 --> 121_end((End))
   122{UtilityLevel}
   123{PublicSafetyImpactLevel}
   124[DECLINE]
-  124 --> 124_end((End))
   125[DECLINE]
-  125 --> 125_end((End))
   126{PublicSafetyImpactLevel}
   127[DECLINE]
-  127 --> 127_end((End))
   128[DECLINE]
-  128 --> 128_end((End))
   129{PublicSafetyImpactLevel}
   130[DECLINE]
-  130 --> 130_end((End))
   131[DECLINE]
-  131 --> 131_end((End))
   132{ReportCredibilityLevel}
   133{SupplierCardinalityLevel}
   134{UtilityLevel}
   135{PublicSafetyImpactLevel}
   136[COORDINATE]
-  136 --> 136_end((End))
   137[TRACK]
-  137 --> 137_end((End))
   138{PublicSafetyImpactLevel}
   139[DECLINE]
-  139 --> 139_end((End))
   140[DECLINE]
-  140 --> 140_end((End))
   141{PublicSafetyImpactLevel}
   142[DECLINE]
-  142 --> 142_end((End))
   143[DECLINE]
-  143 --> 143_end((End))
   144{UtilityLevel}
   145{PublicSafetyImpactLevel}
   146[DECLINE]
-  146 --> 146_end((End))
   147[DECLINE]
-  147 --> 147_end((End))
   148{PublicSafetyImpactLevel}
   149[DECLINE]
-  149 --> 149_end((End))
   150[DECLINE]
-  150 --> 150_end((End))
   151{PublicSafetyImpactLevel}
   152[DECLINE]
-  152 --> 152_end((End))
   153[DECLINE]
-  153 --> 153_end((End))
   154{SupplierCardinalityLevel}
   155{UtilityLevel}
   156{PublicSafetyImpactLevel}
   157[DECLINE]
-  157 --> 157_end((End))
   158[DECLINE]
-  158 --> 158_end((End))
   159{PublicSafetyImpactLevel}
   160[DECLINE]
-  160 --> 160_end((End))
   161[DECLINE]
-  161 --> 161_end((End))
   162{PublicSafetyImpactLevel}
   163[DECLINE]
-  163 --> 163_end((End))
   164[DECLINE]
-  164 --> 164_end((End))
   165{UtilityLevel}
   166{PublicSafetyImpactLevel}
   167[DECLINE]
-  167 --> 167_end((End))
   168[DECLINE]
-  168 --> 168_end((End))
   169{PublicSafetyImpactLevel}
   170[DECLINE]
-  170 --> 170_end((End))
   171[DECLINE]
-  171 --> 171_end((End))
   172{PublicSafetyImpactLevel}
   173[DECLINE]
-  173 --> 173_end((End))
   174[DECLINE]
-  174 --> 174_end((End))
   0 -->|YES| 1
   1 -->|YES| 2
   2 -->|CREDIBLE| 3
@@ -469,27 +374,33 @@ flowchart TD
 ## Enums
 
 ### ReportPublicStatus
+
 - YES
 - NO
 
 ### SupplierContactedStatus
+
 - YES
 - NO
 
 ### ReportCredibilityLevel
+
 - CREDIBLE
 - NOT_CREDIBLE
 
 ### SupplierCardinalityLevel
+
 - ONE
 - MULTIPLE
 
 ### UtilityLevel
+
 - LABORIOUS
 - EFFICIENT
 - SUPER_EFFECTIVE
 
 ### PublicSafetyImpactLevel
+
 - MINIMAL
 - SIGNIFICANT
 
@@ -502,7 +413,7 @@ flowchart TD
 ## Usage
 
 ```typescript
-import { DecisionCoordinatorTriage } from './plugins/coordinator_triage';
+import { DecisionCoordinatorTriage } from "./plugins/coordinator_triage";
 
 const decision = new DecisionCoordinatorTriage({
   // Add parameters based on methodology
@@ -518,14 +429,14 @@ This methodology supports SSVC vector strings for compact representation and int
 
 ### Parameter Abbreviations
 
-| Parameter | Abbreviation | Value Mappings |
-|-----------|--------------|----------------|
-| report_public | RP | YES→Y, NO→N |
-| supplier_contacted | SC | YES→Y, NO→N |
-| report_credibility | RC | CREDIBLE→C, NOT_CREDIBLE→N |
-| supplier_cardinality | CA | ONE→O, MULTIPLE→M |
-| utility | U | LABORIOUS→L, EFFICIENT→E, SUPER_EFFECTIVE→S |
-| public_safety | PS | MINIMAL→M, SIGNIFICANT→S |
+| Parameter            | Abbreviation | Value Mappings                              |
+| -------------------- | ------------ | ------------------------------------------- |
+| report_public        | RP           | YES→Y, NO→N                                 |
+| supplier_contacted   | SC           | YES→Y, NO→N                                 |
+| report_credibility   | RC           | CREDIBLE→C, NOT_CREDIBLE→N                  |
+| supplier_cardinality | CA           | ONE→O, MULTIPLE→M                           |
+| utility              | U            | LABORIOUS→L, EFFICIENT→E, SUPER_EFFECTIVE→S |
+| public_safety        | PS           | MINIMAL→M, SIGNIFICANT→S                    |
 
 ### Vector String Format
 
@@ -543,7 +454,7 @@ const decision = new DecisionCoordinatorTriage({
   report_credibility: "CREDIBLE",
   supplier_cardinality: "ONE",
   utility: "LABORIOUS",
-  public_safety: "MINIMAL"
+  public_safety: "MINIMAL",
 });
 
 const vectorString = decision.toVector();
@@ -551,7 +462,9 @@ console.log(vectorString);
 // Output: COORD_TRIAGEv1/RP:Y/SC:Y/RC:C/CA:O/U:L/PS:M/2024-07-23T20:34:21.000Z/
 
 // Parse vector string to create decision
-const parsedDecision = DecisionCoordinatorTriage.fromVector("COORD_TRIAGEv1/RP:Y/SC:Y/RC:C/CA:O/U:L/PS:M/2024-07-23T20:34:21.000Z/");
+const parsedDecision = DecisionCoordinatorTriage.fromVector(
+  "COORD_TRIAGEv1/RP:Y/SC:Y/RC:C/CA:O/U:L/PS:M/2024-07-23T20:34:21.000Z/",
+);
 const outcome = parsedDecision.evaluate();
 ```
 
@@ -565,12 +478,13 @@ Verify the integrity of generated files using these commands:
 
 ```bash
 # Verify TypeScript plugin file
-echo "b69ee0e1d70991d7f5d880e711c93191e95011c8  /home/chris/github/typescript-ssvc/src/plugins/coordinator_triage-generated.ts" | sha1sum -c
+echo "6476a51c2270e28d58192541b78b51e97a4264c3  /home/chris/github/typescript-ssvc/src/plugins/coordinator_triage-generated.ts" | sha1sum -c
 ```
 
 **Why This Matters**: Checksum verification ensures that generated files haven't been tampered with or corrupted. This is important for:
+
 - **Security**: Detecting unauthorized modifications to generated code
-- **Integrity**: Ensuring files match their expected content exactly  
+- **Integrity**: Ensuring files match their expected content exactly
 - **Trust**: Providing cryptographic proof that files are authentic
 - **Debugging**: Confirming file corruption isn't causing unexpected behavior
 

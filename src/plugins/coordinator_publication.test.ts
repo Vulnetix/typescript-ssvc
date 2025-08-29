@@ -342,7 +342,8 @@ describe('CoordinatorPublicationPlugin', () => {
       ];
       
       testCases.forEach(({ params, expectedAction }) => {
-        const decision = plugin.createDecision(params);
+        const testPlugin = new CoordinatorPublicationPlugin();
+        const decision = testPlugin.createDecision(params);
         const outcome = decision.evaluate();
         expect(outcome.action).toBe(expectedAction);
       });
@@ -454,6 +455,285 @@ describe('Generated Coordinator Publication Components', () => {
     });
   });
   
+  describe('Vector serialization', () => {
+    it('should serialize to vector format', () => {
+      const decision = new DecisionCoordinatorPublication({
+        supplierInvolvement: SupplierInvolvementLevel.fix_ready,
+        exploitation: ExploitationStatus.active,
+        publicValueAdded: PublicValueAddedLevel.precedence
+      });
+
+      const vector = decision.toVector();
+      expect(vector).toMatch(/^COORD_PUBv1\/SI:fix_ready\/E:active\/PV:precedence\/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z\/$/);
+    });
+
+    it('should serialize different parameter combinations', () => {
+      const decision = new DecisionCoordinatorPublication({
+        supplierInvolvement: SupplierInvolvementLevel.cooperative,
+        exploitation: ExploitationStatus.none,
+        publicValueAdded: PublicValueAddedLevel.limited
+      });
+
+      const vector = decision.toVector();
+      expect(vector).toMatch(/^COORD_PUBv1\/SI:cooperative\/E:none\/PV:limited\/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z\/$/);
+    });
+
+    it('should serialize third parameter combination', () => {
+      const decision = new DecisionCoordinatorPublication({
+        supplierInvolvement: SupplierInvolvementLevel.uncooperative_unresponsive,
+        exploitation: ExploitationStatus.public_poc,
+        publicValueAdded: PublicValueAddedLevel.ampliative
+      });
+
+      const vector = decision.toVector();
+      expect(vector).toMatch(/^COORD_PUBv1\/SI:uncooperative_unresponsive\/E:public_poc\/PV:ampliative\/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z\/$/);
+    });
+
+    it('should handle undefined parameters in serialization', () => {
+      const decision = new DecisionCoordinatorPublication({
+        supplierInvolvement: undefined,
+        exploitation: ExploitationStatus.active,
+        publicValueAdded: PublicValueAddedLevel.precedence
+      });
+
+      const vector = decision.toVector();
+      expect(vector).toContain('SI:');
+      expect(vector).toContain('E:active');
+      expect(vector).toContain('PV:precedence');
+    });
+
+    it('should throw error for invalid vector format', () => {
+      expect(() => {
+        DecisionCoordinatorPublication.fromVector('invalid-format');
+      }).toThrow('Invalid vector string format for Coordinator Publication');
+    });
+
+    it('should throw error for malformed vector', () => {
+      expect(() => {
+        DecisionCoordinatorPublication.fromVector('COORD_PUBv1/malformed');
+      }).toThrow('Invalid vector string format for Coordinator Publication');
+    });
+  });
+
+  describe('Additional decision tree coverage', () => {
+    it('should cover uncooperative supplier paths', () => {
+      // Test all combinations with uncooperative suppliers
+      const testCases = [
+        {
+          params: {
+            supplier_involvement: 'uncooperative_unresponsive',
+            exploitation: 'none',
+            public_value_added: 'limited'
+          },
+          expectedAction: 'dont_publish'
+        },
+        {
+          params: {
+            supplier_involvement: 'uncooperative_unresponsive',
+            exploitation: 'none',
+            public_value_added: 'ampliative'
+          },
+          expectedAction: 'dont_publish'
+        },
+        {
+          params: {
+            supplier_involvement: 'uncooperative_unresponsive',
+            exploitation: 'none',
+            public_value_added: 'precedence'
+          },
+          expectedAction: 'publish'
+        },
+        {
+          params: {
+            supplier_involvement: 'uncooperative_unresponsive',
+            exploitation: 'public_poc',
+            public_value_added: 'limited'
+          },
+          expectedAction: 'publish'
+        },
+        {
+          params: {
+            supplier_involvement: 'uncooperative_unresponsive',
+            exploitation: 'public_poc',
+            public_value_added: 'ampliative'
+          },
+          expectedAction: 'publish'
+        },
+        {
+          params: {
+            supplier_involvement: 'uncooperative_unresponsive',
+            exploitation: 'public_poc',
+            public_value_added: 'precedence'
+          },
+          expectedAction: 'publish'
+        },
+        {
+          params: {
+            supplier_involvement: 'uncooperative_unresponsive',
+            exploitation: 'active',
+            public_value_added: 'limited'
+          },
+          expectedAction: 'publish'
+        },
+        {
+          params: {
+            supplier_involvement: 'uncooperative_unresponsive',
+            exploitation: 'active',
+            public_value_added: 'ampliative'
+          },
+          expectedAction: 'publish'
+        },
+        {
+          params: {
+            supplier_involvement: 'uncooperative_unresponsive',
+            exploitation: 'active',
+            public_value_added: 'precedence'
+          },
+          expectedAction: 'publish'
+        }
+      ];
+
+      testCases.forEach(({ params, expectedAction }) => {
+        const testPlugin = new CoordinatorPublicationPlugin();
+        const decision = testPlugin.createDecision(params);
+        const outcome = decision.evaluate();
+        expect(outcome.action).toBe(expectedAction);
+      });
+    });
+
+    it('should cover cooperative supplier with various exploitation levels', () => {
+      const testCases = [
+        {
+          params: {
+            supplier_involvement: 'cooperative',
+            exploitation: 'public_poc',
+            public_value_added: 'limited'
+          },
+          expectedAction: 'dont_publish'
+        },
+        {
+          params: {
+            supplier_involvement: 'cooperative',
+            exploitation: 'public_poc',
+            public_value_added: 'ampliative'
+          },
+          expectedAction: 'publish'
+        },
+        {
+          params: {
+            supplier_involvement: 'cooperative',
+            exploitation: 'public_poc',
+            public_value_added: 'precedence'
+          },
+          expectedAction: 'publish'
+        },
+        {
+          params: {
+            supplier_involvement: 'cooperative',
+            exploitation: 'active',
+            public_value_added: 'limited'
+          },
+          expectedAction: 'publish'
+        },
+        {
+          params: {
+            supplier_involvement: 'cooperative',
+            exploitation: 'active',
+            public_value_added: 'ampliative'
+          },
+          expectedAction: 'publish'
+        },
+        {
+          params: {
+            supplier_involvement: 'cooperative',
+            exploitation: 'active',
+            public_value_added: 'precedence'
+          },
+          expectedAction: 'publish'
+        }
+      ];
+
+      testCases.forEach(({ params, expectedAction }) => {
+        const testPlugin = new CoordinatorPublicationPlugin();
+        const decision = testPlugin.createDecision(params);
+        const outcome = decision.evaluate();
+        expect(outcome.action).toBe(expectedAction);
+      });
+    });
+
+    it('should cover fix_ready with public_poc exploitation', () => {
+      const testCases = [
+        {
+          params: {
+            supplier_involvement: 'fix_ready',
+            exploitation: 'public_poc',
+            public_value_added: 'limited'
+          },
+          expectedAction: 'dont_publish'
+        },
+        {
+          params: {
+            supplier_involvement: 'fix_ready',
+            exploitation: 'public_poc',
+            public_value_added: 'ampliative'
+          },
+          expectedAction: 'publish'
+        },
+        {
+          params: {
+            supplier_involvement: 'fix_ready',
+            exploitation: 'public_poc',
+            public_value_added: 'precedence'
+          },
+          expectedAction: 'publish'
+        }
+      ];
+
+      testCases.forEach(({ params, expectedAction }) => {
+        const testPlugin = new CoordinatorPublicationPlugin();
+        const decision = testPlugin.createDecision(params);
+        const outcome = decision.evaluate();
+        expect(outcome.action).toBe(expectedAction);
+      });
+    });
+
+    it('should cover fix_ready with active exploitation', () => {
+      const testCases = [
+        {
+          params: {
+            supplier_involvement: 'fix_ready',
+            exploitation: 'active',
+            public_value_added: 'limited'
+          },
+          expectedAction: 'publish'
+        },
+        {
+          params: {
+            supplier_involvement: 'fix_ready',
+            exploitation: 'active',
+            public_value_added: 'ampliative'
+          },
+          expectedAction: 'publish'
+        },
+        {
+          params: {
+            supplier_involvement: 'fix_ready',
+            exploitation: 'active',
+            public_value_added: 'precedence'
+          },
+          expectedAction: 'publish'
+        }
+      ];
+
+      testCases.forEach(({ params, expectedAction }) => {
+        const testPlugin = new CoordinatorPublicationPlugin();
+        const decision = testPlugin.createDecision(params);
+        const outcome = decision.evaluate();
+        expect(outcome.action).toBe(expectedAction);
+      });
+    });
+  });
+
   describe('Enums', () => {
     it('should have correct SupplierInvolvementLevel values', () => {
       expect(SupplierInvolvementLevel.fix_ready).toBe('fix_ready');

@@ -86,102 +86,237 @@ describe('CoordinatorTriagePlugin', () => {
     });
   });
   
-  describe('Decision tree logic', () => {
-    it('should coordinate for high-impact credible reports with multiple suppliers', () => {
-      const testCases = [
+  describe('Decision tree logic - comprehensive coverage', () => {
+    it('should handle all coordinate paths', () => {
+      const coordinateCases = [
+        // Report public=yes, supplier contacted=yes, credible, multiple suppliers, super_effective utility
+        { 
+          params: { report_public: 'yes', supplier_contacted: 'yes', report_credibility: 'credible', supplier_cardinality: 'multiple', utility: 'super_effective', public_safety_impact: 'significant' },
+          expected: { action: 'COORDINATE', priority: 'HIGH' }
+        },
+        // Report public=yes, supplier contacted=no, credible, multiple suppliers, super_effective utility
         {
-          params: {
-            report_public: 'yes',
-            supplier_contacted: 'yes',
-            report_credibility: 'credible',
-            supplier_cardinality: 'multiple',
-            utility: 'super_effective',
-            public_safety_impact: 'significant'
-          },
+          params: { report_public: 'yes', supplier_contacted: 'no', report_credibility: 'credible', supplier_cardinality: 'multiple', utility: 'super_effective', public_safety_impact: 'significant' },
+          expected: { action: 'COORDINATE', priority: 'HIGH' }
+        },
+        // Report public=no, supplier contacted=yes, credible, multiple suppliers, super_effective utility
+        {
+          params: { report_public: 'no', supplier_contacted: 'yes', report_credibility: 'credible', supplier_cardinality: 'multiple', utility: 'super_effective', public_safety_impact: 'significant' },
+          expected: { action: 'COORDINATE', priority: 'HIGH' }
+        },
+        // Report public=no, supplier contacted=yes, credible, multiple suppliers, laborious utility
+        {
+          params: { report_public: 'no', supplier_contacted: 'yes', report_credibility: 'credible', supplier_cardinality: 'multiple', utility: 'laborious', public_safety_impact: 'significant' },
           expected: { action: 'COORDINATE', priority: 'HIGH' }
         },
         {
-          params: {
-            report_public: 'no',
-            supplier_contacted: 'yes',
-            report_credibility: 'credible',
-            supplier_cardinality: 'multiple',
-            utility: 'super_effective',
-            public_safety_impact: 'significant'
-          },
+          params: { report_public: 'no', supplier_contacted: 'yes', report_credibility: 'credible', supplier_cardinality: 'multiple', utility: 'laborious', public_safety_impact: 'minimal' },
+          expected: { action: 'COORDINATE', priority: 'HIGH' }
+        },
+        // Report public=no, supplier contacted=yes, credible, one supplier, laborious utility
+        {
+          params: { report_public: 'no', supplier_contacted: 'yes', report_credibility: 'credible', supplier_cardinality: 'one', utility: 'laborious', public_safety_impact: 'significant' },
+          expected: { action: 'COORDINATE', priority: 'HIGH' }
+        },
+        // Report public=no, supplier contacted=yes, not_credible, multiple suppliers, super_effective utility
+        {
+          params: { report_public: 'no', supplier_contacted: 'yes', report_credibility: 'not_credible', supplier_cardinality: 'multiple', utility: 'super_effective', public_safety_impact: 'significant' },
+          expected: { action: 'COORDINATE', priority: 'HIGH' }
+        },
+        // Report public=no, supplier contacted=no, credible, multiple suppliers, super_effective utility
+        {
+          params: { report_public: 'no', supplier_contacted: 'no', report_credibility: 'credible', supplier_cardinality: 'multiple', utility: 'super_effective', public_safety_impact: 'significant' },
           expected: { action: 'COORDINATE', priority: 'HIGH' }
         }
       ];
-      
-      testCases.forEach(({ params, expected }) => {
+
+      coordinateCases.forEach(({ params, expected }) => {
         const outcome = plugin.createDecision(params);
         const result = outcome.evaluate();
         expect(result.action).toBe(expected.action);
         expect(result.priority).toBe(expected.priority);
       });
     });
-    
-    it('should decline for not credible reports', () => {
-      const testCases = [
+
+    it('should handle all track paths', () => {
+      const trackCases = [
+        // Report public=yes, supplier contacted=yes, credible, multiple suppliers, super_effective, minimal impact
         {
-          params: {
-            report_public: 'yes',
-            supplier_contacted: 'yes',
-            report_credibility: 'not_credible',
-            supplier_cardinality: 'multiple',
-            utility: 'super_effective',
-            public_safety_impact: 'significant'
-          },
-          expected: { action: 'DECLINE', priority: 'LOW' }
+          params: { report_public: 'yes', supplier_contacted: 'yes', report_credibility: 'credible', supplier_cardinality: 'multiple', utility: 'super_effective', public_safety_impact: 'minimal' },
+          expected: { action: 'TRACK', priority: 'MEDIUM' }
+        },
+        // Report public=yes, supplier contacted=yes, credible, multiple suppliers, efficient utility
+        {
+          params: { report_public: 'yes', supplier_contacted: 'yes', report_credibility: 'credible', supplier_cardinality: 'multiple', utility: 'efficient', public_safety_impact: 'significant' },
+          expected: { action: 'TRACK', priority: 'MEDIUM' }
+        },
+        // Report public=yes, supplier contacted=yes, credible, one supplier, super_effective utility
+        {
+          params: { report_public: 'yes', supplier_contacted: 'yes', report_credibility: 'credible', supplier_cardinality: 'one', utility: 'super_effective', public_safety_impact: 'significant' },
+          expected: { action: 'TRACK', priority: 'MEDIUM' }
+        },
+        // Report public=yes, supplier contacted=no, credible, multiple suppliers, super_effective, minimal impact
+        {
+          params: { report_public: 'yes', supplier_contacted: 'no', report_credibility: 'credible', supplier_cardinality: 'multiple', utility: 'super_effective', public_safety_impact: 'minimal' },
+          expected: { action: 'TRACK', priority: 'MEDIUM' }
+        },
+        // Report public=no, supplier contacted=yes, credible, multiple suppliers, super_effective, minimal impact
+        {
+          params: { report_public: 'no', supplier_contacted: 'yes', report_credibility: 'credible', supplier_cardinality: 'multiple', utility: 'super_effective', public_safety_impact: 'minimal' },
+          expected: { action: 'TRACK', priority: 'MEDIUM' }
+        },
+        // Report public=no, supplier contacted=yes, credible, multiple suppliers, efficient utility
+        {
+          params: { report_public: 'no', supplier_contacted: 'yes', report_credibility: 'credible', supplier_cardinality: 'multiple', utility: 'efficient', public_safety_impact: 'significant' },
+          expected: { action: 'TRACK', priority: 'MEDIUM' }
         },
         {
-          params: {
-            report_public: 'yes',
-            supplier_contacted: 'no',
-            report_credibility: 'not_credible',
-            supplier_cardinality: 'one',
-            utility: 'laborious',
-            public_safety_impact: 'minimal'
-          },
-          expected: { action: 'DECLINE', priority: 'LOW' }
+          params: { report_public: 'no', supplier_contacted: 'yes', report_credibility: 'credible', supplier_cardinality: 'multiple', utility: 'efficient', public_safety_impact: 'minimal' },
+          expected: { action: 'TRACK', priority: 'MEDIUM' }
+        },
+        // Report public=no, supplier contacted=yes, credible, one supplier, super_effective utility
+        {
+          params: { report_public: 'no', supplier_contacted: 'yes', report_credibility: 'credible', supplier_cardinality: 'one', utility: 'super_effective', public_safety_impact: 'significant' },
+          expected: { action: 'TRACK', priority: 'MEDIUM' }
+        },
+        {
+          params: { report_public: 'no', supplier_contacted: 'yes', report_credibility: 'credible', supplier_cardinality: 'one', utility: 'super_effective', public_safety_impact: 'minimal' },
+          expected: { action: 'TRACK', priority: 'MEDIUM' }
+        },
+        // Report public=no, supplier contacted=yes, credible, one supplier, efficient utility
+        {
+          params: { report_public: 'no', supplier_contacted: 'yes', report_credibility: 'credible', supplier_cardinality: 'one', utility: 'efficient', public_safety_impact: 'significant' },
+          expected: { action: 'TRACK', priority: 'MEDIUM' }
+        },
+        // Report public=no, supplier contacted=no, credible, multiple suppliers, super_effective, minimal impact
+        {
+          params: { report_public: 'no', supplier_contacted: 'no', report_credibility: 'credible', supplier_cardinality: 'multiple', utility: 'super_effective', public_safety_impact: 'minimal' },
+          expected: { action: 'TRACK', priority: 'MEDIUM' }
         }
       ];
-      
-      testCases.forEach(({ params, expected }) => {
+
+      trackCases.forEach(({ params, expected }) => {
         const outcome = plugin.createDecision(params);
         const result = outcome.evaluate();
         expect(result.action).toBe(expected.action);
         expect(result.priority).toBe(expected.priority);
       });
     });
-    
-    it('should track for moderate impact scenarios', () => {
-      const testCases = [
+
+    it('should handle all decline paths', () => {
+      const declineCases = [
+        // Report public=yes, supplier contacted=yes, credible, multiple suppliers, efficient, minimal impact
         {
-          params: {
-            report_public: 'yes',
-            supplier_contacted: 'yes',
-            report_credibility: 'credible',
-            supplier_cardinality: 'multiple',
-            utility: 'efficient',
-            public_safety_impact: 'significant'
-          },
-          expected: { action: 'TRACK', priority: 'MEDIUM' }
+          params: { report_public: 'yes', supplier_contacted: 'yes', report_credibility: 'credible', supplier_cardinality: 'multiple', utility: 'efficient', public_safety_impact: 'minimal' },
+          expected: { action: 'DECLINE', priority: 'LOW' }
+        },
+        // All laborious paths for credible reports
+        {
+          params: { report_public: 'yes', supplier_contacted: 'yes', report_credibility: 'credible', supplier_cardinality: 'multiple', utility: 'laborious', public_safety_impact: 'significant' },
+          expected: { action: 'DECLINE', priority: 'LOW' }
         },
         {
-          params: {
-            report_public: 'no',
-            supplier_contacted: 'yes',
-            report_credibility: 'credible',
-            supplier_cardinality: 'multiple',
-            utility: 'efficient',
-            public_safety_impact: 'minimal'
-          },
-          expected: { action: 'TRACK', priority: 'MEDIUM' }
+          params: { report_public: 'yes', supplier_contacted: 'yes', report_credibility: 'credible', supplier_cardinality: 'multiple', utility: 'laborious', public_safety_impact: 'minimal' },
+          expected: { action: 'DECLINE', priority: 'LOW' }
+        },
+        // One supplier paths
+        {
+          params: { report_public: 'yes', supplier_contacted: 'yes', report_credibility: 'credible', supplier_cardinality: 'one', utility: 'super_effective', public_safety_impact: 'minimal' },
+          expected: { action: 'DECLINE', priority: 'LOW' }
+        },
+        {
+          params: { report_public: 'yes', supplier_contacted: 'yes', report_credibility: 'credible', supplier_cardinality: 'one', utility: 'efficient', public_safety_impact: 'significant' },
+          expected: { action: 'DECLINE', priority: 'LOW' }
+        },
+        {
+          params: { report_public: 'yes', supplier_contacted: 'yes', report_credibility: 'credible', supplier_cardinality: 'one', utility: 'efficient', public_safety_impact: 'minimal' },
+          expected: { action: 'DECLINE', priority: 'LOW' }
+        },
+        {
+          params: { report_public: 'yes', supplier_contacted: 'yes', report_credibility: 'credible', supplier_cardinality: 'one', utility: 'laborious', public_safety_impact: 'significant' },
+          expected: { action: 'DECLINE', priority: 'LOW' }
+        },
+        {
+          params: { report_public: 'yes', supplier_contacted: 'yes', report_credibility: 'credible', supplier_cardinality: 'one', utility: 'laborious', public_safety_impact: 'minimal' },
+          expected: { action: 'DECLINE', priority: 'LOW' }
+        },
+        // All not_credible paths for report_public=yes, supplier_contacted=yes
+        {
+          params: { report_public: 'yes', supplier_contacted: 'yes', report_credibility: 'not_credible', supplier_cardinality: 'multiple', utility: 'super_effective', public_safety_impact: 'significant' },
+          expected: { action: 'DECLINE', priority: 'LOW' }
+        },
+        {
+          params: { report_public: 'yes', supplier_contacted: 'yes', report_credibility: 'not_credible', supplier_cardinality: 'multiple', utility: 'super_effective', public_safety_impact: 'minimal' },
+          expected: { action: 'DECLINE', priority: 'LOW' }
+        },
+        {
+          params: { report_public: 'yes', supplier_contacted: 'yes', report_credibility: 'not_credible', supplier_cardinality: 'multiple', utility: 'efficient', public_safety_impact: 'significant' },
+          expected: { action: 'DECLINE', priority: 'LOW' }
+        },
+        {
+          params: { report_public: 'yes', supplier_contacted: 'yes', report_credibility: 'not_credible', supplier_cardinality: 'multiple', utility: 'efficient', public_safety_impact: 'minimal' },
+          expected: { action: 'DECLINE', priority: 'LOW' }
+        },
+        // More not_credible paths for various combinations
+        {
+          params: { report_public: 'yes', supplier_contacted: 'yes', report_credibility: 'not_credible', supplier_cardinality: 'one', utility: 'super_effective', public_safety_impact: 'significant' },
+          expected: { action: 'DECLINE', priority: 'LOW' }
+        },
+        {
+          params: { report_public: 'yes', supplier_contacted: 'no', report_credibility: 'not_credible', supplier_cardinality: 'one', utility: 'laborious', public_safety_impact: 'minimal' },
+          expected: { action: 'DECLINE', priority: 'LOW' }
+        },
+        // Report public=no, supplier contacted=yes, credible, one supplier, efficient, minimal impact
+        {
+          params: { report_public: 'no', supplier_contacted: 'yes', report_credibility: 'credible', supplier_cardinality: 'one', utility: 'efficient', public_safety_impact: 'minimal' },
+          expected: { action: 'DECLINE', priority: 'LOW' }
+        },
+        // Report public=no, supplier contacted=yes, credible, one supplier, laborious, minimal impact
+        {
+          params: { report_public: 'no', supplier_contacted: 'yes', report_credibility: 'credible', supplier_cardinality: 'one', utility: 'laborious', public_safety_impact: 'minimal' },
+          expected: { action: 'DECLINE', priority: 'LOW' }
+        },
+        // Report public=no, supplier contacted=yes, not_credible, multiple, super_effective, minimal
+        {
+          params: { report_public: 'no', supplier_contacted: 'yes', report_credibility: 'not_credible', supplier_cardinality: 'multiple', utility: 'super_effective', public_safety_impact: 'minimal' },
+          expected: { action: 'DECLINE', priority: 'LOW' }
+        },
+        // More paths for complete coverage
+        {
+          params: { report_public: 'yes', supplier_contacted: 'no', report_credibility: 'credible', supplier_cardinality: 'multiple', utility: 'efficient', public_safety_impact: 'significant' },
+          expected: { action: 'DECLINE', priority: 'LOW' }
+        },
+        {
+          params: { report_public: 'yes', supplier_contacted: 'no', report_credibility: 'credible', supplier_cardinality: 'multiple', utility: 'efficient', public_safety_impact: 'minimal' },
+          expected: { action: 'DECLINE', priority: 'LOW' }
+        },
+        {
+          params: { report_public: 'yes', supplier_contacted: 'no', report_credibility: 'credible', supplier_cardinality: 'multiple', utility: 'laborious', public_safety_impact: 'significant' },
+          expected: { action: 'DECLINE', priority: 'LOW' }
+        },
+        {
+          params: { report_public: 'yes', supplier_contacted: 'no', report_credibility: 'credible', supplier_cardinality: 'multiple', utility: 'laborious', public_safety_impact: 'minimal' },
+          expected: { action: 'DECLINE', priority: 'LOW' }
+        },
+        {
+          params: { report_public: 'no', supplier_contacted: 'no', report_credibility: 'credible', supplier_cardinality: 'multiple', utility: 'efficient', public_safety_impact: 'significant' },
+          expected: { action: 'DECLINE', priority: 'LOW' }
+        },
+        {
+          params: { report_public: 'no', supplier_contacted: 'no', report_credibility: 'credible', supplier_cardinality: 'multiple', utility: 'efficient', public_safety_impact: 'minimal' },
+          expected: { action: 'DECLINE', priority: 'LOW' }
+        },
+        {
+          params: { report_public: 'no', supplier_contacted: 'no', report_credibility: 'credible', supplier_cardinality: 'multiple', utility: 'laborious', public_safety_impact: 'significant' },
+          expected: { action: 'DECLINE', priority: 'LOW' }
+        },
+        {
+          params: { report_public: 'no', supplier_contacted: 'no', report_credibility: 'credible', supplier_cardinality: 'multiple', utility: 'laborious', public_safety_impact: 'minimal' },
+          expected: { action: 'DECLINE', priority: 'LOW' }
         }
       ];
-      
-      testCases.forEach(({ params, expected }) => {
+
+      declineCases.forEach(({ params, expected }) => {
         const outcome = plugin.createDecision(params);
         const result = outcome.evaluate();
         expect(result.action).toBe(expected.action);
@@ -271,6 +406,64 @@ describe('DecisionCoordinatorTriage', () => {
       const outcome = decision.evaluate();
       expect(outcome.action).toBe(ActionType.COORDINATE);
       expect(outcome.priority).toBe(PriorityLevel.HIGH);
+    });
+  });
+
+  describe('Vector serialization', () => {
+    it('should serialize to vector format', () => {
+      const decision = new DecisionCoordinatorTriage({
+        reportPublic: ReportPublicStatus.YES,
+        supplierContacted: SupplierContactedStatus.YES,
+        reportCredibility: ReportCredibilityLevel.CREDIBLE,
+        supplierCardinality: SupplierCardinalityLevel.MULTIPLE,
+        utility: UtilityLevel.SUPER_EFFECTIVE,
+        publicSafetyImpact: PublicSafetyImpactLevel.SIGNIFICANT
+      });
+
+      const vector = decision.toVector();
+      expect(vector).toMatch(/^COORD_TRIAGEv1\/RP:Y\/SC:Y\/RC:C\/CA:M\/U:S\/PS:S\/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z\/$/);
+    });
+
+    it('should serialize with different parameter combinations', () => {
+      const decision = new DecisionCoordinatorTriage({
+        reportPublic: ReportPublicStatus.NO,
+        supplierContacted: SupplierContactedStatus.NO,
+        reportCredibility: ReportCredibilityLevel.NOT_CREDIBLE,
+        supplierCardinality: SupplierCardinalityLevel.ONE,
+        utility: UtilityLevel.LABORIOUS,
+        publicSafetyImpact: PublicSafetyImpactLevel.MINIMAL
+      });
+
+      const vector = decision.toVector();
+      expect(vector).toMatch(/^COORD_TRIAGEv1\/RP:N\/SC:N\/RC:N\/CA:O\/U:L\/PS:M\/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z\/$/);
+    });
+
+    it('should handle undefined parameters in vector', () => {
+      const decision = new DecisionCoordinatorTriage({
+        reportPublic: undefined,
+        supplierContacted: SupplierContactedStatus.YES,
+        reportCredibility: ReportCredibilityLevel.CREDIBLE,
+        supplierCardinality: SupplierCardinalityLevel.ONE,
+        utility: UtilityLevel.EFFICIENT,
+        publicSafetyImpact: PublicSafetyImpactLevel.MINIMAL
+      });
+
+      const vector = decision.toVector();
+      expect(vector).toContain('RP:');
+      expect(vector).toContain('SC:Y');
+      expect(vector).toContain('RC:C');
+    });
+
+    it('should throw error for invalid vector format', () => {
+      expect(() => {
+        DecisionCoordinatorTriage.fromVector('invalid-vector-format');
+      }).toThrow('Invalid vector string format for Coordinator Triage');
+    });
+
+    it('should throw error for malformed vector', () => {
+      expect(() => {
+        DecisionCoordinatorTriage.fromVector('COORD_TRIAGEv1/malformed');
+      }).toThrow('Invalid vector string format for Coordinator Triage');
     });
   });
 });

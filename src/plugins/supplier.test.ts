@@ -629,6 +629,71 @@ describe('Generated Supplier Components', () => {
     });
   });
   
+  describe('Vector serialization', () => {
+    it('should serialize to vector format', () => {
+      const decision = new DecisionSupplier({
+        exploitation: ExploitationStatus.active,
+        utility: UtilityLevel.super_effective,
+        technicalImpact: TechnicalImpactLevel.total,
+        publicSafetyImpact: PublicSafetyImpactLevel.significant
+      });
+
+      const vector = decision.toVector();
+      expect(vector).toMatch(/^SUPPLIERv1\/E:active\/U:super_effective\/T:total\/P:significant\/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z\/$/);
+    });
+
+    it('should serialize different parameter combinations', () => {
+      const decision = new DecisionSupplier({
+        exploitation: ExploitationStatus.none,
+        utility: UtilityLevel.laborious,
+        technicalImpact: TechnicalImpactLevel.partial,
+        publicSafetyImpact: PublicSafetyImpactLevel.minimal
+      });
+
+      const vector = decision.toVector();
+      expect(vector).toMatch(/^SUPPLIERv1\/E:none\/U:laborious\/T:partial\/P:minimal\/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z\/$/);
+    });
+
+    it('should serialize public_poc exploitation', () => {
+      const decision = new DecisionSupplier({
+        exploitation: ExploitationStatus.public_poc,
+        utility: UtilityLevel.efficient,
+        technicalImpact: TechnicalImpactLevel.total,
+        publicSafetyImpact: PublicSafetyImpactLevel.minimal
+      });
+
+      const vector = decision.toVector();
+      expect(vector).toMatch(/^SUPPLIERv1\/E:public_poc\/U:efficient\/T:total\/P:minimal\/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z\/$/);
+    });
+
+    it('should handle undefined parameters in vector', () => {
+      const decision = new DecisionSupplier({
+        exploitation: undefined,
+        utility: UtilityLevel.efficient,
+        technicalImpact: TechnicalImpactLevel.total,
+        publicSafetyImpact: PublicSafetyImpactLevel.significant
+      });
+
+      const vector = decision.toVector();
+      expect(vector).toContain('E:');
+      expect(vector).toContain('U:efficient');
+      expect(vector).toContain('T:total');
+      expect(vector).toContain('P:significant');
+    });
+
+    it('should throw error for invalid vector format', () => {
+      expect(() => {
+        DecisionSupplier.fromVector('invalid-format');
+      }).toThrow('Invalid vector string format for Supplier');
+    });
+
+    it('should throw error for malformed vector', () => {
+      expect(() => {
+        DecisionSupplier.fromVector('SUPPLIERv1/malformed');
+      }).toThrow('Invalid vector string format for Supplier');
+    });
+  });
+
   describe('Enums', () => {
     it('should have correct ExploitationStatus values', () => {
       expect(ExploitationStatus.none).toBe('none');
