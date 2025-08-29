@@ -1,6 +1,7 @@
 name: "Coordinator Publication"
 description: "CERT/CC Coordinator Publication Decision Model"
 version: "1.0"
+url: "https://certcc.github.io/SSVC/howto/publication_decision/"
 
 enums:
   SupplierInvolvementLevel:
@@ -18,13 +19,6 @@ enums:
     - ampliative
     - precedence
 
-  ActionType:
-    - publish
-    - dont_publish
-
-  DecisionPriorityLevel:
-    - low
-    - high
 
 priorityMap:
   publish: high
@@ -33,191 +27,94 @@ priorityMap:
 defaultAction: dont_publish
 
 decisionTree:
-  # Row 1: Fix Ready, None, Limited
-  - conditions:
-      supplier_involvement: fix_ready
-      exploitation: none
-      public_value_added: limited
-    action: dont_publish
-
-  # Row 2: Fix Ready, None, Ampliative  
-  - conditions:
-      supplier_involvement: fix_ready
-      exploitation: none
-      public_value_added: ampliative
-    action: publish
-
-  # Row 3: Fix Ready, None, Precedence
-  - conditions:
-      supplier_involvement: fix_ready
-      exploitation: none
-      public_value_added: precedence
-    action: publish
-
-  # Row 4: Fix Ready, Public PoC, Limited
-  - conditions:
-      supplier_involvement: fix_ready
-      exploitation: public_poc
-      public_value_added: limited
-    action: dont_publish
-
-  # Row 5: Fix Ready, Public PoC, Ampliative
-  - conditions:
-      supplier_involvement: fix_ready
-      exploitation: public_poc
-      public_value_added: ampliative
-    action: publish
-
-  # Row 6: Fix Ready, Public PoC, Precedence
-  - conditions:
-      supplier_involvement: fix_ready
-      exploitation: public_poc
-      public_value_added: precedence
-    action: publish
-
-  # Row 7: Fix Ready, Active, Limited
-  - conditions:
-      supplier_involvement: fix_ready
-      exploitation: active
-      public_value_added: limited
-    action: publish
-
-  # Row 8: Fix Ready, Active, Ampliative
-  - conditions:
-      supplier_involvement: fix_ready
-      exploitation: active
-      public_value_added: ampliative
-    action: publish
-
-  # Row 9: Fix Ready, Active, Precedence
-  - conditions:
-      supplier_involvement: fix_ready
-      exploitation: active
-      public_value_added: precedence
-    action: publish
-
-  # Row 10: Cooperative, None, Limited
-  - conditions:
-      supplier_involvement: cooperative
-      exploitation: none
-      public_value_added: limited
-    action: dont_publish
-
-  # Row 11: Cooperative, None, Ampliative
-  - conditions:
-      supplier_involvement: cooperative
-      exploitation: none
-      public_value_added: ampliative
-    action: dont_publish
-
-  # Row 12: Cooperative, None, Precedence
-  - conditions:
-      supplier_involvement: cooperative
-      exploitation: none
-      public_value_added: precedence
-    action: publish
-
-  # Row 13: Cooperative, Public PoC, Limited
-  - conditions:
-      supplier_involvement: cooperative
-      exploitation: public_poc
-      public_value_added: limited
-    action: dont_publish
-
-  # Row 14: Cooperative, Public PoC, Ampliative
-  - conditions:
-      supplier_involvement: cooperative
-      exploitation: public_poc
-      public_value_added: ampliative
-    action: publish
-
-  # Row 15: Cooperative, Public PoC, Precedence
-  - conditions:
-      supplier_involvement: cooperative
-      exploitation: public_poc
-      public_value_added: precedence
-    action: publish
-
-  # Row 16: Cooperative, Active, Limited
-  - conditions:
-      supplier_involvement: cooperative
-      exploitation: active
-      public_value_added: limited
-    action: publish
-
-  # Row 17: Cooperative, Active, Ampliative
-  - conditions:
-      supplier_involvement: cooperative
-      exploitation: active
-      public_value_added: ampliative
-    action: publish
-
-  # Row 18: Cooperative, Active, Precedence
-  - conditions:
-      supplier_involvement: cooperative
-      exploitation: active
-      public_value_added: precedence
-    action: publish
-
-  # Row 19: Uncooperative/Unresponsive, None, Limited
-  - conditions:
-      supplier_involvement: uncooperative_unresponsive
-      exploitation: none
-      public_value_added: limited
-    action: dont_publish
-
-  # Row 20: Uncooperative/Unresponsive, None, Ampliative
-  - conditions:
-      supplier_involvement: uncooperative_unresponsive
-      exploitation: none
-      public_value_added: ampliative
-    action: dont_publish
-
-  # Row 21: Uncooperative/Unresponsive, None, Precedence
-  - conditions:
-      supplier_involvement: uncooperative_unresponsive
-      exploitation: none
-      public_value_added: precedence
-    action: publish
-
-  # Row 22: Uncooperative/Unresponsive, Public PoC, Limited
-  - conditions:
-      supplier_involvement: uncooperative_unresponsive
-      exploitation: public_poc
-      public_value_added: limited
-    action: publish
-
-  # Row 23: Uncooperative/Unresponsive, Public PoC, Ampliative
-  - conditions:
-      supplier_involvement: uncooperative_unresponsive
-      exploitation: public_poc
-      public_value_added: ampliative
-    action: publish
-
-  # Row 24: Uncooperative/Unresponsive, Public PoC, Precedence
-  - conditions:
-      supplier_involvement: uncooperative_unresponsive
-      exploitation: public_poc
-      public_value_added: precedence
-    action: publish
-
-  # Row 25: Uncooperative/Unresponsive, Active, Limited
-  - conditions:
-      supplier_involvement: uncooperative_unresponsive
-      exploitation: active
-      public_value_added: limited
-    action: publish
-
-  # Row 26: Uncooperative/Unresponsive, Active, Ampliative
-  - conditions:
-      supplier_involvement: uncooperative_unresponsive
-      exploitation: active
-      public_value_added: ampliative
-    action: publish
-
-  # Row 27: Uncooperative/Unresponsive, Active, Precedence
-  - conditions:
-      supplier_involvement: uncooperative_unresponsive
-      exploitation: active
-      public_value_added: precedence
-    action: publish
+  type: SupplierInvolvementLevel
+  children:
+    fix_ready:
+      type: ExploitationStatus
+      children:
+        none:
+          type: PublicValueAddedLevel
+          children:
+            limited: dont_publish
+            ampliative: publish
+            precedence: publish
+        public_poc:
+          type: PublicValueAddedLevel
+          children:
+            limited: dont_publish
+            ampliative: publish
+            precedence: publish
+        active:
+          type: PublicValueAddedLevel
+          children:
+            limited: publish
+            ampliative: publish
+            precedence: publish
+    cooperative:
+      type: ExploitationStatus
+      children:
+        none:
+          type: PublicValueAddedLevel
+          children:
+            limited: dont_publish
+            ampliative: dont_publish
+            precedence: publish
+        public_poc:
+          type: PublicValueAddedLevel
+          children:
+            limited: dont_publish
+            ampliative: publish
+            precedence: publish
+        active:
+          type: PublicValueAddedLevel
+          children:
+            limited: publish
+            ampliative: publish
+            precedence: publish
+    uncooperative_unresponsive:
+      type: ExploitationStatus
+      children:
+        none:
+          type: PublicValueAddedLevel
+          children:
+            limited: dont_publish
+            ampliative: dont_publish
+            precedence: publish
+        public_poc:
+          type: PublicValueAddedLevel
+          children:
+            limited: publish
+            ampliative: publish
+            precedence: publish
+        active:
+          type: PublicValueAddedLevel
+          children:
+            limited: publish
+            ampliative: publish
+            precedence: publish
+# Vector string metadata
+vectorMetadata:
+  prefix: COORD_PUB
+  version: v1
+  parameterMappings:
+    supplier_involvement:
+      abbrev: SI
+      enumType: SupplierInvolvementLevel
+      valueMappings:
+        fix_ready: F
+        cooperative: C
+        uncooperative_unresponsive: U
+    exploitation:
+      abbrev: E
+      enumType: ExploitationStatus
+      valueMappings:
+        none: N
+        public_poc: P
+        active: A
+    public_value_added:
+      abbrev: PV
+      enumType: PublicValueAddedLevel
+      valueMappings:
+        limited: L
+        ampliative: A
+        precedence: P

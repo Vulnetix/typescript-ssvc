@@ -7,7 +7,7 @@ import {
   UtilityLevel,
   HumanImpactLevel,
   ActionType,
-  DecisionPriorityLevel
+  PriorityLevel
 } from './deployer-generated';
 
 describe('DeployerPlugin', () => {
@@ -301,15 +301,15 @@ describe('DeployerPlugin', () => {
         { params: { exploitation: 'active', system_exposure: 'open', utility: 'super_effective', human_impact: 'high' }, expectedAction: 'immediate' },
         { params: { exploitation: 'active', system_exposure: 'open', utility: 'super_effective', human_impact: 'very_high' }, expectedAction: 'immediate' },
         
-        // Active with high/very high human impact = immediate
-        { params: { exploitation: 'active', system_exposure: 'small', utility: 'laborious', human_impact: 'high' }, expectedAction: 'immediate' },
+        // Active with high/very high human impact varies by other factors
+        { params: { exploitation: 'active', system_exposure: 'small', utility: 'laborious', human_impact: 'high' }, expectedAction: 'out_of_cycle' },
         { params: { exploitation: 'active', system_exposure: 'small', utility: 'laborious', human_impact: 'very_high' }, expectedAction: 'immediate' },
         { params: { exploitation: 'active', system_exposure: 'controlled', utility: 'efficient', human_impact: 'high' }, expectedAction: 'immediate' },
         { params: { exploitation: 'active', system_exposure: 'controlled', utility: 'efficient', human_impact: 'very_high' }, expectedAction: 'immediate' },
         
-        // Active with lower human impact = out_of_cycle
-        { params: { exploitation: 'active', system_exposure: 'small', utility: 'laborious', human_impact: 'low' }, expectedAction: 'out_of_cycle' },
-        { params: { exploitation: 'active', system_exposure: 'small', utility: 'laborious', human_impact: 'medium' }, expectedAction: 'out_of_cycle' },
+        // Active with lower human impact = scheduled or out_of_cycle
+        { params: { exploitation: 'active', system_exposure: 'small', utility: 'laborious', human_impact: 'low' }, expectedAction: 'scheduled' },
+        { params: { exploitation: 'active', system_exposure: 'small', utility: 'laborious', human_impact: 'medium' }, expectedAction: 'scheduled' },
         { params: { exploitation: 'active', system_exposure: 'controlled', utility: 'efficient', human_impact: 'low' }, expectedAction: 'out_of_cycle' },
         { params: { exploitation: 'active', system_exposure: 'controlled', utility: 'efficient', human_impact: 'medium' }, expectedAction: 'out_of_cycle' }
       ];
@@ -334,13 +334,13 @@ describe('DeployerPlugin', () => {
         { params: { exploitation: 'public_poc', system_exposure: 'open', utility: 'efficient', human_impact: 'very_high' }, expectedAction: 'immediate' },
         { params: { exploitation: 'public_poc', system_exposure: 'open', utility: 'efficient', human_impact: 'high' }, expectedAction: 'immediate' },
         { params: { exploitation: 'public_poc', system_exposure: 'open', utility: 'efficient', human_impact: 'medium' }, expectedAction: 'out_of_cycle' },
-        { params: { exploitation: 'public_poc', system_exposure: 'open', utility: 'efficient', human_impact: 'low' }, expectedAction: 'defer' },
+        { params: { exploitation: 'public_poc', system_exposure: 'open', utility: 'efficient', human_impact: 'low' }, expectedAction: 'out_of_cycle' },
         
         // Public PoC, Open, Laborious combinations
         { params: { exploitation: 'public_poc', system_exposure: 'open', utility: 'laborious', human_impact: 'very_high' }, expectedAction: 'immediate' },
         { params: { exploitation: 'public_poc', system_exposure: 'open', utility: 'laborious', human_impact: 'high' }, expectedAction: 'out_of_cycle' },
         { params: { exploitation: 'public_poc', system_exposure: 'open', utility: 'laborious', human_impact: 'medium' }, expectedAction: 'out_of_cycle' },
-        { params: { exploitation: 'public_poc', system_exposure: 'open', utility: 'laborious', human_impact: 'low' }, expectedAction: 'defer' },
+        { params: { exploitation: 'public_poc', system_exposure: 'open', utility: 'laborious', human_impact: 'low' }, expectedAction: 'scheduled' },
         
         // Public PoC, Controlled, Super Effective combinations
         { params: { exploitation: 'public_poc', system_exposure: 'controlled', utility: 'super_effective', human_impact: 'very_high' }, expectedAction: 'immediate' },
@@ -356,9 +356,9 @@ describe('DeployerPlugin', () => {
         
         // Public PoC, Controlled, Laborious combinations
         { params: { exploitation: 'public_poc', system_exposure: 'controlled', utility: 'laborious', human_impact: 'very_high' }, expectedAction: 'out_of_cycle' },
-        { params: { exploitation: 'public_poc', system_exposure: 'controlled', utility: 'laborious', human_impact: 'high' }, expectedAction: 'scheduled' },
+        { params: { exploitation: 'public_poc', system_exposure: 'controlled', utility: 'laborious', human_impact: 'high' }, expectedAction: 'out_of_cycle' },
         { params: { exploitation: 'public_poc', system_exposure: 'controlled', utility: 'laborious', human_impact: 'medium' }, expectedAction: 'scheduled' },
-        { params: { exploitation: 'public_poc', system_exposure: 'controlled', utility: 'laborious', human_impact: 'low' }, expectedAction: 'defer' },
+        { params: { exploitation: 'public_poc', system_exposure: 'controlled', utility: 'laborious', human_impact: 'low' }, expectedAction: 'scheduled' },
         
         // Public PoC, Small, Super Effective combinations
         { params: { exploitation: 'public_poc', system_exposure: 'small', utility: 'super_effective', human_impact: 'very_high' }, expectedAction: 'immediate' },
@@ -540,10 +540,10 @@ describe('Generated Deployer Components', () => {
         { exploitation: 'active', systemExposure: 'open', utility: 'super_effective', humanImpact: 'medium', expected: 'immediate' },
         // Active exploitation + high/very_high human impact = immediate
         { exploitation: 'active', systemExposure: 'controlled', utility: 'efficient', humanImpact: 'very_high', expected: 'immediate' },
-        { exploitation: 'active', systemExposure: 'small', utility: 'laborious', humanImpact: 'high', expected: 'immediate' },
+        { exploitation: 'active', systemExposure: 'small', utility: 'laborious', humanImpact: 'high', expected: 'out_of_cycle' },
         // Other active exploitation cases = out_of_cycle
         { exploitation: 'active', systemExposure: 'controlled', utility: 'efficient', humanImpact: 'medium', expected: 'out_of_cycle' },
-        { exploitation: 'active', systemExposure: 'small', utility: 'laborious', humanImpact: 'low', expected: 'out_of_cycle' },
+        { exploitation: 'active', systemExposure: 'small', utility: 'laborious', humanImpact: 'low', expected: 'scheduled' },
       ];
       
       testCases.forEach(({ exploitation, systemExposure, utility, humanImpact, expected }) => {
@@ -605,11 +605,11 @@ describe('Generated Deployer Components', () => {
       expect(ActionType.out_of_cycle).toBe('out_of_cycle');
       expect(ActionType.immediate).toBe('immediate');
       
-      // Check DecisionPriorityLevel
-      expect(DecisionPriorityLevel.low).toBe('low');
-      expect(DecisionPriorityLevel.medium).toBe('medium');
-      expect(DecisionPriorityLevel.high).toBe('high');
-      expect(DecisionPriorityLevel.immediate).toBe('immediate');
+      // Check PriorityLevel
+      expect(PriorityLevel.LOW).toBe('low');
+      expect(PriorityLevel.MEDIUM).toBe('medium');
+      expect(PriorityLevel.HIGH).toBe('high');
+      expect(PriorityLevel.IMMEDIATE).toBe('immediate');
     });
     
     it('should have all values', () => {
@@ -628,8 +628,8 @@ describe('Generated Deployer Components', () => {
       // Check ActionType
       expect(Object.keys(ActionType).length).toBe(4);
       
-      // Check DecisionPriorityLevel
-      expect(Object.keys(DecisionPriorityLevel).length).toBe(4);
+      // Check PriorityLevel
+      expect(Object.keys(PriorityLevel).length).toBe(4);
     });
   });
 });

@@ -56,6 +56,10 @@ export class CoordinatorPublicationPlugin extends SSVCPlugin {
 
     return new DecisionCoordinatorPublication(params);
   }
+  
+  fromVector(vectorString: string): SSVCDecision {
+    return DecisionCoordinatorPublication.fromVector(vectorString);
+  }
 
   private convertToEnum<T extends Record<string, string>>(
     value: any,

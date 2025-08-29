@@ -19,6 +19,18 @@ interface DecisionNode {
   children?: { [key: string]: DecisionNode | string };
 }
 
+interface VectorMetadata {
+  prefix: string;
+  version: string;
+  parameterMappings: {
+    [paramName: string]: {
+      abbrev: string;
+      enumType: string;
+      valueMappings?: { [enumValue: string]: string };
+    };
+  };
+}
+
 interface PluginConfig {
   name: string;
   description: string;
@@ -28,6 +40,7 @@ interface PluginConfig {
   priorityMap: { [action: string]: string };
   decisionTree: DecisionNode;
   defaultAction?: string;
+  vectorMetadata?: VectorMetadata;
 }
 
 class SSVCPluginGenerator {
@@ -124,27 +137,27 @@ ${decisionClassCode}
   }
 
   private generatePriorityMap(priorityMap: { [action: string]: string }, enums: EnumDefinition): string {
-    let actionEnum = '';
-    let priorityEnum = '';
+    // Generate action and priority enums dynamically from priorityMap
+    const actions = Object.keys(priorityMap);
+    const priorities = [...new Set(Object.values(priorityMap))];
 
-    for (const enumName of Object.keys(enums)) {
-      if (enumName.includes('ActionType') || enumName === 'ActionType') {
-        actionEnum = enumName;
-      } else if (enumName.includes('Priority') || enumName.endsWith('PriorityLevel')) {
-        priorityEnum = enumName;
-      }
-    }
+    // Generate ActionType enum
+    const actionEnumValues = actions.map(action => `  ${action} = '${action}'`).join(',\n');
+    const actionEnum = `export enum ActionType {\n${actionEnumValues}\n}`;
 
-    if (!actionEnum || !priorityEnum) {
-      throw new Error(`Could not find ActionType and Priority enums. Available enums: ${Object.keys(enums).join(', ')}`);
-    }
+    // Generate PriorityLevel enum
+    const priorityEnumValues = priorities.map(priority => `  ${priority.toUpperCase()} = '${priority}'`).join(',\n');
+    const priorityEnum = `export enum PriorityLevel {\n${priorityEnumValues}\n}`;
 
+    // Generate priority mappings
     const mappings: string[] = [];
     for (const [action, priority] of Object.entries(priorityMap)) {
-      mappings.push(`  [${actionEnum}.${action}]: ${priorityEnum}.${priority}`);
+      mappings.push(`  [ActionType.${action}]: PriorityLevel.${priority.toUpperCase()}`);
     }
 
-    return `export const priorityMap = {\n${mappings.join(',\n')}\n};`;
+    const priorityMapCode = `export const priorityMap = {\n${mappings.join(',\n')}\n};`;
+
+    return `${actionEnum}\n\n${priorityEnum}\n\n${priorityMapCode}`;
   }
 
   private generateOutcomeClass(pluginName: string): string {
@@ -220,8 +233,90 @@ ${typeConversions.join('\n')}
     return this.outcome;
   }
 
+${this.generateVectorMethods(config, className)}
+
 ${treeMethod}
 }`;
+  }
+
+  private generateVectorMethods(config: PluginConfig, className: string): string {
+    if (!config.vectorMetadata) {
+      return '';
+    }
+
+    const vectorMeta = config.vectorMetadata;
+
+    // Generate toVector method
+    const toVectorParams: string[] = [];
+    for (const [paramName, mapping] of Object.entries(vectorMeta.parameterMappings)) {
+      const actualParamName = this.enumToParamName(mapping.enumType);
+      const valueMappings = mapping.valueMappings || {};
+      const hasValueMappings = Object.keys(valueMappings).length > 0;
+
+      if (hasValueMappings) {
+        toVectorParams.push(`    const ${paramName}Vector = ${JSON.stringify(valueMappings)}[this.${actualParamName}?.toString?.()?.toUpperCase?.() ?? ''] || this.${actualParamName} || '';`);
+      } else {
+        toVectorParams.push(`    const ${paramName}Vector = this.${actualParamName} || '';`);
+      }
+    }
+
+    const vectorSegments = Object.entries(vectorMeta.parameterMappings)
+      .map(([paramName, mapping]) => `${mapping.abbrev}:\${${paramName}Vector}`)
+      .join('/');
+
+    const fromVectorValidations: string[] = [];
+    const fromVectorParams: string[] = [];
+
+    for (const [paramName, mapping] of Object.entries(vectorMeta.parameterMappings)) {
+      const actualParamName = this.enumToParamName(mapping.enumType);
+      const reverseValueMappings = mapping.valueMappings ? Object.fromEntries(
+        Object.entries(mapping.valueMappings).map(([k, v]) => [v, k])
+      ) : {};
+
+      fromVectorValidations.push(`    const ${paramName}Match = params.get('${mapping.abbrev}');`);
+
+      if (Object.keys(reverseValueMappings).length > 0) {
+        fromVectorParams.push(`      ${actualParamName}: ${JSON.stringify(reverseValueMappings)}[${paramName}Match || ''] || ${paramName}Match,`);
+      } else {
+        fromVectorParams.push(`      ${actualParamName}: ${paramName}Match,`);
+      }
+    }
+
+    return `  toVector(): string {
+    if (!this.outcome) {
+      this.evaluate();
+    }
+
+${toVectorParams.join('\n')}
+    const timestamp = new Date().toISOString();
+    return \`${vectorMeta.prefix}${vectorMeta.version}/${vectorSegments}/\${timestamp}/\`;
+  }
+
+  static fromVector(vectorString: string): ${className} {
+    const regex = /^${vectorMeta.prefix}${vectorMeta.version}\\/(.+)\\/([0-9T:\\-\\.Z]+)\\/?$/;
+    const match = vectorString.match(regex);
+
+    if (!match) {
+      throw new Error(\`Invalid vector string format for ${config.name}: \${vectorString}\`);
+    }
+
+    const paramsString = match[1];
+    const params = new Map<string, string>();
+
+    const paramPairs = paramsString.split('/');
+    for (const pair of paramPairs) {
+      const [key, value] = pair.split(':');
+      if (key && value !== undefined) {
+        params.set(key, value);
+      }
+    }
+
+${fromVectorValidations.join('\n')}
+
+    return new ${className}({
+${fromVectorParams.join('\n')}
+    });
+  }`;
   }
 
   private generateDecisionTreeMethod(tree: DecisionNode, defaultAction: string): string {
@@ -315,7 +410,83 @@ const decision = new Decision${this.toPascalCase(pluginName)}({
 const outcome = decision.evaluate();
 console.log(outcome.action, outcome.priority);
 \`\`\`
+
+${this.generateVectorDocumentation(config, pluginName)}
 `;
+  }
+
+  private generateVectorDocumentation(config: PluginConfig, pluginName: string): string {
+    if (!config.vectorMetadata) {
+      return '';
+    }
+
+    const vectorMeta = config.vectorMetadata;
+    const className = `Decision${this.toPascalCase(pluginName)}`;
+
+    // Generate parameter abbreviations table
+    const paramTable = Object.entries(vectorMeta.parameterMappings)
+      .map(([paramName, mapping]) => {
+        const valueMappings = mapping.valueMappings;
+        if (valueMappings && Object.keys(valueMappings).length > 0) {
+          const valueExamples = Object.entries(valueMappings)
+            .map(([key, value]) => `${key}→${value}`)
+            .join(', ');
+          return `| ${paramName} | ${mapping.abbrev} | ${valueExamples} |`;
+        }
+        return `| ${paramName} | ${mapping.abbrev} | Direct mapping |`;
+      })
+      .join('\n');
+
+    // Generate example vector strings
+    const firstParams = Object.keys(vectorMeta.parameterMappings);
+    const exampleParams: string[] = [];
+    const vectorSegments: string[] = [];
+
+    for (const [paramName, mapping] of Object.entries(vectorMeta.parameterMappings)) {
+      const firstEnumValue = Object.keys(mapping.valueMappings || {})[0];
+      if (firstEnumValue) {
+        exampleParams.push(`  ${paramName}: "${firstEnumValue}"`);
+        vectorSegments.push(`${mapping.abbrev}:${mapping.valueMappings![firstEnumValue]}`);
+      } else {
+        exampleParams.push(`  ${paramName}: "example"`);
+        vectorSegments.push(`${mapping.abbrev}:example`);
+      }
+    }
+
+    const exampleVectorString = `${vectorMeta.prefix}${vectorMeta.version}/${vectorSegments.join('/')}/2024-07-23T20:34:21.000Z/`;
+
+    return `## Vector String Support
+
+This methodology supports SSVC vector strings for compact representation and interchange.
+
+### Parameter Abbreviations
+
+| Parameter | Abbreviation | Value Mappings |
+|-----------|--------------|----------------|
+${paramTable}
+
+### Vector String Format
+
+\`\`\`
+${vectorMeta.prefix}${vectorMeta.version}/[parameters]/[timestamp]/
+\`\`\`
+
+### Example Usage
+
+\`\`\`typescript
+// Generate vector string from decision
+const decision = new ${className}({
+${exampleParams.join(',\n')}
+});
+
+const vectorString = decision.toVector();
+console.log(vectorString);
+// Output: ${exampleVectorString}
+
+// Parse vector string to create decision
+const parsedDecision = ${className}.fromVector("${exampleVectorString}");
+const outcome = parsedDecision.evaluate();
+\`\`\``;
   }
 
   private generateMermaidDiagram(tree: DecisionNode, pluginName: string): string {

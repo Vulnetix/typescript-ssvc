@@ -22,6 +22,16 @@ export class CISAPlugin extends SSVCPlugin {
   createDecision(options: Record<string, any>): SSVCDecision {
     return new CISADecisionWrapper(options);
   }
+  
+  fromVector(vectorString: string): SSVCDecision {
+    const decision = DecisionCisa.fromVector(vectorString);
+    return new CISADecisionWrapper({
+      exploitation: decision.exploitation,
+      automatable: decision.automatable,
+      technical_impact: decision.technicalImpact,
+      mission_wellbeing: decision.missionWellbeingImpact
+    });
+  }
 }
 
 class CISADecisionWrapper implements SSVCDecision {
@@ -47,6 +57,10 @@ class CISADecisionWrapper implements SSVCDecision {
       priority: outcome.priority
     };
     return this.outcome;
+  }
+  
+  toVector(): string {
+    return this.decision.toVector();
   }
   
   private mapValue(value: any, enumType: any): any {

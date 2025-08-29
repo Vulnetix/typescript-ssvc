@@ -1,6 +1,7 @@
 name: "Supplier"
 description: "CERT/CC Supplier Decision Model"
 version: "1.0"
+url: "https://certcc.github.io/SSVC/howto/supplier_tree/"
 
 enums:
   ExploitationStatus:
@@ -21,17 +22,6 @@ enums:
     - minimal
     - significant
 
-  ActionType:
-    - defer
-    - scheduled
-    - out_of_cycle
-    - immediate
-
-  DecisionPriorityLevel:
-    - low
-    - medium
-    - high
-    - immediate
 
 priorityMap:
   defer: low
@@ -42,293 +32,163 @@ priorityMap:
 defaultAction: defer
 
 decisionTree:
-  # None exploitation scenarios
-  # Row 1: None, Laborious, Partial, Minimal
-  - conditions:
-      exploitation: none
-      utility: laborious
-      technical_impact: partial
-      public_safety_impact: minimal
-    action: defer
+  type: ExploitationStatus
+  children:
+    none:
+      type: UtilityLevel
+      children:
+        laborious:
+          type: TechnicalImpactLevel
+          children:
+            partial:
+              type: PublicSafetyImpactLevel
+              children:
+                minimal: defer
+                significant: scheduled
+            total:
+              type: PublicSafetyImpactLevel
+              children:
+                minimal: defer
+                significant: scheduled
+        efficient:
+          type: TechnicalImpactLevel
+          children:
+            partial:
+              type: PublicSafetyImpactLevel
+              children:
+                minimal: defer
+                significant: scheduled
+            total:
+              type: PublicSafetyImpactLevel
+              children:
+                minimal: scheduled
+                significant: scheduled
+        super_effective:
+          type: TechnicalImpactLevel
+          children:
+            partial:
+              type: PublicSafetyImpactLevel
+              children:
+                minimal: defer
+                significant: scheduled
+            total:
+              type: PublicSafetyImpactLevel
+              children:
+                minimal: scheduled
+                significant: out_of_cycle
+    public_poc:
+      type: UtilityLevel
+      children:
+        laborious:
+          type: TechnicalImpactLevel
+          children:
+            partial:
+              type: PublicSafetyImpactLevel
+              children:
+                minimal: defer
+                significant: scheduled
+            total:
+              type: PublicSafetyImpactLevel
+              children:
+                minimal: scheduled
+                significant: out_of_cycle
+        efficient:
+          type: TechnicalImpactLevel
+          children:
+            partial:
+              type: PublicSafetyImpactLevel
+              children:
+                minimal: scheduled
+                significant: out_of_cycle
+            total:
+              type: PublicSafetyImpactLevel
+              children:
+                minimal: scheduled
+                significant: out_of_cycle
+        super_effective:
+          type: TechnicalImpactLevel
+          children:
+            partial:
+              type: PublicSafetyImpactLevel
+              children:
+                minimal: scheduled
+                significant: out_of_cycle
+            total:
+              type: PublicSafetyImpactLevel
+              children:
+                minimal: out_of_cycle
+                significant: immediate
+    active:
+      type: UtilityLevel
+      children:
+        laborious:
+          type: TechnicalImpactLevel
+          children:
+            partial:
+              type: PublicSafetyImpactLevel
+              children:
+                minimal: scheduled
+                significant: out_of_cycle
+            total:
+              type: PublicSafetyImpactLevel
+              children:
+                minimal: out_of_cycle
+                significant: immediate
+        efficient:
+          type: TechnicalImpactLevel
+          children:
+            partial:
+              type: PublicSafetyImpactLevel
+              children:
+                minimal: out_of_cycle
+                significant: immediate
+            total:
+              type: PublicSafetyImpactLevel
+              children:
+                minimal: out_of_cycle
+                significant: immediate
+        super_effective:
+          type: TechnicalImpactLevel
+          children:
+            partial:
+              type: PublicSafetyImpactLevel
+              children:
+                minimal: out_of_cycle
+                significant: immediate
+            total:
+              type: PublicSafetyImpactLevel
+              children:
+                minimal: immediate
+                significant: immediate
 
-  # Row 2: None, Laborious, Partial, Significant
-  - conditions:
-      exploitation: none
-      utility: laborious
-      technical_impact: partial
-      public_safety_impact: significant
-    action: scheduled
-
-  # Row 3: None, Laborious, Total, Minimal
-  - conditions:
-      exploitation: none
-      utility: laborious
-      technical_impact: total
-      public_safety_impact: minimal
-    action: defer
-
-  # Row 4: None, Laborious, Total, Significant
-  - conditions:
-      exploitation: none
-      utility: laborious
-      technical_impact: total
-      public_safety_impact: significant
-    action: scheduled
-
-  # Row 5: None, Efficient, Partial, Minimal
-  - conditions:
-      exploitation: none
-      utility: efficient
-      technical_impact: partial
-      public_safety_impact: minimal
-    action: defer
-
-  # Row 6: None, Efficient, Partial, Significant
-  - conditions:
-      exploitation: none
-      utility: efficient
-      technical_impact: partial
-      public_safety_impact: significant
-    action: scheduled
-
-  # Row 7: None, Efficient, Total, Minimal
-  - conditions:
-      exploitation: none
-      utility: efficient
-      technical_impact: total
-      public_safety_impact: minimal
-    action: scheduled
-
-  # Row 8: None, Efficient, Total, Significant
-  - conditions:
-      exploitation: none
-      utility: efficient
-      technical_impact: total
-      public_safety_impact: significant
-    action: scheduled
-
-  # Row 9: None, Super Effective, Partial, Minimal
-  - conditions:
-      exploitation: none
-      utility: super_effective
-      technical_impact: partial
-      public_safety_impact: minimal
-    action: defer
-
-  # Row 10: None, Super Effective, Partial, Significant
-  - conditions:
-      exploitation: none
-      utility: super_effective
-      technical_impact: partial
-      public_safety_impact: significant
-    action: scheduled
-
-  # Row 11: None, Super Effective, Total, Minimal
-  - conditions:
-      exploitation: none
-      utility: super_effective
-      technical_impact: total
-      public_safety_impact: minimal
-    action: scheduled
-
-  # Row 12: None, Super Effective, Total, Significant
-  - conditions:
-      exploitation: none
-      utility: super_effective
-      technical_impact: total
-      public_safety_impact: significant
-    action: out_of_cycle
-
-  # Public PoC exploitation scenarios
-  # Row 13: Public PoC, Laborious, Partial, Minimal
-  - conditions:
-      exploitation: public_poc
-      utility: laborious
-      technical_impact: partial
-      public_safety_impact: minimal
-    action: defer
-
-  # Row 14: Public PoC, Laborious, Partial, Significant
-  - conditions:
-      exploitation: public_poc
-      utility: laborious
-      technical_impact: partial
-      public_safety_impact: significant
-    action: scheduled
-
-  # Row 15: Public PoC, Laborious, Total, Minimal
-  - conditions:
-      exploitation: public_poc
-      utility: laborious
-      technical_impact: total
-      public_safety_impact: minimal
-    action: scheduled
-
-  # Row 16: Public PoC, Laborious, Total, Significant
-  - conditions:
-      exploitation: public_poc
-      utility: laborious
-      technical_impact: total
-      public_safety_impact: significant
-    action: out_of_cycle
-
-  # Row 17: Public PoC, Efficient, Partial, Minimal
-  - conditions:
-      exploitation: public_poc
-      utility: efficient
-      technical_impact: partial
-      public_safety_impact: minimal
-    action: scheduled
-
-  # Row 18: Public PoC, Efficient, Partial, Significant
-  - conditions:
-      exploitation: public_poc
-      utility: efficient
-      technical_impact: partial
-      public_safety_impact: significant
-    action: out_of_cycle
-
-  # Row 19: Public PoC, Efficient, Total, Minimal
-  - conditions:
-      exploitation: public_poc
-      utility: efficient
-      technical_impact: total
-      public_safety_impact: minimal
-    action: scheduled
-
-  # Row 20: Public PoC, Efficient, Total, Significant
-  - conditions:
-      exploitation: public_poc
-      utility: efficient
-      technical_impact: total
-      public_safety_impact: significant
-    action: out_of_cycle
-
-  # Row 21: Public PoC, Super Effective, Partial, Minimal
-  - conditions:
-      exploitation: public_poc
-      utility: super_effective
-      technical_impact: partial
-      public_safety_impact: minimal
-    action: scheduled
-
-  # Row 22: Public PoC, Super Effective, Partial, Significant
-  - conditions:
-      exploitation: public_poc
-      utility: super_effective
-      technical_impact: partial
-      public_safety_impact: significant
-    action: out_of_cycle
-
-  # Row 23: Public PoC, Super Effective, Total, Minimal
-  - conditions:
-      exploitation: public_poc
-      utility: super_effective
-      technical_impact: total
-      public_safety_impact: minimal
-    action: out_of_cycle
-
-  # Row 24: Public PoC, Super Effective, Total, Significant
-  - conditions:
-      exploitation: public_poc
-      utility: super_effective
-      technical_impact: total
-      public_safety_impact: significant
-    action: immediate
-
-  # Active exploitation scenarios
-  # Row 25: Active, Laborious, Partial, Minimal
-  - conditions:
-      exploitation: active
-      utility: laborious
-      technical_impact: partial
-      public_safety_impact: minimal
-    action: scheduled
-
-  # Row 26: Active, Laborious, Partial, Significant
-  - conditions:
-      exploitation: active
-      utility: laborious
-      technical_impact: partial
-      public_safety_impact: significant
-    action: out_of_cycle
-
-  # Row 27: Active, Laborious, Total, Minimal
-  - conditions:
-      exploitation: active
-      utility: laborious
-      technical_impact: total
-      public_safety_impact: minimal
-    action: out_of_cycle
-
-  # Row 28: Active, Laborious, Total, Significant
-  - conditions:
-      exploitation: active
-      utility: laborious
-      technical_impact: total
-      public_safety_impact: significant
-    action: immediate
-
-  # Row 29: Active, Efficient, Partial, Minimal
-  - conditions:
-      exploitation: active
-      utility: efficient
-      technical_impact: partial
-      public_safety_impact: minimal
-    action: out_of_cycle
-
-  # Row 30: Active, Efficient, Partial, Significant
-  - conditions:
-      exploitation: active
-      utility: efficient
-      technical_impact: partial
-      public_safety_impact: significant
-    action: immediate
-
-  # Row 31: Active, Efficient, Total, Minimal
-  - conditions:
-      exploitation: active
-      utility: efficient
-      technical_impact: total
-      public_safety_impact: minimal
-    action: out_of_cycle
-
-  # Row 32: Active, Efficient, Total, Significant
-  - conditions:
-      exploitation: active
-      utility: efficient
-      technical_impact: total
-      public_safety_impact: significant
-    action: immediate
-
-  # Row 33: Active, Super Effective, Partial, Minimal
-  - conditions:
-      exploitation: active
-      utility: super_effective
-      technical_impact: partial
-      public_safety_impact: minimal
-    action: out_of_cycle
-
-  # Row 34: Active, Super Effective, Partial, Significant
-  - conditions:
-      exploitation: active
-      utility: super_effective
-      technical_impact: partial
-      public_safety_impact: significant
-    action: immediate
-
-  # Row 35: Active, Super Effective, Total, Minimal
-  - conditions:
-      exploitation: active
-      utility: super_effective
-      technical_impact: total
-      public_safety_impact: minimal
-    action: immediate
-
-  # Row 36: Active, Super Effective, Total, Significant
-  - conditions:
-      exploitation: active
-      utility: super_effective
-      technical_impact: total
-      public_safety_impact: significant
-    action: immediate
+# Vector string metadata
+vectorMetadata:
+  prefix: SUPPLIER
+  version: v1
+  parameterMappings:
+    exploitation:
+      abbrev: E
+      enumType: ExploitationStatus
+      valueMappings:
+        none: N
+        public_poc: P
+        active: A
+    utility:
+      abbrev: U
+      enumType: UtilityLevel
+      valueMappings:
+        laborious: L
+        efficient: E
+        super_effective: S
+    technical_impact:
+      abbrev: T
+      enumType: TechnicalImpactLevel
+      valueMappings:
+        partial: P
+        total: T
+    public_safety:
+      abbrev: P
+      enumType: PublicSafetyImpactLevel
+      valueMappings:
+        minimal: M
+        significant: S

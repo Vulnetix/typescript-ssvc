@@ -121,18 +121,6 @@ flowchart TD
 - MEDIUM
 - HIGH
 
-### DecisionPriorityLevel
-- LOW
-- MEDIUM
-- HIGH
-- IMMEDIATE
-
-### ActionType
-- TRACK
-- TRACK_STAR
-- ATTEND
-- ACT
-
 ## Priority Mapping
 
 - **TRACK** → LOW
@@ -151,4 +139,43 @@ const decision = new DecisionCisa({
 
 const outcome = decision.evaluate();
 console.log(outcome.action, outcome.priority);
+```
+
+## Vector String Support
+
+This methodology supports SSVC vector strings for compact representation and interchange.
+
+### Parameter Abbreviations
+
+| Parameter | Abbreviation | Value Mappings |
+|-----------|--------------|----------------|
+| exploitation | E | NONE→N, POC→P, ACTIVE→A |
+| automatable | A | YES→Y, NO→N |
+| technical_impact | T | PARTIAL→P, TOTAL→T |
+| mission_wellbeing | M | LOW→L, MEDIUM→M, HIGH→H |
+
+### Vector String Format
+
+```
+CISAv1/[parameters]/[timestamp]/
+```
+
+### Example Usage
+
+```typescript
+// Generate vector string from decision
+const decision = new DecisionCisa({
+  exploitation: "NONE",
+  automatable: "YES",
+  technical_impact: "PARTIAL",
+  mission_wellbeing: "LOW"
+});
+
+const vectorString = decision.toVector();
+console.log(vectorString);
+// Output: CISAv1/E:N/A:Y/T:P/M:L/2024-07-23T20:34:21.000Z/
+
+// Parse vector string to create decision
+const parsedDecision = DecisionCisa.fromVector("CISAv1/E:N/A:Y/T:P/M:L/2024-07-23T20:34:21.000Z/");
+const outcome = parsedDecision.evaluate();
 ```

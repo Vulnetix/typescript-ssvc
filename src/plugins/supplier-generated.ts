@@ -28,24 +28,24 @@ export enum PublicSafetyImpactLevel {
 }
 
 export enum ActionType {
-  defer = "defer",
-  scheduled = "scheduled",
-  out_of_cycle = "out_of_cycle",
-  immediate = "immediate"
+  defer = 'defer',
+  scheduled = 'scheduled',
+  out_of_cycle = 'out_of_cycle',
+  immediate = 'immediate'
 }
 
-export enum DecisionPriorityLevel {
-  low = "low",
-  medium = "medium",
-  high = "high",
-  immediate = "immediate"
+export enum PriorityLevel {
+  LOW = 'low',
+  MEDIUM = 'medium',
+  HIGH = 'high',
+  IMMEDIATE = 'immediate'
 }
 
 export const priorityMap = {
-  [ActionType.defer]: DecisionPriorityLevel.low,
-  [ActionType.scheduled]: DecisionPriorityLevel.medium,
-  [ActionType.out_of_cycle]: DecisionPriorityLevel.high,
-  [ActionType.immediate]: DecisionPriorityLevel.immediate
+  [ActionType.defer]: PriorityLevel.LOW,
+  [ActionType.scheduled]: PriorityLevel.MEDIUM,
+  [ActionType.out_of_cycle]: PriorityLevel.HIGH,
+  [ActionType.immediate]: PriorityLevel.IMMEDIATE
 };
 
 export class OutcomeSupplier {
@@ -106,267 +106,219 @@ export class DecisionSupplier {
     return this.outcome;
   }
 
+  toVector(): string {
+    if (!this.outcome) {
+      this.evaluate();
+    }
+    
+    const exploitationVector = {"none":"N","public_poc":"P","active":"A"}[this.exploitation?.toString?.()?.toUpperCase?.() ?? ''] || this.exploitation || '';
+    const utilityVector = {"laborious":"L","efficient":"E","super_effective":"S"}[this.utility?.toString?.()?.toUpperCase?.() ?? ''] || this.utility || '';
+    const technical_impactVector = {"partial":"P","total":"T"}[this.technicalImpact?.toString?.()?.toUpperCase?.() ?? ''] || this.technicalImpact || '';
+    const public_safetyVector = {"minimal":"M","significant":"S"}[this.publicSafetyImpact?.toString?.()?.toUpperCase?.() ?? ''] || this.publicSafetyImpact || '';
+    const timestamp = new Date().toISOString();
+    return `SUPPLIERv1/E:${exploitationVector}/U:${utilityVector}/T:${technical_impactVector}/P:${public_safetyVector}/${timestamp}/`;
+  }
+
+  static fromVector(vectorString: string): DecisionSupplier {
+    const regex = /^SUPPLIERv1\/(.+)\/([0-9T:\-\.Z]+)\/?$/;
+    const match = vectorString.match(regex);
+    
+    if (!match) {
+      throw new Error(`Invalid vector string format for Supplier: ${vectorString}`);
+    }
+    
+    const paramsString = match[1];
+    const params = new Map<string, string>();
+    
+    const paramPairs = paramsString.split('/');
+    for (const pair of paramPairs) {
+      const [key, value] = pair.split(':');
+      if (key && value !== undefined) {
+        params.set(key, value);
+      }
+    }
+    
+    const exploitationMatch = params.get('E');
+    const utilityMatch = params.get('U');
+    const technical_impactMatch = params.get('T');
+    const public_safetyMatch = params.get('P');
+    
+    return new DecisionSupplier({
+      exploitation: {"N":"none","P":"public_poc","A":"active"}[exploitationMatch || ''] || exploitationMatch,
+      utility: {"L":"laborious","E":"efficient","S":"super_effective"}[utilityMatch || ''] || utilityMatch,
+      technicalImpact: {"P":"partial","T":"total"}[technical_impactMatch || ''] || technical_impactMatch,
+      publicSafetyImpact: {"M":"minimal","S":"significant"}[public_safetyMatch || ''] || public_safetyMatch,
+    });
+  }
+
   private traverseTree(): any {
     // Traverse the decision tree to determine the outcome
-    
-    // Active exploitation scenarios
-    if (this.exploitation === ExploitationStatus.active) {
-      // Active, Super Effective, Total, Significant = immediate
-      if (this.utility === UtilityLevel.super_effective && 
-          this.technicalImpact === TechnicalImpactLevel.total && 
-          this.publicSafetyImpact === PublicSafetyImpactLevel.significant) {
-        return ActionType.immediate;
-      }
-      
-      // Active, Super Effective, Total, Minimal = immediate
-      if (this.utility === UtilityLevel.super_effective && 
-          this.technicalImpact === TechnicalImpactLevel.total && 
-          this.publicSafetyImpact === PublicSafetyImpactLevel.minimal) {
-        return ActionType.immediate;
-      }
-      
-      // Active, Super Effective, Partial, Significant = immediate
-      if (this.utility === UtilityLevel.super_effective && 
-          this.technicalImpact === TechnicalImpactLevel.partial && 
-          this.publicSafetyImpact === PublicSafetyImpactLevel.significant) {
-        return ActionType.immediate;
-      }
-      
-      // Active, Super Effective, Partial, Minimal = out_of_cycle
-      if (this.utility === UtilityLevel.super_effective && 
-          this.technicalImpact === TechnicalImpactLevel.partial && 
-          this.publicSafetyImpact === PublicSafetyImpactLevel.minimal) {
-        return ActionType.out_of_cycle;
-      }
-      
-      // Active, Efficient, Total, Significant = immediate
-      if (this.utility === UtilityLevel.efficient && 
-          this.technicalImpact === TechnicalImpactLevel.total && 
-          this.publicSafetyImpact === PublicSafetyImpactLevel.significant) {
-        return ActionType.immediate;
-      }
-      
-      // Active, Efficient, Total, Minimal = out_of_cycle
-      if (this.utility === UtilityLevel.efficient && 
-          this.technicalImpact === TechnicalImpactLevel.total && 
-          this.publicSafetyImpact === PublicSafetyImpactLevel.minimal) {
-        return ActionType.out_of_cycle;
-      }
-      
-      // Active, Efficient, Partial, Significant = immediate
-      if (this.utility === UtilityLevel.efficient && 
-          this.technicalImpact === TechnicalImpactLevel.partial && 
-          this.publicSafetyImpact === PublicSafetyImpactLevel.significant) {
-        return ActionType.immediate;
-      }
-      
-      // Active, Efficient, Partial, Minimal = out_of_cycle
-      if (this.utility === UtilityLevel.efficient && 
-          this.technicalImpact === TechnicalImpactLevel.partial && 
-          this.publicSafetyImpact === PublicSafetyImpactLevel.minimal) {
-        return ActionType.out_of_cycle;
-      }
-      
-      // Active, Laborious, Total, Significant = immediate
-      if (this.utility === UtilityLevel.laborious && 
-          this.technicalImpact === TechnicalImpactLevel.total && 
-          this.publicSafetyImpact === PublicSafetyImpactLevel.significant) {
-        return ActionType.immediate;
-      }
-      
-      // Active, Laborious, Total, Minimal = out_of_cycle
-      if (this.utility === UtilityLevel.laborious && 
-          this.technicalImpact === TechnicalImpactLevel.total && 
-          this.publicSafetyImpact === PublicSafetyImpactLevel.minimal) {
-        return ActionType.out_of_cycle;
-      }
-      
-      // Active, Laborious, Partial, Significant = out_of_cycle
-      if (this.utility === UtilityLevel.laborious && 
-          this.technicalImpact === TechnicalImpactLevel.partial && 
-          this.publicSafetyImpact === PublicSafetyImpactLevel.significant) {
-        return ActionType.out_of_cycle;
-      }
-      
-      // Active, Laborious, Partial, Minimal = scheduled
-      if (this.utility === UtilityLevel.laborious && 
-          this.technicalImpact === TechnicalImpactLevel.partial && 
-          this.publicSafetyImpact === PublicSafetyImpactLevel.minimal) {
-        return ActionType.scheduled;
-      }
-    }
-    
-    // Public PoC exploitation scenarios
-    if (this.exploitation === ExploitationStatus.public_poc) {
-      // Public PoC, Super Effective, Total, Significant = immediate
-      if (this.utility === UtilityLevel.super_effective && 
-          this.technicalImpact === TechnicalImpactLevel.total && 
-          this.publicSafetyImpact === PublicSafetyImpactLevel.significant) {
-        return ActionType.immediate;
-      }
-      
-      // Public PoC, Super Effective, Total, Minimal = out_of_cycle
-      if (this.utility === UtilityLevel.super_effective && 
-          this.technicalImpact === TechnicalImpactLevel.total && 
-          this.publicSafetyImpact === PublicSafetyImpactLevel.minimal) {
-        return ActionType.out_of_cycle;
-      }
-      
-      // Public PoC, Super Effective, Partial, Significant = out_of_cycle
-      if (this.utility === UtilityLevel.super_effective && 
-          this.technicalImpact === TechnicalImpactLevel.partial && 
-          this.publicSafetyImpact === PublicSafetyImpactLevel.significant) {
-        return ActionType.out_of_cycle;
-      }
-      
-      // Public PoC, Super Effective, Partial, Minimal = scheduled
-      if (this.utility === UtilityLevel.super_effective && 
-          this.technicalImpact === TechnicalImpactLevel.partial && 
-          this.publicSafetyImpact === PublicSafetyImpactLevel.minimal) {
-        return ActionType.scheduled;
-      }
-      
-      // Public PoC, Efficient, Total, Significant = out_of_cycle
-      if (this.utility === UtilityLevel.efficient && 
-          this.technicalImpact === TechnicalImpactLevel.total && 
-          this.publicSafetyImpact === PublicSafetyImpactLevel.significant) {
-        return ActionType.out_of_cycle;
-      }
-      
-      // Public PoC, Efficient, Total, Minimal = scheduled
-      if (this.utility === UtilityLevel.efficient && 
-          this.technicalImpact === TechnicalImpactLevel.total && 
-          this.publicSafetyImpact === PublicSafetyImpactLevel.minimal) {
-        return ActionType.scheduled;
-      }
-      
-      // Public PoC, Efficient, Partial, Significant = out_of_cycle
-      if (this.utility === UtilityLevel.efficient && 
-          this.technicalImpact === TechnicalImpactLevel.partial && 
-          this.publicSafetyImpact === PublicSafetyImpactLevel.significant) {
-        return ActionType.out_of_cycle;
-      }
-      
-      // Public PoC, Efficient, Partial, Minimal = scheduled
-      if (this.utility === UtilityLevel.efficient && 
-          this.technicalImpact === TechnicalImpactLevel.partial && 
-          this.publicSafetyImpact === PublicSafetyImpactLevel.minimal) {
-        return ActionType.scheduled;
-      }
-      
-      // Public PoC, Laborious, Total, Significant = out_of_cycle
-      if (this.utility === UtilityLevel.laborious && 
-          this.technicalImpact === TechnicalImpactLevel.total && 
-          this.publicSafetyImpact === PublicSafetyImpactLevel.significant) {
-        return ActionType.out_of_cycle;
-      }
-      
-      // Public PoC, Laborious, Total, Minimal = scheduled
-      if (this.utility === UtilityLevel.laborious && 
-          this.technicalImpact === TechnicalImpactLevel.total && 
-          this.publicSafetyImpact === PublicSafetyImpactLevel.minimal) {
-        return ActionType.scheduled;
-      }
-      
-      // Public PoC, Laborious, Partial, Significant = scheduled
-      if (this.utility === UtilityLevel.laborious && 
-          this.technicalImpact === TechnicalImpactLevel.partial && 
-          this.publicSafetyImpact === PublicSafetyImpactLevel.significant) {
-        return ActionType.scheduled;
-      }
-      
-      // Public PoC, Laborious, Partial, Minimal = defer
-      if (this.utility === UtilityLevel.laborious && 
-          this.technicalImpact === TechnicalImpactLevel.partial && 
-          this.publicSafetyImpact === PublicSafetyImpactLevel.minimal) {
-        return ActionType.defer;
-      }
-    }
-    
-    // None exploitation scenarios
     if (this.exploitation === ExploitationStatus.none) {
-      // None, Super Effective, Total, Significant = out_of_cycle
-      if (this.utility === UtilityLevel.super_effective && 
-          this.technicalImpact === TechnicalImpactLevel.total && 
-          this.publicSafetyImpact === PublicSafetyImpactLevel.significant) {
-        return ActionType.out_of_cycle;
+      if (this.utility === UtilityLevel.laborious) {
+        if (this.technicalImpact === TechnicalImpactLevel.partial) {
+          if (this.publicSafetyImpact === PublicSafetyImpactLevel.minimal) {
+            return ActionType.defer;
+          }
+          else if (this.publicSafetyImpact === PublicSafetyImpactLevel.significant) {
+            return ActionType.scheduled;
+          }
+        }
+        else if (this.technicalImpact === TechnicalImpactLevel.total) {
+          if (this.publicSafetyImpact === PublicSafetyImpactLevel.minimal) {
+            return ActionType.defer;
+          }
+          else if (this.publicSafetyImpact === PublicSafetyImpactLevel.significant) {
+            return ActionType.scheduled;
+          }
+        }
       }
-      
-      // None, Super Effective, Total, Minimal = scheduled
-      if (this.utility === UtilityLevel.super_effective && 
-          this.technicalImpact === TechnicalImpactLevel.total && 
-          this.publicSafetyImpact === PublicSafetyImpactLevel.minimal) {
-        return ActionType.scheduled;
+      else if (this.utility === UtilityLevel.efficient) {
+        if (this.technicalImpact === TechnicalImpactLevel.partial) {
+          if (this.publicSafetyImpact === PublicSafetyImpactLevel.minimal) {
+            return ActionType.defer;
+          }
+          else if (this.publicSafetyImpact === PublicSafetyImpactLevel.significant) {
+            return ActionType.scheduled;
+          }
+        }
+        else if (this.technicalImpact === TechnicalImpactLevel.total) {
+          if (this.publicSafetyImpact === PublicSafetyImpactLevel.minimal) {
+            return ActionType.scheduled;
+          }
+          else if (this.publicSafetyImpact === PublicSafetyImpactLevel.significant) {
+            return ActionType.scheduled;
+          }
+        }
       }
-      
-      // None, Super Effective, Partial, Significant = scheduled
-      if (this.utility === UtilityLevel.super_effective && 
-          this.technicalImpact === TechnicalImpactLevel.partial && 
-          this.publicSafetyImpact === PublicSafetyImpactLevel.significant) {
-        return ActionType.scheduled;
+      else if (this.utility === UtilityLevel.super_effective) {
+        if (this.technicalImpact === TechnicalImpactLevel.partial) {
+          if (this.publicSafetyImpact === PublicSafetyImpactLevel.minimal) {
+            return ActionType.defer;
+          }
+          else if (this.publicSafetyImpact === PublicSafetyImpactLevel.significant) {
+            return ActionType.scheduled;
+          }
+        }
+        else if (this.technicalImpact === TechnicalImpactLevel.total) {
+          if (this.publicSafetyImpact === PublicSafetyImpactLevel.minimal) {
+            return ActionType.scheduled;
+          }
+          else if (this.publicSafetyImpact === PublicSafetyImpactLevel.significant) {
+            return ActionType.out_of_cycle;
+          }
+        }
       }
-      
-      // None, Super Effective, Partial, Minimal = defer
-      if (this.utility === UtilityLevel.super_effective && 
-          this.technicalImpact === TechnicalImpactLevel.partial && 
-          this.publicSafetyImpact === PublicSafetyImpactLevel.minimal) {
-        return ActionType.defer;
+    }
+    else if (this.exploitation === ExploitationStatus.public_poc) {
+      if (this.utility === UtilityLevel.laborious) {
+        if (this.technicalImpact === TechnicalImpactLevel.partial) {
+          if (this.publicSafetyImpact === PublicSafetyImpactLevel.minimal) {
+            return ActionType.defer;
+          }
+          else if (this.publicSafetyImpact === PublicSafetyImpactLevel.significant) {
+            return ActionType.scheduled;
+          }
+        }
+        else if (this.technicalImpact === TechnicalImpactLevel.total) {
+          if (this.publicSafetyImpact === PublicSafetyImpactLevel.minimal) {
+            return ActionType.scheduled;
+          }
+          else if (this.publicSafetyImpact === PublicSafetyImpactLevel.significant) {
+            return ActionType.out_of_cycle;
+          }
+        }
       }
-      
-      // None, Efficient, Total, Significant = scheduled
-      if (this.utility === UtilityLevel.efficient && 
-          this.technicalImpact === TechnicalImpactLevel.total && 
-          this.publicSafetyImpact === PublicSafetyImpactLevel.significant) {
-        return ActionType.scheduled;
+      else if (this.utility === UtilityLevel.efficient) {
+        if (this.technicalImpact === TechnicalImpactLevel.partial) {
+          if (this.publicSafetyImpact === PublicSafetyImpactLevel.minimal) {
+            return ActionType.scheduled;
+          }
+          else if (this.publicSafetyImpact === PublicSafetyImpactLevel.significant) {
+            return ActionType.out_of_cycle;
+          }
+        }
+        else if (this.technicalImpact === TechnicalImpactLevel.total) {
+          if (this.publicSafetyImpact === PublicSafetyImpactLevel.minimal) {
+            return ActionType.scheduled;
+          }
+          else if (this.publicSafetyImpact === PublicSafetyImpactLevel.significant) {
+            return ActionType.out_of_cycle;
+          }
+        }
       }
-      
-      // None, Efficient, Total, Minimal = scheduled
-      if (this.utility === UtilityLevel.efficient && 
-          this.technicalImpact === TechnicalImpactLevel.total && 
-          this.publicSafetyImpact === PublicSafetyImpactLevel.minimal) {
-        return ActionType.scheduled;
+      else if (this.utility === UtilityLevel.super_effective) {
+        if (this.technicalImpact === TechnicalImpactLevel.partial) {
+          if (this.publicSafetyImpact === PublicSafetyImpactLevel.minimal) {
+            return ActionType.scheduled;
+          }
+          else if (this.publicSafetyImpact === PublicSafetyImpactLevel.significant) {
+            return ActionType.out_of_cycle;
+          }
+        }
+        else if (this.technicalImpact === TechnicalImpactLevel.total) {
+          if (this.publicSafetyImpact === PublicSafetyImpactLevel.minimal) {
+            return ActionType.out_of_cycle;
+          }
+          else if (this.publicSafetyImpact === PublicSafetyImpactLevel.significant) {
+            return ActionType.immediate;
+          }
+        }
       }
-      
-      // None, Efficient, Partial, Significant = scheduled
-      if (this.utility === UtilityLevel.efficient && 
-          this.technicalImpact === TechnicalImpactLevel.partial && 
-          this.publicSafetyImpact === PublicSafetyImpactLevel.significant) {
-        return ActionType.scheduled;
+    }
+    else if (this.exploitation === ExploitationStatus.active) {
+      if (this.utility === UtilityLevel.laborious) {
+        if (this.technicalImpact === TechnicalImpactLevel.partial) {
+          if (this.publicSafetyImpact === PublicSafetyImpactLevel.minimal) {
+            return ActionType.scheduled;
+          }
+          else if (this.publicSafetyImpact === PublicSafetyImpactLevel.significant) {
+            return ActionType.out_of_cycle;
+          }
+        }
+        else if (this.technicalImpact === TechnicalImpactLevel.total) {
+          if (this.publicSafetyImpact === PublicSafetyImpactLevel.minimal) {
+            return ActionType.out_of_cycle;
+          }
+          else if (this.publicSafetyImpact === PublicSafetyImpactLevel.significant) {
+            return ActionType.immediate;
+          }
+        }
       }
-      
-      // None, Efficient, Partial, Minimal = defer
-      if (this.utility === UtilityLevel.efficient && 
-          this.technicalImpact === TechnicalImpactLevel.partial && 
-          this.publicSafetyImpact === PublicSafetyImpactLevel.minimal) {
-        return ActionType.defer;
+      else if (this.utility === UtilityLevel.efficient) {
+        if (this.technicalImpact === TechnicalImpactLevel.partial) {
+          if (this.publicSafetyImpact === PublicSafetyImpactLevel.minimal) {
+            return ActionType.out_of_cycle;
+          }
+          else if (this.publicSafetyImpact === PublicSafetyImpactLevel.significant) {
+            return ActionType.immediate;
+          }
+        }
+        else if (this.technicalImpact === TechnicalImpactLevel.total) {
+          if (this.publicSafetyImpact === PublicSafetyImpactLevel.minimal) {
+            return ActionType.out_of_cycle;
+          }
+          else if (this.publicSafetyImpact === PublicSafetyImpactLevel.significant) {
+            return ActionType.immediate;
+          }
+        }
       }
-      
-      // None, Laborious, Total, Significant = scheduled
-      if (this.utility === UtilityLevel.laborious && 
-          this.technicalImpact === TechnicalImpactLevel.total && 
-          this.publicSafetyImpact === PublicSafetyImpactLevel.significant) {
-        return ActionType.scheduled;
-      }
-      
-      // None, Laborious, Total, Minimal = defer
-      if (this.utility === UtilityLevel.laborious && 
-          this.technicalImpact === TechnicalImpactLevel.total && 
-          this.publicSafetyImpact === PublicSafetyImpactLevel.minimal) {
-        return ActionType.defer;
-      }
-      
-      // None, Laborious, Partial, Significant = scheduled
-      if (this.utility === UtilityLevel.laborious && 
-          this.technicalImpact === TechnicalImpactLevel.partial && 
-          this.publicSafetyImpact === PublicSafetyImpactLevel.significant) {
-        return ActionType.scheduled;
-      }
-      
-      // None, Laborious, Partial, Minimal = defer
-      if (this.utility === UtilityLevel.laborious && 
-          this.technicalImpact === TechnicalImpactLevel.partial && 
-          this.publicSafetyImpact === PublicSafetyImpactLevel.minimal) {
-        return ActionType.defer;
+      else if (this.utility === UtilityLevel.super_effective) {
+        if (this.technicalImpact === TechnicalImpactLevel.partial) {
+          if (this.publicSafetyImpact === PublicSafetyImpactLevel.minimal) {
+            return ActionType.out_of_cycle;
+          }
+          else if (this.publicSafetyImpact === PublicSafetyImpactLevel.significant) {
+            return ActionType.immediate;
+          }
+        }
+        else if (this.technicalImpact === TechnicalImpactLevel.total) {
+          if (this.publicSafetyImpact === PublicSafetyImpactLevel.minimal) {
+            return ActionType.immediate;
+          }
+          else if (this.publicSafetyImpact === PublicSafetyImpactLevel.significant) {
+            return ActionType.immediate;
+          }
+        }
       }
     }
     

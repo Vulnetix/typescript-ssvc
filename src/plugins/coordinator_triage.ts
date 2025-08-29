@@ -12,7 +12,6 @@ import {
   SupplierContactedStatus,
   ReportCredibilityLevel,
   SupplierCardinalityLevel,
-  SupplierEngagementLevel,
   UtilityLevel,
   PublicSafetyImpactLevel
 } from './coordinator_triage-generated';
@@ -24,6 +23,18 @@ export class CoordinatorTriagePlugin extends SSVCPlugin {
   
   createDecision(options: Record<string, any>): SSVCDecision {
     return new CoordinatorTriageDecisionWrapper(options);
+  }
+  
+  fromVector(vectorString: string): SSVCDecision {
+    const decision = DecisionCoordinatorTriage.fromVector(vectorString);
+    return new CoordinatorTriageDecisionWrapper({
+      report_public: decision.reportPublic,
+      supplier_contacted: decision.supplierContacted,
+      report_credibility: decision.reportCredibility,
+      supplier_cardinality: decision.supplierCardinality,
+      utility: decision.utility,
+      public_safety: decision.publicSafetyImpact
+    });
   }
 }
 
@@ -38,7 +49,6 @@ class CoordinatorTriageDecisionWrapper implements SSVCDecision {
       supplierContacted: this.mapValue(options.supplier_contacted || options.supplierContactedStatus, SupplierContactedStatus),
       reportCredibility: this.mapValue(options.report_credibility || options.reportCredibilityLevel, ReportCredibilityLevel),
       supplierCardinality: this.mapValue(options.supplier_cardinality || options.supplierCardinalityLevel, SupplierCardinalityLevel),
-      supplierEngagement: this.mapValue(options.supplier_engagement || options.supplierEngagementLevel, SupplierEngagementLevel),
       utility: this.mapValue(options.utility || options.utilityLevel, UtilityLevel),
       publicSafetyImpact: this.mapValue(options.public_safety_impact || options.publicSafetyImpactLevel, PublicSafetyImpactLevel)
     };
@@ -53,6 +63,10 @@ class CoordinatorTriageDecisionWrapper implements SSVCDecision {
       priority: outcome.priority
     };
     return this.outcome;
+  }
+  
+  toVector(): string {
+    return this.decision.toVector();
   }
   
   private mapValue(value: any, enumType: any): any {

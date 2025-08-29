@@ -18,8 +18,8 @@ describe('Public API', () => {
       });
       
       const outcome = decision.evaluate();
-      expect(outcome.action).toBe('act');
-      expect(outcome.priority).toBe('immediate');
+      expect(outcome.action).toBe('ACT');
+      expect(outcome.priority).toBe('IMMEDIATE');
     });
     
     it('should create Coordinator Triage decisions', () => {
@@ -34,8 +34,8 @@ describe('Public API', () => {
       });
       
       const outcome = decision.evaluate();
-      expect(outcome.action).toBe('coordinate');
-      expect(outcome.priority).toBe('high');
+      expect(outcome.action).toBe('COORDINATE');
+      expect(outcome.priority).toBe('HIGH');
     });
     
     it('should create decisions with empty options', () => {
@@ -126,15 +126,15 @@ describe('Public API', () => {
       const testCases = [
         {
           params: { exploitation: 'active', automatable: 'yes', technical_impact: 'total', mission_wellbeing: 'high' },
-          expected: { action: 'act', priority: 'immediate' }
+          expected: { action: 'ACT', priority: 'IMMEDIATE' }
         },
         {
           params: { exploitation: 'poc', automatable: 'no', technical_impact: 'partial', mission_wellbeing: 'high' },
-          expected: { action: 'track_star', priority: 'medium' }
+          expected: { action: 'TRACK_STAR', priority: 'MEDIUM' }
         },
         {
           params: { exploitation: 'none', automatable: 'no', technical_impact: 'partial', mission_wellbeing: 'low' },
-          expected: { action: 'track', priority: 'low' }
+          expected: { action: 'TRACK', priority: 'LOW' }
         }
       ];
       
@@ -154,20 +154,20 @@ describe('Public API', () => {
             report_public: 'yes', supplier_contacted: 'yes', report_credibility: 'credible',
             supplier_cardinality: 'multiple', utility: 'super_effective', public_safety_impact: 'significant'
           },
-          expected: { action: 'coordinate', priority: 'high' }
+          expected: { action: 'COORDINATE', priority: 'HIGH' }
         },
         {
           params: {
             report_public: 'yes', supplier_contacted: 'yes', report_credibility: 'credible',
             supplier_cardinality: 'one', utility: 'super_effective', public_safety_impact: 'minimal'
           },
-          expected: { action: 'decline', priority: 'low' }
+          expected: { action: 'DECLINE', priority: 'LOW' }
         },
         {
           params: {
             report_public: 'yes', supplier_contacted: 'yes', report_credibility: 'not_credible'
           },
-          expected: { action: 'decline', priority: 'low' }
+          expected: { action: 'DECLINE', priority: 'LOW' }
         }
       ];
       
@@ -198,10 +198,10 @@ describe('Public API', () => {
       const outcome2 = decision2.evaluate();
       
       // Verify each decision maintains its own state
-      expect(outcome1.action).toBe('act');
-      expect(outcome2.action).toBe('track');
-      expect(decision1.outcome?.action).toBe('act');
-      expect(decision2.outcome?.action).toBe('track');
+      expect(outcome1.action).toBe('ACT');
+      expect(outcome2.action).toBe('TRACK');
+      expect(decision1.outcome?.action).toBe('ACT');
+      expect(decision2.outcome?.action).toBe('TRACK');
     });
   });
   
