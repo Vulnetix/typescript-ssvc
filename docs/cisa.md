@@ -1,3 +1,13 @@
+---
+generated: true
+source: methodologies/cisa.yaml
+generator: scripts/generate-plugins.ts
+lastGenerated: 2025-08-29T10:52:45.997Z
+generatedFiles:
+  typescript:
+    path: /home/chris/github/typescript-ssvc/src/plugins/cisa-generated.ts
+    checksum: 86ddad0d26da8fae95a05e3fab5ac57ecbcfeff7
+---
 # CISA
 
 CISA Stakeholder-Specific Vulnerability Categorization
@@ -15,90 +25,100 @@ flowchart TD
   3{MissionWellbeingImpactLevel}
   4[ATTEND]
   4 --> 4_end((End))
-  5{TechnicalImpactLevel}
-  6{MissionWellbeingImpactLevel}
-  7[TRACK_STAR]
-  7 --> 7_end((End))
-  8{AutomatableStatus}
-  9{TechnicalImpactLevel}
+  5{MissionWellbeingImpactLevel}
+  6[ATTEND]
+  6 --> 6_end((End))
+  7{TechnicalImpactLevel}
+  8{MissionWellbeingImpactLevel}
+  9[TRACK_STAR]
+  9 --> 9_end((End))
   10{MissionWellbeingImpactLevel}
   11[TRACK_STAR]
   11 --> 11_end((End))
-  12[ATTEND]
-  12 --> 12_end((End))
-  13{MissionWellbeingImpactLevel}
-  14[ATTEND]
-  14 --> 14_end((End))
-  15{TechnicalImpactLevel}
-  16{MissionWellbeingImpactLevel}
-  17[TRACK_STAR]
-  17 --> 17_end((End))
-  18{MissionWellbeingImpactLevel}
-  19[TRACK_STAR]
-  19 --> 19_end((End))
-  20[ATTEND]
-  20 --> 20_end((End))
-  21{AutomatableStatus}
-  22{TechnicalImpactLevel}
-  23{MissionWellbeingImpactLevel}
+  12{AutomatableStatus}
+  13{TechnicalImpactLevel}
+  14{MissionWellbeingImpactLevel}
+  15[TRACK_STAR]
+  15 --> 15_end((End))
+  16[ATTEND]
+  16 --> 16_end((End))
+  17{MissionWellbeingImpactLevel}
+  18[ATTEND]
+  18 --> 18_end((End))
+  19{TechnicalImpactLevel}
+  20{MissionWellbeingImpactLevel}
+  21[TRACK_STAR]
+  21 --> 21_end((End))
+  22{MissionWellbeingImpactLevel}
+  23[TRACK_STAR]
+  23 --> 23_end((End))
   24[ATTEND]
   24 --> 24_end((End))
-  25[ATTEND]
-  25 --> 25_end((End))
-  26[ACT]
-  26 --> 26_end((End))
+  25{AutomatableStatus}
+  26{TechnicalImpactLevel}
   27{MissionWellbeingImpactLevel}
   28[ATTEND]
   28 --> 28_end((End))
-  29[ACT]
+  29[ATTEND]
   29 --> 29_end((End))
   30[ACT]
   30 --> 30_end((End))
-  31{TechnicalImpactLevel}
-  32{MissionWellbeingImpactLevel}
-  33[ATTEND]
+  31{MissionWellbeingImpactLevel}
+  32[ATTEND]
+  32 --> 32_end((End))
+  33[ACT]
   33 --> 33_end((End))
-  34{MissionWellbeingImpactLevel}
-  35[ATTEND]
-  35 --> 35_end((End))
-  36[ACT]
-  36 --> 36_end((End))
+  34[ACT]
+  34 --> 34_end((End))
+  35{TechnicalImpactLevel}
+  36{MissionWellbeingImpactLevel}
+  37[ATTEND]
+  37 --> 37_end((End))
+  38{MissionWellbeingImpactLevel}
+  39[ATTEND]
+  39 --> 39_end((End))
+  40[ACT]
+  40 --> 40_end((End))
   0 -->|NONE| 1
   1 -->|YES| 2
-  2 -->|TOTAL| 3
+  2 -->|PARTIAL| 3
   3 -->|HIGH| 4
-  1 -->|NO| 5
-  5 -->|TOTAL| 6
-  6 -->|HIGH| 7
-  0 -->|POC| 8
-  8 -->|YES| 9
-  9 -->|TOTAL| 10
-  10 -->|MEDIUM| 11
-  10 -->|HIGH| 12
-  9 -->|PARTIAL| 13
-  13 -->|HIGH| 14
-  8 -->|NO| 15
-  15 -->|PARTIAL| 16
-  16 -->|HIGH| 17
-  15 -->|TOTAL| 18
-  18 -->|MEDIUM| 19
-  18 -->|HIGH| 20
-  0 -->|ACTIVE| 21
-  21 -->|YES| 22
-  22 -->|PARTIAL| 23
-  23 -->|LOW| 24
-  23 -->|MEDIUM| 25
-  23 -->|HIGH| 26
-  22 -->|TOTAL| 27
+  2 -->|TOTAL| 5
+  5 -->|HIGH| 6
+  1 -->|NO| 7
+  7 -->|PARTIAL| 8
+  8 -->|HIGH| 9
+  7 -->|TOTAL| 10
+  10 -->|HIGH| 11
+  0 -->|POC| 12
+  12 -->|YES| 13
+  13 -->|TOTAL| 14
+  14 -->|MEDIUM| 15
+  14 -->|HIGH| 16
+  13 -->|PARTIAL| 17
+  17 -->|HIGH| 18
+  12 -->|NO| 19
+  19 -->|PARTIAL| 20
+  20 -->|HIGH| 21
+  19 -->|TOTAL| 22
+  22 -->|MEDIUM| 23
+  22 -->|HIGH| 24
+  0 -->|ACTIVE| 25
+  25 -->|YES| 26
+  26 -->|PARTIAL| 27
   27 -->|LOW| 28
   27 -->|MEDIUM| 29
   27 -->|HIGH| 30
-  21 -->|NO| 31
-  31 -->|PARTIAL| 32
-  32 -->|HIGH| 33
-  31 -->|TOTAL| 34
-  34 -->|MEDIUM| 35
-  34 -->|HIGH| 36
+  26 -->|TOTAL| 31
+  31 -->|LOW| 32
+  31 -->|MEDIUM| 33
+  31 -->|HIGH| 34
+  25 -->|NO| 35
+  35 -->|PARTIAL| 36
+  36 -->|HIGH| 37
+  35 -->|TOTAL| 38
+  38 -->|MEDIUM| 39
+  38 -->|HIGH| 40
 ```
 
 ## Enums
@@ -179,3 +199,24 @@ console.log(vectorString);
 const parsedDecision = DecisionCisa.fromVector("CISAv1/E:N/A:Y/T:P/M:L/2024-07-23T20:34:21.000Z/");
 const outcome = parsedDecision.evaluate();
 ```
+
+## File Integrity Verification
+
+The generated files in this methodology have SHA1 checksums for verification:
+
+### Checksum Verification Commands
+
+Verify the integrity of generated files using these commands:
+
+```bash
+# Verify TypeScript plugin file
+echo "86ddad0d26da8fae95a05e3fab5ac57ecbcfeff7  /home/chris/github/typescript-ssvc/src/plugins/cisa-generated.ts" | sha1sum -c
+```
+
+**Why This Matters**: Checksum verification ensures that generated files haven't been tampered with or corrupted. This is important for:
+- **Security**: Detecting unauthorized modifications to generated code
+- **Integrity**: Ensuring files match their expected content exactly  
+- **Trust**: Providing cryptographic proof that files are authentic
+- **Debugging**: Confirming file corruption isn't causing unexpected behavior
+
+Always verify checksums before deploying or using generated files in production environments.

@@ -34,6 +34,10 @@ decisionTree:
         "YES":
           type: TechnicalImpactLevel
           children:
+            PARTIAL:
+              type: MissionWellbeingImpactLevel
+              children:
+                HIGH: ATTEND
             TOTAL:
               type: MissionWellbeingImpactLevel
               children:
@@ -41,6 +45,10 @@ decisionTree:
         "NO":
           type: TechnicalImpactLevel
           children:
+            PARTIAL:
+              type: MissionWellbeingImpactLevel
+              children:
+                HIGH: TRACK_STAR
             TOTAL:
               type: MissionWellbeingImpactLevel
               children:
@@ -120,7 +128,7 @@ vectorMetadata:
         ACTIVE: A
     automatable:
       abbrev: A
-      enumType: AutomatableStatus  
+      enumType: AutomatableStatus
       valueMappings:
         "YES": Y
         "NO": N
