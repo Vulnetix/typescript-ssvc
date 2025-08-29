@@ -39,12 +39,14 @@ See the [**Schema Documentation**](docs/methodology-schema.md) for complete deta
 
 This library features a **plugin-based architecture** that allows for easy integration of different SSVC methodologies. It includes built-in support for **6 methodologies**:
 
-- **[CISA](#cisa-methodology)** - Stakeholder-Specific Vulnerability Categorization ([docs](docs/cisa.md))
-- **[AI/LLM Triage](#aillm-triage-methodology)** - AI and LLM-specific vulnerability assessment ([docs](docs/ai_llm_triage.md))
-- **[Coordinator Triage](#coordinator-triage-methodology)** - CERT/CC Coordinator Triage Decision Model ([docs](docs/coordinator_triage.md))
-- **[Coordinator Publication](#coordinator-publication-methodology)** - CERT/CC Publication Decision Model ([docs](docs/coordinator_publication.md))
-- **[Supplier](#supplier-methodology)** - CERT/CC Supplier Decision Model ([docs](docs/supplier.md))
-- **[Deployer](#deployer-methodology)** - CERT/CC Deployer Decision Model ([docs](docs/deployer.md))
+| Methodology | Description | Documentation | Official Source |
+|-------------|-------------|---------------|-----------------|
+| **AI LLM Triage** | AI-specific vulnerability triage for LLMs | [docs/ai_llm_triage.md](docs/ai_llm_triage.md) | [NIST AI Risk Management](https://www.nist.gov/ai-risk-management) |
+| **CISA** | CISA Stakeholder-Specific Vulnerability Categorization | [docs/cisa.md](docs/cisa.md) | [CISA SSVC Guide](https://www.cisa.gov/stakeholder-specific-vulnerability-categorization-ssvc) |
+| **Coordinator Triage** | CERT/CC Coordinator Triage Decision Model | [docs/coordinator_triage.md](docs/coordinator_triage.md) | [CERT/CC Coordinator Triage](https://certcc.github.io/SSVC/howto/coordination_triage_decision/) |
+| **Coordinator Publication** | CERT/CC Coordinator Publication Decision Model | [docs/coordinator_publication.md](docs/coordinator_publication.md) | [CERT/CC Publication Decision](https://certcc.github.io/SSVC/howto/publication_decision/) |
+| **Supplier** | CERT/CC Supplier Decision Model for patch prioritization | [docs/supplier.md](docs/supplier.md) | [CERT/CC Supplier Tree](https://certcc.github.io/SSVC/howto/supplier_tree/) |
+| **Deployer** | CERT/CC Deployer Decision Model for patch deployment | [docs/deployer.md](docs/deployer.md) | [CERT/CC Deployer Tree](https://certcc.github.io/SSVC/howto/deployer_tree/) |
 
 All methodologies support both **quantitative** (structured decision trees) and **qualitative** (expert judgment) approaches, with the library providing the quantitative framework while allowing for qualitative override based on domain expertise.
 
