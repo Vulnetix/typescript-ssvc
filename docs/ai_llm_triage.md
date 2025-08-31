@@ -2,11 +2,11 @@
 generated: true
 source: methodologies/ai_llm_triage.yaml
 generator: scripts/generate-plugins.ts
-lastGenerated: 2025-08-29T14:35:24.875Z
+lastGenerated: 2025-08-31T12:19:02.482Z
 generatedFiles:
   typescript:
     path: /home/chris/github/typescript-ssvc/src/plugins/ai_llm_triage-generated.ts
-    checksum: faa6a6743b82e0d0f062bedc3c25492bf10001a5
+    checksum: 62bd31b5580d96280d558b35b427aac925fae461
 ---
 
 # AI/LLM Triage
@@ -223,7 +223,7 @@ Verify the integrity of generated files using these commands:
 
 ```bash
 # Verify TypeScript plugin file
-echo "faa6a6743b82e0d0f062bedc3c25492bf10001a5  /home/chris/github/typescript-ssvc/src/plugins/ai_llm_triage-generated.ts" | sha1sum -c
+echo "62bd31b5580d96280d558b35b427aac925fae461  /home/chris/github/typescript-ssvc/src/plugins/ai_llm_triage-generated.ts" | sha1sum -c
 ```
 
 **Why This Matters**: Checksum verification ensures that generated files haven't been tampered with or corrupted. This is important for:

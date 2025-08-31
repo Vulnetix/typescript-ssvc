@@ -2,11 +2,11 @@
 generated: true
 source: methodologies/deployer.yaml
 generator: scripts/generate-plugins.ts
-lastGenerated: 2025-08-29T14:36:08.866Z
+lastGenerated: 2025-08-31T12:19:10.855Z
 generatedFiles:
   typescript:
     path: /home/chris/github/typescript-ssvc/src/plugins/deployer-generated.ts
-    checksum: 431ff2a588e2484270d91042db85f8cdf09c53c5
+    checksum: 5a60410e62bd5482031a6003bcadca8ba85c7546
 ---
 
 # Deployer
@@ -415,7 +415,7 @@ Verify the integrity of generated files using these commands:
 
 ```bash
 # Verify TypeScript plugin file
-echo "431ff2a588e2484270d91042db85f8cdf09c53c5  /home/chris/github/typescript-ssvc/src/plugins/deployer-generated.ts" | sha1sum -c
+echo "5a60410e62bd5482031a6003bcadca8ba85c7546  /home/chris/github/typescript-ssvc/src/plugins/deployer-generated.ts" | sha1sum -c
 ```
 
 **Why This Matters**: Checksum verification ensures that generated files haven't been tampered with or corrupted. This is important for:

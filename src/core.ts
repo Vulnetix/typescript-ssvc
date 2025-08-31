@@ -21,7 +21,20 @@ export abstract class SSVCPlugin {
 export interface SSVCDecision {
   evaluate(): SSVCOutcome;
   outcome?: SSVCOutcome;
-  toVector?(): string;
+  toVector?(): string | undefined;
+  evaluationId?: string; // UUID for audit trail tracking
+}
+
+export interface AuditableDecision extends SSVCDecision {
+  evaluationId: string; // Required for auditable decisions
+  attachEvidence(decisionPoint: string, evidence: any): void;
+  mapDataSource(decisionPoint: string, dataSource: any): void;
+  getAuditEntry(): any;
+  generateForensicReport(): any;
+  getEvidence(): Record<string, any>;
+  getDataSources(): Record<string, any>;
+  getTimeline(): any[];
+  getWrappedDecision(): SSVCDecision;
 }
 
 export class PluginRegistry {
@@ -56,10 +69,13 @@ export class Decision {
   private methodology: string;
   private options: Record<string, any>;
   public outcome?: SSVCOutcome;
+  public evaluationId?: string;
   
   constructor(methodology: string, options: Record<string, any> = {}) {
     this.methodology = methodology;
     this.options = options;
+    // Note: We don't generate evaluationId here to maintain backward compatibility
+    // It can be set by audit systems when needed
   }
   
   evaluate(): SSVCOutcome {
@@ -121,7 +137,10 @@ export class Decision {
     
     const decision = plugin.createDecision(this.options);
     if (decision.toVector) {
-      return decision.toVector();
+      const vector = decision.toVector();
+      if (vector !== undefined) {
+        return vector;
+      }
     }
     
     throw new Error(`Vector string generation not supported for methodology: ${this.methodology}`);

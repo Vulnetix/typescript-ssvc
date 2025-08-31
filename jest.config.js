@@ -11,6 +11,7 @@ module.exports = {
       'src/**/*.{js,jsx,ts,tsx}',
       '!src/**/*.d.ts',
       '!src/index.ts',
+      '!src/runtime/runtime.test.js', // Exclude compiled JS test file
     ],
     coverageThreshold: {
       global: {

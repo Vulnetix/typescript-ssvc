@@ -345,7 +345,7 @@ describe('Decision - FIRST Methodology', () => {
             expect(outcome.priority).toBe(DecisionPriority.LOW);
         }
     });
-    
+
     it('should return SCHEDULED as default action for FIRST methodology when no match found', () => {
         // Create a decision that doesn't match any specific case in the matrix
         const decision = new Decision({

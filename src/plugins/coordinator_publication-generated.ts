@@ -12,7 +12,7 @@
  * @generated true
  * @source methodologies/coordinator_publication.yaml
  * @generator scripts/generate-plugins.ts
- * @lastGenerated 2025-08-29T14:35:29.108Z
+ * @lastGenerated 2025-08-31T12:19:05.599Z
  */
 
 export enum SupplierInvolvementLevel {

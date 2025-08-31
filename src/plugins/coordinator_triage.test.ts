@@ -465,6 +465,44 @@ describe('DecisionCoordinatorTriage', () => {
         DecisionCoordinatorTriage.fromVector('COORD_TRIAGEv1/malformed');
       }).toThrow('Invalid vector string format for Coordinator Triage');
     });
+
+    it('should handle plugin fromVector error cases', () => {
+      const plugin = new CoordinatorTriagePlugin();
+      
+      expect(() => {
+        plugin.fromVector('INVALID_FORMAT');
+      }).toThrow();
+
+      expect(() => {
+        plugin.fromVector('COORD_TRIAGEv1/INVALID');
+      }).toThrow();
+    });
+  });
+
+  describe('Vector string methods coverage', () => {
+    it('should cover toVector method', () => {
+      const plugin = new CoordinatorTriagePlugin();
+      const decision = plugin.createDecision({
+        report_public: 'yes',
+        supplier_contacted: 'yes',
+        report_credibility: 'credible',
+        supplier_cardinality: 'multiple',
+        utility: 'super_effective',
+        public_safety_impact: 'significant'
+      });
+
+      expect(decision.toVector).toBeDefined();
+      if (decision.toVector) {
+        expect(() => decision.toVector!()).not.toThrow();
+      }
+    });
+
+    it('should cover fromVector method', () => {
+      const plugin = new CoordinatorTriagePlugin();
+      const vectorString = 'COORD_TRIAGEv1/RP:Y/SC:Y/RC:C/CA:M/U:S/PS:S/2024-01-01T00:00:00.000Z/';
+      
+      expect(() => plugin.fromVector(vectorString)).not.toThrow();
+    });
   });
 });
 

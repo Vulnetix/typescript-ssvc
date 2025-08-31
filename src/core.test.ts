@@ -289,4 +289,76 @@ describe('Integration tests', () => {
     expect(outcome1.action).toBe('immediate');
     expect(outcome2.action).toBe('track');
   });
+
+  describe('Error handling edge cases', () => {
+    it('should handle invalid vector string format in fromVector', () => {
+      const mockPlugin = new MockPlugin();
+      registry.register(mockPlugin);
+      
+      // Test invalid vector format (line 104 in core.ts) - use a string that fails the regex
+      expect(() => {
+        Decision.fromVector('invalid-vector-123');
+      }).toThrow('Invalid vector string format');
+    });
+
+    it('should handle toVector when plugin does not support vectors', () => {
+      const pluginWithoutVector = new (class extends SSVCPlugin {
+        readonly name = 'NoVector';
+        readonly description = 'Plugin without vector support';
+        readonly version = '1.0.0';
+        
+        createDecision(options: Record<string, any>): SSVCDecision {
+          return new (class implements SSVCDecision {
+            evaluate(): SSVCOutcome {
+              return { action: 'track', priority: 'low' };
+            }
+            // No toVector method
+          })();
+        }
+        fromVector(vector: string): SSVCDecision {
+          return new MockDecision({});
+        }
+      })();
+      
+      registry.register(pluginWithoutVector);
+      
+      const decision = new Decision('NoVector', {});
+      
+      // Test when toVector is not supported (line 146 in core.ts)
+      expect(() => {
+        decision.toVector();
+      }).toThrow('Vector string generation not supported for methodology: NoVector');
+    });
+
+    it('should handle toVector when plugin toVector returns undefined', () => {
+      const pluginWithUndefinedVector = new (class extends SSVCPlugin {
+        readonly name = 'UndefinedVector';
+        readonly description = 'Plugin with undefined vector';
+        readonly version = '1.0.0';
+        
+        createDecision(options: Record<string, any>): SSVCDecision {
+          return new (class implements SSVCDecision {
+            evaluate(): SSVCOutcome {
+              return { action: 'track', priority: 'low' };
+            }
+            toVector(): string | undefined {
+              return undefined; // This should trigger the error path
+            }
+          })();
+        }
+        fromVector(vector: string): SSVCDecision {
+          return new MockDecision({});
+        }
+      })();
+      
+      registry.register(pluginWithUndefinedVector);
+      
+      const decision = new Decision('UndefinedVector', {});
+      
+      // Test when toVector returns undefined (line 146 in core.ts)
+      expect(() => {
+        decision.toVector();
+      }).toThrow('Vector string generation not supported for methodology: UndefinedVector');
+    });
+  });
 });

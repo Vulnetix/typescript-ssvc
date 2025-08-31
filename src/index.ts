@@ -5,24 +5,24 @@
  */
 
 // Export core functionality
-export { Decision, PluginRegistry, SSVCPlugin, SSVCDecision, SSVCOutcome } from './core';
+export { Decision, PluginRegistry, SSVCDecision, SSVCOutcome, SSVCPlugin, AuditableDecision } from './core';
 
 // Export plugins
-export { CISAPlugin } from './plugins/cisa';
-export { CoordinatorTriagePlugin } from './plugins/coordinator_triage';
-export { CoordinatorPublicationPlugin } from './plugins/coordinator_publication';
-export { SupplierPlugin } from './plugins/supplier';
-export { DeployerPlugin } from './plugins/deployer';
 export { AILLMTriagePlugin } from './plugins/ai-llm-triage';
+export { CISAPlugin } from './plugins/cisa';
+export { CoordinatorPublicationPlugin } from './plugins/coordinator_publication';
+export { CoordinatorTriagePlugin } from './plugins/coordinator_triage';
+export { DeployerPlugin } from './plugins/deployer';
+export { SupplierPlugin } from './plugins/supplier';
 
 // Auto-register built-in plugins
-import { PluginRegistry, Decision } from './core';
-import { CISAPlugin } from './plugins/cisa';
-import { CoordinatorTriagePlugin } from './plugins/coordinator_triage';
-import { CoordinatorPublicationPlugin } from './plugins/coordinator_publication';
-import { SupplierPlugin } from './plugins/supplier';
-import { DeployerPlugin } from './plugins/deployer';
+import { Decision, PluginRegistry } from './core';
 import { AILLMTriagePlugin } from './plugins/ai-llm-triage';
+import { CISAPlugin } from './plugins/cisa';
+import { CoordinatorPublicationPlugin } from './plugins/coordinator_publication';
+import { CoordinatorTriagePlugin } from './plugins/coordinator_triage';
+import { DeployerPlugin } from './plugins/deployer';
+import { SupplierPlugin } from './plugins/supplier';
 
 // Register plugins on module load
 const registry = PluginRegistry.getInstance();
@@ -47,57 +47,64 @@ export function listMethodologies(): string[] {
 
 // Re-export generated plugin types for advanced usage (with prefixes to avoid conflicts)
 export {
-  ExploitationStatus as CISAExploitationStatus,
-  AutomatableStatus as CISAAutomatableStatus,
-  TechnicalImpactLevel as CISATechnicalImpactLevel,
-  MissionWellbeingImpactLevel as CISAMissionWellbeingImpactLevel,
-  DecisionCisa,
-  OutcomeCisa
+    AutomatableStatus as CISAAutomatableStatus, ExploitationStatus as CISAExploitationStatus, MissionWellbeingImpactLevel as CISAMissionWellbeingImpactLevel, TechnicalImpactLevel as CISATechnicalImpactLevel, DecisionCisa,
+    OutcomeCisa
 } from './plugins/cisa-generated';
 
 export {
-  ReportPublicStatus,
-  SupplierContactedStatus,
-  ReportCredibilityLevel,
-  SupplierCardinalityLevel,
-  UtilityLevel as CoordinatorUtilityLevel,
-  PublicSafetyImpactLevel,
-  DecisionCoordinatorTriage,
-  OutcomeCoordinatorTriage
+    UtilityLevel as CoordinatorUtilityLevel, DecisionCoordinatorTriage,
+    OutcomeCoordinatorTriage, PublicSafetyImpactLevel, ReportCredibilityLevel, ReportPublicStatus, SupplierCardinalityLevel, SupplierContactedStatus
 } from './plugins/coordinator_triage-generated';
 
 export {
-  SupplierInvolvementLevel,
-  ExploitationStatus as PublicationExploitationStatus,
-  PublicValueAddedLevel,
-  DecisionCoordinatorPublication,
-  OutcomeCoordinatorPublication
+    DecisionCoordinatorPublication,
+    OutcomeCoordinatorPublication, ExploitationStatus as PublicationExploitationStatus,
+    PublicValueAddedLevel, SupplierInvolvementLevel
 } from './plugins/coordinator_publication-generated';
 
 export {
-  ExploitationStatus as SupplierExploitationStatus,
-  UtilityLevel as SupplierUtilityLevel,
-  TechnicalImpactLevel as SupplierTechnicalImpactLevel,
-  PublicSafetyImpactLevel as SupplierPublicSafetyImpactLevel,
-  DecisionSupplier,
-  OutcomeSupplier
+    DecisionSupplier,
+    OutcomeSupplier, ExploitationStatus as SupplierExploitationStatus, PublicSafetyImpactLevel as SupplierPublicSafetyImpactLevel, TechnicalImpactLevel as SupplierTechnicalImpactLevel, UtilityLevel as SupplierUtilityLevel
 } from './plugins/supplier-generated';
 
 export {
-  ExploitationStatus as DeployerExploitationStatus,
-  SystemExposureLevel,
-  UtilityLevel as DeployerUtilityLevel,
-  HumanImpactLevel,
-  DecisionDeployer,
-  OutcomeDeployer
+    DecisionDeployer, ExploitationStatus as DeployerExploitationStatus, UtilityLevel as DeployerUtilityLevel,
+    HumanImpactLevel, OutcomeDeployer, SystemExposureLevel
 } from './plugins/deployer-generated';
 
 export {
-  ExploitationStatus as AILLMExploitationStatus,
-  StakeholderRole,
-  DeployerAttackVector,
-  ApplicationAttackVector,
-  UserAttackVector,
-  DecisionAiLlmTriage,
-  OutcomeAiLlmTriage
+    ExploitationStatus as AILLMExploitationStatus, ApplicationAttackVector, DecisionAiLlmTriage, DeployerAttackVector, OutcomeAiLlmTriage, StakeholderRole, UserAttackVector
 } from './plugins/ai_llm_triage-generated';
+
+// Runtime YAML Evaluation API (completely isolated from generated plugins)
+export * as Runtime from './runtime';
+
+// Evidence Mapping and Data-Driven Evaluation System
+export * from './evidence/types';
+export * from './mapping/types';
+export * from './audit/types';
+
+// Configuration and Building
+export { MethodologyConfigBuilder, DataSourceFactory } from './mapping/config';
+
+// Data-Driven Evaluation Engine
+export { DataDrivenEvaluator } from './evaluator/data-driven';
+export { DataExtractor } from './evaluator/extractor';
+export { TransformEngine, CommonTransforms, RuleValidator } from './evaluator/transformer';
+export { DataValidator } from './evaluator/validator';
+
+// Simple User-Facing API
+export { 
+  SSVCEvaluator, 
+  quickEvaluate, 
+  quickValidate,
+  SimpleEvaluationResult,
+  SimpleValidationResult
+} from './api/simple';
+
+// Auditable Decision Wrapper
+export { 
+  AuditableDecisionWrapper, 
+  AuditableDecisionFactory, 
+  AuditableDecisionUtils 
+} from './audit/wrapper';

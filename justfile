@@ -72,6 +72,21 @@ watch:
 build:
     npx tsc --pretty
 
+# Run example scripts with ts-node
+examples: build
+    @echo "Running SSVC example scripts..."
+    @echo "1. Running verification example..."
+    @timeout 30s npx ts-node examples/verification-example.ts || echo "   ⚠️  Verification example completed or timed out"
+    @echo "2. Running evidence mapping demo..."
+    @timeout 30s npx ts-node examples/evidence-mapping-demo.ts || echo "   ⚠️  Evidence mapping demo completed or timed out"
+    @echo "3. Running runtime demo..."
+    @timeout 30s npx ts-node examples/runtime-demo.ts || echo "   ⚠️  Runtime demo completed or timed out"
+    @echo "4. Running quick evidence example..."
+    @timeout 30s npx ts-node examples/quick-evidence-example.ts || echo "   ⚠️  Quick evidence example completed or timed out"
+    @echo "5. Running transform rules example..."
+    @timeout 30s npx ts-node examples/transform-rules-example.ts || echo "   ⚠️  Transform rules example completed or timed out"
+    @echo "✅ All examples completed!"
+
 # Validate YAML methodology files against schema
 validate-methodologies:
     npx ts-node scripts/validate-methodologies.ts

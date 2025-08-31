@@ -2,11 +2,11 @@
 generated: true
 source: methodologies/coordinator_publication.yaml
 generator: scripts/generate-plugins.ts
-lastGenerated: 2025-08-29T14:35:35.429Z
+lastGenerated: 2025-08-31T12:19:06.678Z
 generatedFiles:
   typescript:
     path: /home/chris/github/typescript-ssvc/src/plugins/coordinator_publication-generated.ts
-    checksum: f32b72671cf58216071f6a03e94d0d9a76127075
+    checksum: af10e614ddffa644efcb8f6190128222e34ec08f
 ---
 
 # Coordinator Publication
@@ -188,7 +188,7 @@ Verify the integrity of generated files using these commands:
 
 ```bash
 # Verify TypeScript plugin file
-echo "f32b72671cf58216071f6a03e94d0d9a76127075  /home/chris/github/typescript-ssvc/src/plugins/coordinator_publication-generated.ts" | sha1sum -c
+echo "af10e614ddffa644efcb8f6190128222e34ec08f  /home/chris/github/typescript-ssvc/src/plugins/coordinator_publication-generated.ts" | sha1sum -c
 ```
 
 **Why This Matters**: Checksum verification ensures that generated files haven't been tampered with or corrupted. This is important for:
