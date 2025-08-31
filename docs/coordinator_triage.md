@@ -2,11 +2,11 @@
 generated: true
 source: methodologies/coordinator_triage.yaml
 generator: scripts/generate-plugins.ts
-lastGenerated: 2025-08-29T14:35:57.018Z
+lastGenerated: 2025-08-31T12:19:08.754Z
 generatedFiles:
   typescript:
     path: /home/chris/github/typescript-ssvc/src/plugins/coordinator_triage-generated.ts
-    checksum: 6476a51c2270e28d58192541b78b51e97a4264c3
+    checksum: 4e34c94a073e1f206b9e8fe919afc40a0b2016f1
 ---
 
 # Coordinator Triage
@@ -478,7 +478,7 @@ Verify the integrity of generated files using these commands:
 
 ```bash
 # Verify TypeScript plugin file
-echo "6476a51c2270e28d58192541b78b51e97a4264c3  /home/chris/github/typescript-ssvc/src/plugins/coordinator_triage-generated.ts" | sha1sum -c
+echo "4e34c94a073e1f206b9e8fe919afc40a0b2016f1  /home/chris/github/typescript-ssvc/src/plugins/coordinator_triage-generated.ts" | sha1sum -c
 ```
 
 **Why This Matters**: Checksum verification ensures that generated files haven't been tampered with or corrupted. This is important for:

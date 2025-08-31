@@ -21,10 +21,12 @@
     "generate-plugins": "npx ts-node scripts/generate-plugins.ts"
   },
   "dependencies": {
+    "jsonpath-plus": "^10.3.0",
     "yaml": "^2.6.1"
   },
   "devDependencies": {
     "@types/jest": "^30.0.0",
+    "@types/jsonpath-plus": "^5.0.5",
     "@types/mocha": "^10.0.10",
     "@types/node": "^22.10.2",
     "ajv": "^8.17.1",

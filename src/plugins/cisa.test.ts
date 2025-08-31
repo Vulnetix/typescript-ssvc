@@ -926,4 +926,30 @@ describe('Vector String Support', () => {
         .toThrow('Unknown methodology: NonExistentMethodology');
     });
   });
+
+  describe('Plugin fromVector error handling', () => {
+    it('should handle fromVector errors gracefully', () => {
+      const plugin = new CISAPlugin();
+      
+      expect(() => {
+        plugin.fromVector('INVALID_VECTOR_FORMAT');
+      }).toThrow();
+    });
+
+    it('should handle malformed vector strings', () => {
+      const plugin = new CISAPlugin();
+      
+      expect(() => {
+        plugin.fromVector('CISAv1/INVALID:FORMAT/');
+      }).toThrow();
+    });
+
+    it('should handle empty vector strings', () => {
+      const plugin = new CISAPlugin();
+      
+      expect(() => {
+        plugin.fromVector('');
+      }).toThrow();
+    });
+  });
 });

@@ -2,11 +2,11 @@
 generated: true
 source: methodologies/supplier.yaml
 generator: scripts/generate-plugins.ts
-lastGenerated: 2025-08-29T14:36:18.696Z
+lastGenerated: 2025-08-31T12:19:12.932Z
 generatedFiles:
   typescript:
     path: /home/chris/github/typescript-ssvc/src/plugins/supplier-generated.ts
-    checksum: 18222c65836143f79514ee9abd03a1d84b809279
+    checksum: 152f59221165e047598e3b1ef969346a37072ad7
 ---
 
 # Supplier
@@ -250,7 +250,7 @@ Verify the integrity of generated files using these commands:
 
 ```bash
 # Verify TypeScript plugin file
-echo "18222c65836143f79514ee9abd03a1d84b809279  /home/chris/github/typescript-ssvc/src/plugins/supplier-generated.ts" | sha1sum -c
+echo "152f59221165e047598e3b1ef969346a37072ad7  /home/chris/github/typescript-ssvc/src/plugins/supplier-generated.ts" | sha1sum -c
 ```
 
 **Why This Matters**: Checksum verification ensures that generated files haven't been tampered with or corrupted. This is important for:

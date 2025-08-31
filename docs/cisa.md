@@ -2,11 +2,11 @@
 generated: true
 source: methodologies/cisa.yaml
 generator: scripts/generate-plugins.ts
-lastGenerated: 2025-08-29T14:35:27.842Z
+lastGenerated: 2025-08-31T12:19:04.549Z
 generatedFiles:
   typescript:
     path: /home/chris/github/typescript-ssvc/src/plugins/cisa-generated.ts
-    checksum: 3a186454117f14559e7b416d35c1c51f74aa6b31
+    checksum: 3d352e38e613bde60241940433e8463238262ce4
 ---
 
 # CISA
@@ -198,7 +198,7 @@ Verify the integrity of generated files using these commands:
 
 ```bash
 # Verify TypeScript plugin file
-echo "3a186454117f14559e7b416d35c1c51f74aa6b31  /home/chris/github/typescript-ssvc/src/plugins/cisa-generated.ts" | sha1sum -c
+echo "3d352e38e613bde60241940433e8463238262ce4  /home/chris/github/typescript-ssvc/src/plugins/cisa-generated.ts" | sha1sum -c
 ```
 
 **Why This Matters**: Checksum verification ensures that generated files haven't been tampered with or corrupted. This is important for:

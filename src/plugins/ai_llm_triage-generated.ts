@@ -12,7 +12,7 @@
  * @generated true
  * @source methodologies/ai_llm_triage.yaml
  * @generator scripts/generate-plugins.ts
- * @lastGenerated 2025-08-29T14:35:18.183Z
+ * @lastGenerated 2025-08-31T12:19:01.415Z
  */
 
 export enum ExploitationStatus {

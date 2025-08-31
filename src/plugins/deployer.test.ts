@@ -743,4 +743,37 @@ describe('Generated Deployer Components', () => {
       expect(Object.keys(PriorityLevel).length).toBe(4);
     });
   });
+
+  describe('Vector string methods', () => {
+    it('should implement toVector method', () => {
+      const plugin = new DeployerPlugin();
+      const decision = plugin.createDecision({
+        exploitation: 'ACTIVE',
+        exposure: 'CONTROLLED',
+        automatable: 'YES',
+        human_impact: 'HIGH'
+      });
+
+      const outcome = decision.evaluate();
+      expect(outcome).toBeDefined();
+      
+      expect(decision.toVector).toBeDefined();
+      if (decision.toVector) {
+        expect(() => decision.toVector!()).not.toThrow();
+      }
+    });
+
+    it('should implement fromVector method', () => {
+      const plugin = new DeployerPlugin();
+      expect(plugin.fromVector).toBeDefined();
+    });
+
+    it('should handle fromVector errors gracefully', () => {
+      const plugin = new DeployerPlugin();
+      
+      expect(() => {
+        plugin.fromVector!('INVALID_VECTOR_FORMAT');
+      }).toThrow();
+    });
+  });
 });

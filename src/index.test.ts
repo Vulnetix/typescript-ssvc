@@ -4,7 +4,11 @@ import {
   PluginRegistry,
   CISAPlugin,
   CoordinatorTriagePlugin,
-  Decision
+  Decision,
+  CISAExploitationStatus,
+  CISAAutomatableStatus,
+  CoordinatorUtilityLevel,
+  ReportPublicStatus
 } from './index';
 
 describe('Public API', () => {
@@ -208,15 +212,21 @@ describe('Public API', () => {
   
   describe('Type exports', () => {
     it('should export CISA types with aliases', () => {
-      // These imports are tested implicitly by the successful compilation
-      // The actual enum values are tested in the plugin-specific test files
-      expect(true).toBe(true); // Placeholder to ensure test runs
+      // Verify CISA enum values are accessible
+      expect(CISAExploitationStatus.ACTIVE).toBe('active');
+      expect(CISAExploitationStatus.POC).toBe('poc');
+      expect(CISAExploitationStatus.NONE).toBe('none');
+      expect(CISAAutomatableStatus.YES).toBe('yes');
+      expect(CISAAutomatableStatus.NO).toBe('no');
     });
     
     it('should export Coordinator Triage types', () => {
-      // These imports are tested implicitly by the successful compilation
-      // The actual enum values are tested in the plugin-specific test files
-      expect(true).toBe(true); // Placeholder to ensure test runs
+      // Verify Coordinator Triage enum values are accessible
+      expect(CoordinatorUtilityLevel.LABORIOUS).toBe('laborious');
+      expect(CoordinatorUtilityLevel.EFFICIENT).toBe('efficient');
+      expect(CoordinatorUtilityLevel.SUPER_EFFECTIVE).toBe('super_effective');
+      expect(ReportPublicStatus.YES).toBe('yes');
+      expect(ReportPublicStatus.NO).toBe('no');
     });
   });
   
