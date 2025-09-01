@@ -2,11 +2,11 @@
 generated: true
 source: methodologies/cisa.yaml
 generator: scripts/generate-plugins.ts
-lastGenerated: 2025-08-31T12:19:04.549Z
+lastGenerated: 2025-09-01T14:11:02.851Z
 generatedFiles:
   typescript:
     path: /home/chris/github/typescript-ssvc/src/plugins/cisa-generated.ts
-    checksum: 3d352e38e613bde60241940433e8463238262ce4
+    checksum: 4bc4bb7cba265e5c63b26a8e44752b4d56d6bd6a
 ---
 
 # CISA
@@ -136,10 +136,25 @@ flowchart LR
 
 ## Usage
 
+### Direct Plugin Usage
+
 ```typescript
-import { DecisionCisa } from "./plugins/cisa";
+import { DecisionCisa } from "ssvc";
 
 const decision = new DecisionCisa({
+  // Add parameters based on methodology
+});
+
+const outcome = decision.evaluate();
+console.log(outcome.action, outcome.priority);
+```
+
+### Using the Generic API
+
+```typescript
+import { createDecision } from "ssvc";
+
+const decision = createDecision("cisa", {
   // Add parameters based on methodology
 });
 
@@ -169,6 +184,8 @@ CISAv1/[parameters]/[timestamp]/
 ### Example Usage
 
 ```typescript
+import { DecisionCisa } from "ssvc";
+
 // Generate vector string from decision
 const decision = new DecisionCisa({
   exploitation: "NONE",
@@ -198,7 +215,7 @@ Verify the integrity of generated files using these commands:
 
 ```bash
 # Verify TypeScript plugin file
-echo "3d352e38e613bde60241940433e8463238262ce4  /home/chris/github/typescript-ssvc/src/plugins/cisa-generated.ts" | sha1sum -c
+echo "4bc4bb7cba265e5c63b26a8e44752b4d56d6bd6a  /home/chris/github/typescript-ssvc/src/plugins/cisa-generated.ts" | sha1sum -c
 ```
 
 **Why This Matters**: Checksum verification ensures that generated files haven't been tampered with or corrupted. This is important for:

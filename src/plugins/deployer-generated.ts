@@ -12,7 +12,7 @@
  * @generated true
  * @source methodologies/deployer.yaml
  * @generator scripts/generate-plugins.ts
- * @lastGenerated 2025-08-31T12:19:09.804Z
+ * @lastGenerated 2025-09-01T14:11:08.050Z
  */
 
 export enum ExploitationStatus {

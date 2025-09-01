@@ -2,11 +2,11 @@
 generated: true
 source: methodologies/ai_llm_triage.yaml
 generator: scripts/generate-plugins.ts
-lastGenerated: 2025-08-31T12:19:02.482Z
+lastGenerated: 2025-09-01T14:11:00.739Z
 generatedFiles:
   typescript:
     path: /home/chris/github/typescript-ssvc/src/plugins/ai_llm_triage-generated.ts
-    checksum: 62bd31b5580d96280d558b35b427aac925fae461
+    checksum: 5ed4f44decd6db119bb816b318488ef447c138fc
 ---
 
 # AI/LLM Triage
@@ -159,10 +159,25 @@ flowchart LR
 
 ## Usage
 
+### Direct Plugin Usage
+
 ```typescript
-import { DecisionAiLlmTriage } from "./plugins/ai_llm_triage";
+import { DecisionAiLlmTriage } from "ssvc";
 
 const decision = new DecisionAiLlmTriage({
+  // Add parameters based on methodology
+});
+
+const outcome = decision.evaluate();
+console.log(outcome.action, outcome.priority);
+```
+
+### Using the Generic API
+
+```typescript
+import { createDecision } from "ssvc";
+
+const decision = createDecision("ai_llm_triage", {
   // Add parameters based on methodology
 });
 
@@ -193,6 +208,8 @@ AI_LLMv2/[parameters]/[timestamp]/
 ### Example Usage
 
 ```typescript
+import { DecisionAiLlmTriage } from "ssvc";
+
 // Generate vector string from decision
 const decision = new DecisionAiLlmTriage({
   exploitation: "NONE",
@@ -223,7 +240,7 @@ Verify the integrity of generated files using these commands:
 
 ```bash
 # Verify TypeScript plugin file
-echo "62bd31b5580d96280d558b35b427aac925fae461  /home/chris/github/typescript-ssvc/src/plugins/ai_llm_triage-generated.ts" | sha1sum -c
+echo "5ed4f44decd6db119bb816b318488ef447c138fc  /home/chris/github/typescript-ssvc/src/plugins/ai_llm_triage-generated.ts" | sha1sum -c
 ```
 
 **Why This Matters**: Checksum verification ensures that generated files haven't been tampered with or corrupted. This is important for:

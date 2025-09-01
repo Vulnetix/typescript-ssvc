@@ -2,11 +2,11 @@
 generated: true
 source: methodologies/supplier.yaml
 generator: scripts/generate-plugins.ts
-lastGenerated: 2025-08-31T12:19:12.932Z
+lastGenerated: 2025-09-01T14:11:13.512Z
 generatedFiles:
   typescript:
     path: /home/chris/github/typescript-ssvc/src/plugins/supplier-generated.ts
-    checksum: 152f59221165e047598e3b1ef969346a37072ad7
+    checksum: 21270c886797c48fe3564deff2e5712bed108d8a
 ---
 
 # Supplier
@@ -188,10 +188,25 @@ flowchart LR
 
 ## Usage
 
+### Direct Plugin Usage
+
 ```typescript
-import { DecisionSupplier } from "./plugins/supplier";
+import { DecisionSupplier } from "ssvc";
 
 const decision = new DecisionSupplier({
+  // Add parameters based on methodology
+});
+
+const outcome = decision.evaluate();
+console.log(outcome.action, outcome.priority);
+```
+
+### Using the Generic API
+
+```typescript
+import { createDecision } from "ssvc";
+
+const decision = createDecision("supplier", {
   // Add parameters based on methodology
 });
 
@@ -221,6 +236,8 @@ SUPPLIERv1/[parameters]/[timestamp]/
 ### Example Usage
 
 ```typescript
+import { DecisionSupplier } from "ssvc";
+
 // Generate vector string from decision
 const decision = new DecisionSupplier({
   exploitation: "none",
@@ -250,7 +267,7 @@ Verify the integrity of generated files using these commands:
 
 ```bash
 # Verify TypeScript plugin file
-echo "152f59221165e047598e3b1ef969346a37072ad7  /home/chris/github/typescript-ssvc/src/plugins/supplier-generated.ts" | sha1sum -c
+echo "21270c886797c48fe3564deff2e5712bed108d8a  /home/chris/github/typescript-ssvc/src/plugins/supplier-generated.ts" | sha1sum -c
 ```
 
 **Why This Matters**: Checksum verification ensures that generated files haven't been tampered with or corrupted. This is important for:

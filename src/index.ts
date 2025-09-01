@@ -13,6 +13,7 @@ export { CISAPlugin } from './plugins/cisa';
 export { CoordinatorPublicationPlugin } from './plugins/coordinator_publication';
 export { CoordinatorTriagePlugin } from './plugins/coordinator_triage';
 export { DeployerPlugin } from './plugins/deployer';
+export { EngineerTriagePlugin } from './plugins/engineer_triage';
 export { SupplierPlugin } from './plugins/supplier';
 
 // Auto-register built-in plugins
@@ -22,6 +23,7 @@ import { CISAPlugin } from './plugins/cisa';
 import { CoordinatorPublicationPlugin } from './plugins/coordinator_publication';
 import { CoordinatorTriagePlugin } from './plugins/coordinator_triage';
 import { DeployerPlugin } from './plugins/deployer';
+import { EngineerTriagePlugin } from './plugins/engineer_triage';
 import { SupplierPlugin } from './plugins/supplier';
 
 // Register plugins on module load
@@ -31,6 +33,7 @@ registry.register(new CoordinatorTriagePlugin());
 registry.register(new CoordinatorPublicationPlugin());
 registry.register(new SupplierPlugin());
 registry.register(new DeployerPlugin());
+registry.register(new EngineerTriagePlugin());
 registry.register(new AILLMTriagePlugin());
 
 // Export legacy compatibility (deprecated)
@@ -75,6 +78,10 @@ export {
 export {
     ExploitationStatus as AILLMExploitationStatus, ApplicationAttackVector, DecisionAiLlmTriage, DeployerAttackVector, OutcomeAiLlmTriage, StakeholderRole, UserAttackVector
 } from './plugins/ai_llm_triage-generated';
+
+export {
+    DecisionEngineerTriage, OutcomeEngineerTriage, Reachability, RemediationOption, MitigationOption, ReportedPriority
+} from './plugins/engineer_triage-generated';
 
 // Runtime YAML Evaluation API (completely isolated from generated plugins)
 export * as Runtime from './runtime';

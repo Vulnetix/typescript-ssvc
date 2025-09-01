@@ -2,11 +2,11 @@
 generated: true
 source: methodologies/coordinator_publication.yaml
 generator: scripts/generate-plugins.ts
-lastGenerated: 2025-08-31T12:19:06.678Z
+lastGenerated: 2025-09-01T14:11:04.933Z
 generatedFiles:
   typescript:
     path: /home/chris/github/typescript-ssvc/src/plugins/coordinator_publication-generated.ts
-    checksum: af10e614ddffa644efcb8f6190128222e34ec08f
+    checksum: 920af7a060f9ffbaf15a225d2086daab6f0386f9
 ---
 
 # Coordinator Publication
@@ -128,10 +128,25 @@ flowchart LR
 
 ## Usage
 
+### Direct Plugin Usage
+
 ```typescript
-import { DecisionCoordinatorPublication } from "./plugins/coordinator_publication";
+import { DecisionCoordinatorPublication } from "ssvc";
 
 const decision = new DecisionCoordinatorPublication({
+  // Add parameters based on methodology
+});
+
+const outcome = decision.evaluate();
+console.log(outcome.action, outcome.priority);
+```
+
+### Using the Generic API
+
+```typescript
+import { createDecision } from "ssvc";
+
+const decision = createDecision("coordinator_publication", {
   // Add parameters based on methodology
 });
 
@@ -160,6 +175,8 @@ COORD_PUBv1/[parameters]/[timestamp]/
 ### Example Usage
 
 ```typescript
+import { DecisionCoordinatorPublication } from "ssvc";
+
 // Generate vector string from decision
 const decision = new DecisionCoordinatorPublication({
   supplier_involvement: "fix_ready",
@@ -188,7 +205,7 @@ Verify the integrity of generated files using these commands:
 
 ```bash
 # Verify TypeScript plugin file
-echo "af10e614ddffa644efcb8f6190128222e34ec08f  /home/chris/github/typescript-ssvc/src/plugins/coordinator_publication-generated.ts" | sha1sum -c
+echo "920af7a060f9ffbaf15a225d2086daab6f0386f9  /home/chris/github/typescript-ssvc/src/plugins/coordinator_publication-generated.ts" | sha1sum -c
 ```
 
 **Why This Matters**: Checksum verification ensures that generated files haven't been tampered with or corrupted. This is important for:

@@ -63,8 +63,9 @@ describe('Public API', () => {
       expect(methodologies).toContain('Coordinator Publication');
       expect(methodologies).toContain('Supplier');
       expect(methodologies).toContain('Deployer');
+      expect(methodologies).toContain('Engineer Triage');
       expect(methodologies).toContain('AI/LLM Triage');
-      expect(methodologies).toHaveLength(6);
+      expect(methodologies).toHaveLength(7);
     });
     
     it('should return array of strings', () => {
@@ -113,9 +114,11 @@ describe('Public API', () => {
       expect(registry.has('Coordinator Publication')).toBe(true);
       expect(registry.has('Supplier')).toBe(true);
       expect(registry.has('Deployer')).toBe(true);
+      expect(registry.has('Engineer Triage')).toBe(true);
+      expect(registry.has('AI/LLM Triage')).toBe(true);
       
       const plugins = registry.list();
-      expect(plugins).toHaveLength(6);
+      expect(plugins).toHaveLength(7);
       
       const cisaPlugin = registry.get('CISA');
       const coordinatorPlugin = registry.get('Coordinator Triage');

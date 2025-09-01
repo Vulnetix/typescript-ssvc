@@ -181,6 +181,50 @@ describe('MethodologyConfigBuilder', () => {
       }).toThrow('SQL source must specify either table or query');
     });
 
+    it('should allow SQL source with valid table config', () => {
+      const sqlSource: DataSource = {
+        sourceId: 'sql-test',
+        name: 'SQL Test',
+        type: 'sql',
+        description: 'Test SQL source',
+        priority: 1,
+        isActive: true,
+        mimeTypes: ['application/json'],
+        config: { table: 'vulnerabilities' }
+      };
+
+      const config = builder
+        .addDecisionPoint('test')
+        .withValidValues('VALUE1')
+        .withSource(sqlSource)
+        .done()
+        .build();
+
+      expect(config.decisionPointMappings[0].dataSources[0].config.table).toBe('vulnerabilities');
+    });
+
+    it('should allow SQL source with valid query config', () => {
+      const sqlSource: DataSource = {
+        sourceId: 'sql-test',
+        name: 'SQL Test',
+        type: 'sql',
+        description: 'Test SQL source',
+        priority: 1,
+        isActive: true,
+        mimeTypes: ['application/json'],
+        config: { query: 'SELECT * FROM test' }
+      };
+
+      const config = builder
+        .addDecisionPoint('test')
+        .withValidValues('VALUE1')
+        .withSource(sqlSource)
+        .done()
+        .build();
+
+      expect(config.decisionPointMappings[0].dataSources[0].config.query).toBe('SELECT * FROM test');
+    });
+
     it('should validate API source configuration', () => {
       const apiSource: DataSource = {
         sourceId: 'api-test',
@@ -201,6 +245,28 @@ describe('MethodologyConfigBuilder', () => {
           .done()
           .build();
       }).toThrow('API source must specify endpoint');
+    });
+
+    it('should allow API source with valid endpoint', () => {
+      const apiSource: DataSource = {
+        sourceId: 'api-test',
+        name: 'API Test',
+        type: 'api',
+        description: 'Test API source',
+        priority: 1,
+        isActive: true,
+        mimeTypes: ['application/json'],
+        config: { endpoint: 'https://api.example.com' }
+      };
+
+      const config = builder
+        .addDecisionPoint('test')
+        .withValidValues('VALUE1')
+        .withSource(apiSource)
+        .done()
+        .build();
+
+      expect(config.decisionPointMappings[0].dataSources[0].config.endpoint).toBe('https://api.example.com');
     });
 
     it('should validate document source configuration', () => {
@@ -225,6 +291,28 @@ describe('MethodologyConfigBuilder', () => {
       }).toThrow('Document source must specify collection');
     });
 
+    it('should allow document source with valid collection', () => {
+      const docSource: DataSource = {
+        sourceId: 'doc-test',
+        name: 'Doc Test',
+        type: 'document',
+        description: 'Test document source',
+        priority: 1,
+        isActive: true,
+        mimeTypes: ['application/json'],
+        config: { collection: 'vulnerabilities' }
+      };
+
+      const config = builder
+        .addDecisionPoint('test')
+        .withValidValues('VALUE1')
+        .withSource(docSource)
+        .done()
+        .build();
+
+      expect(config.decisionPointMappings[0].dataSources[0].config.collection).toBe('vulnerabilities');
+    });
+
     it('should validate file source configuration', () => {
       const fileSource: DataSource = {
         sourceId: 'file-test',
@@ -245,6 +333,28 @@ describe('MethodologyConfigBuilder', () => {
           .done()
           .build();
       }).toThrow('File source must specify filePath');
+    });
+
+    it('should allow file source with valid filePath', () => {
+      const fileSource: DataSource = {
+        sourceId: 'file-test',
+        name: 'File Test',
+        type: 'file',
+        description: 'Test file source',
+        priority: 1,
+        isActive: true,
+        mimeTypes: ['text/plain'],
+        config: { filePath: '/path/to/file.json' }
+      };
+
+      const config = builder
+        .addDecisionPoint('test')
+        .withValidValues('VALUE1')
+        .withSource(fileSource)
+        .done()
+        .build();
+
+      expect(config.decisionPointMappings[0].dataSources[0].config.filePath).toBe('/path/to/file.json');
     });
 
     it('should validate data source has sourceId', () => {
