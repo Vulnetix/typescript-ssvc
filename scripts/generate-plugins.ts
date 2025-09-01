@@ -201,13 +201,8 @@ ${decisionClassCode}
     const className = `Decision${this.toPascalCase(pluginName)}`;
     const outcomeClass = `Outcome${this.toPascalCase(pluginName)}`;
 
-    // Get decision point enums (exclude ActionType and Priority)
-    const decisionEnums: string[] = [];
-    for (const enumName of Object.keys(config.enums)) {
-      if (!enumName.includes('ActionType') && !enumName.includes('Priority')) {
-        decisionEnums.push(enumName);
-      }
-    }
+    // Get decision point enums by analyzing the decision tree
+    const decisionEnums = this.collectDecisionPointEnums(config.decisionTree);
 
     // Generate constructor parameters interface
     const interfaceName = `${className}Options`;
@@ -342,6 +337,29 @@ ${fromVectorParams.join('\n')}
   }`;
   }
 
+  private collectDecisionPointEnums(tree: DecisionNode): string[] {
+    const enumTypes = new Set<string>();
+    
+    const traverse = (node: DecisionNode | string) => {
+      if (typeof node === 'string') {
+        return; // Leaf node
+      }
+      
+      if (node.type) {
+        enumTypes.add(node.type);
+      }
+      
+      if (node.children) {
+        for (const childNode of Object.values(node.children)) {
+          traverse(childNode);
+        }
+      }
+    };
+    
+    traverse(tree);
+    return Array.from(enumTypes);
+  }
+
   private generateDecisionTreeMethod(tree: DecisionNode, defaultAction: string): string {
     const generateTraversalCode = (node: DecisionNode | string, depth: number = 2): string => {
       const indent = '  '.repeat(depth);
@@ -439,10 +457,25 @@ ${Object.entries(config.priorityMap).map(([action, priority]) =>
 
 ## Usage
 
+### Direct Plugin Usage
+
 \`\`\`typescript
-import { Decision${this.toPascalCase(pluginName)} } from './plugins/${pluginName}';
+import { Decision${this.toPascalCase(pluginName)} } from 'ssvc';
 
 const decision = new Decision${this.toPascalCase(pluginName)}({
+  // Add parameters based on methodology
+});
+
+const outcome = decision.evaluate();
+console.log(outcome.action, outcome.priority);
+\`\`\`
+
+### Using the Generic API
+
+\`\`\`typescript
+import { createDecision } from 'ssvc';
+
+const decision = createDecision('${pluginName}', {
   // Add parameters based on methodology
 });
 
@@ -534,6 +567,8 @@ ${vectorMeta.prefix}${vectorMeta.version}/[parameters]/[timestamp]/
 ### Example Usage
 
 \`\`\`typescript
+import { ${className} } from 'ssvc';
+
 // Generate vector string from decision
 const decision = new ${className}({
 ${exampleParams.join(',\n')}

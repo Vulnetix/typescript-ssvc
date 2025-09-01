@@ -37,7 +37,7 @@ npx ts-node scripts/validate-methodologies.ts
 
 See the [**Schema Documentation**](docs/methodology-schema.md) for complete details on creating schema-compliant YAML methodologies.
 
-This library features a **plugin-based architecture** that allows for easy integration of different SSVC methodologies. It includes built-in support for **6 methodologies**:
+This library features a **plugin-based architecture** that allows for easy integration of different SSVC methodologies. It includes built-in support for **7 methodologies**:
 
 | Methodology | Description | Documentation | Official Source |
 |-------------|-------------|---------------|-----------------|
@@ -45,6 +45,7 @@ This library features a **plugin-based architecture** that allows for easy integ
 | **CISA** | CISA Stakeholder-Specific Vulnerability Categorization | [docs/cisa.md](docs/cisa.md) | [CISA SSVC Guide](https://www.cisa.gov/stakeholder-specific-vulnerability-categorization-ssvc) |
 | **Coordinator Triage** | CERT/CC Coordinator Triage Decision Model | [docs/coordinator_triage.md](docs/coordinator_triage.md) | [CERT/CC Coordinator Triage](https://certcc.github.io/SSVC/howto/coordination_triage_decision/) |
 | **Coordinator Publication** | CERT/CC Coordinator Publication Decision Model | [docs/coordinator_publication.md](docs/coordinator_publication.md) | [CERT/CC Publication Decision](https://certcc.github.io/SSVC/howto/publication_decision/) |
+| **Engineer Triage** | Developer-focused vulnerability triage methodology | [docs/engineer_triage.md](docs/engineer_triage.md) | [Comprehensive Guide](docs/engineer_triage_guide.md) |
 | **Supplier** | CERT/CC Supplier Decision Model for patch prioritization | [docs/supplier.md](docs/supplier.md) | [CERT/CC Supplier Tree](https://certcc.github.io/SSVC/howto/supplier_tree/) |
 | **Deployer** | CERT/CC Deployer Decision Model for patch deployment | [docs/deployer.md](docs/deployer.md) | [CERT/CC Deployer Tree](https://certcc.github.io/SSVC/howto/deployer_tree/) |
 
@@ -309,6 +310,38 @@ const outcome = deployerDecision.evaluate();
 - `scheduled` → Medium priority  
 - `out_of_cycle` → High priority
 - `immediate` → Immediate priority
+
+### Engineer Triage Methodology
+
+The Engineer Triage methodology is specifically designed for software engineers to prioritize vulnerability response within development workflows. It focuses on **actionable outcomes** that integrate directly with development practices:
+
+```javascript
+import { createDecision } from 'ssvc';
+
+const engineerDecision = createDecision('Engineer Triage', {
+  reachability: 'verified_reachable',           // 'verified_reachable' | 'verified_unreachable' | 'unknown'
+  remediation_option: 'patchable_deployment',   // patch availability and deployment method
+  mitigation_option: 'automation',              // available defensive measures
+  reported_priority: 'critical'                 // 'critical' | 'high' | 'medium' | 'low'
+});
+
+const outcome = engineerDecision.evaluate();
+// Returns: { action: 'spike_effort', priority: 'high' }
+```
+
+**Decision Points:**
+- **Reachability**: Can vulnerable code paths be executed? (determined via SAST, code coverage, call graph analysis)
+- **Remediation Option**: What patching options are available? (from package managers, lock files, vendor advisories)
+- **Mitigation Option**: What defensive measures can be implemented? (WAF rules, code changes, alternative libraries)
+- **Reported Priority**: What is the severity rating? (from CVSS scores, vulnerability databases, internal assessments)
+
+**Possible Actions:**
+- `nightly_auto_patch` → Low priority (routine automated patching)
+- `spike_effort` → High priority (time-boxed investigation needed)
+- `drop_tools` → Immediate priority (stop current work, address now)
+- `backlog` → Medium priority (schedule for future sprint)
+
+**For detailed implementation guidance**, including data source mapping and practical examples, see the [**Engineer Triage Comprehensive Guide**](docs/engineer_triage_guide.md).
 
 ## Quantitative vs Qualitative Decision Making
 

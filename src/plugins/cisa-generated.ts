@@ -12,7 +12,7 @@
  * @generated true
  * @source methodologies/cisa.yaml
  * @generator scripts/generate-plugins.ts
- * @lastGenerated 2025-08-31T12:19:03.540Z
+ * @lastGenerated 2025-09-01T14:11:01.809Z
  */
 
 export enum ExploitationStatus {

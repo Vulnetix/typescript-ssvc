@@ -12,7 +12,7 @@
  * @generated true
  * @source methodologies/coordinator_triage.yaml
  * @generator scripts/generate-plugins.ts
- * @lastGenerated 2025-08-31T12:19:07.695Z
+ * @lastGenerated 2025-09-01T14:11:05.988Z
  */
 
 export enum ReportPublicStatus {

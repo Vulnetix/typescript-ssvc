@@ -1,0 +1,366 @@
+name: "Engineer Triage"
+description: "Developer-focused vulnerability triage methodology for determining appropriate response actions based on reachability, remediation options, mitigation capabilities, and priority"
+version: "1.0"
+
+enums:
+  Reachability:
+    - VERIFIED_REACHABLE
+    - VERIFIED_UNREACHABLE
+    - UNKNOWN
+  RemediationOption:
+    - PATCHABLE_VERSION_LOCKED
+    - PATCHABLE_DEPLOYMENT
+    - PATCHABLE_MANUAL
+    - PATCH_UNAVAILABLE
+    - NO_PATCH
+  MitigationOption:
+    - INFRASTRUCTURE
+    - CODE_CHANGE
+    - UPSTREAM_PR
+    - ALTERNATIVE
+    - AUTOMATION
+  ReportedPriority:
+    - CRITICAL
+    - HIGH
+    - MEDIUM
+    - LOW
+
+priorityMap:
+  NIGHTLY_AUTO_PATCH: low
+  DROP_TOOLS: immediate
+  SPIKE_EFFORT: high
+  BACKLOG: medium
+
+# 4-level decision tree with consistent depth
+# Default action handles many unmapped paths to simplify the tree
+# UNKNOWN reachability is treated as VERIFIED_REACHABLE (bias toward reachable until proven otherwise)
+decisionTree:
+  type: Reachability
+  children:
+    VERIFIED_REACHABLE:
+      type: RemediationOption
+      children:
+        PATCHABLE_DEPLOYMENT:
+          type: MitigationOption
+          children:
+            AUTOMATION:
+              type: ReportedPriority
+              children:
+                CRITICAL: SPIKE_EFFORT
+                HIGH: NIGHTLY_AUTO_PATCH
+                MEDIUM: NIGHTLY_AUTO_PATCH
+                LOW: NIGHTLY_AUTO_PATCH
+        PATCHABLE_VERSION_LOCKED:
+          type: MitigationOption
+          children:
+            CODE_CHANGE:
+              type: ReportedPriority
+              children:
+                CRITICAL: DROP_TOOLS
+                HIGH: DROP_TOOLS
+                MEDIUM: SPIKE_EFFORT
+                LOW: SPIKE_EFFORT
+        PATCHABLE_MANUAL:
+          type: MitigationOption
+          children:
+            CODE_CHANGE:
+              type: ReportedPriority
+              children:
+                CRITICAL: DROP_TOOLS
+                HIGH: DROP_TOOLS
+                MEDIUM: NIGHTLY_AUTO_PATCH
+                LOW: NIGHTLY_AUTO_PATCH
+        PATCH_UNAVAILABLE:
+          type: MitigationOption
+          children:
+            INFRASTRUCTURE:
+              type: ReportedPriority
+              children:
+                CRITICAL: DROP_TOOLS
+                HIGH: DROP_TOOLS
+                MEDIUM: SPIKE_EFFORT
+                LOW: BACKLOG
+            CODE_CHANGE:
+              type: ReportedPriority
+              children:
+                CRITICAL: DROP_TOOLS
+                HIGH: DROP_TOOLS
+                MEDIUM: SPIKE_EFFORT
+                LOW: BACKLOG
+            UPSTREAM_PR:
+              type: ReportedPriority
+              children:
+                CRITICAL: DROP_TOOLS
+                HIGH: SPIKE_EFFORT
+                MEDIUM: SPIKE_EFFORT
+                LOW: SPIKE_EFFORT
+            ALTERNATIVE:
+              type: ReportedPriority
+              children:
+                CRITICAL: DROP_TOOLS
+                HIGH: DROP_TOOLS
+                MEDIUM: SPIKE_EFFORT
+                LOW: SPIKE_EFFORT
+        NO_PATCH:
+          type: MitigationOption
+          children:
+            INFRASTRUCTURE:
+              type: ReportedPriority
+              children:
+                CRITICAL: DROP_TOOLS
+                HIGH: DROP_TOOLS
+                MEDIUM: SPIKE_EFFORT
+                LOW: BACKLOG
+            CODE_CHANGE:
+              type: ReportedPriority
+              children:
+                CRITICAL: DROP_TOOLS
+                HIGH: DROP_TOOLS
+                MEDIUM: SPIKE_EFFORT
+                LOW: SPIKE_EFFORT
+            UPSTREAM_PR:
+              type: ReportedPriority
+              children:
+                CRITICAL: DROP_TOOLS
+                HIGH: SPIKE_EFFORT
+                MEDIUM: SPIKE_EFFORT
+                LOW: SPIKE_EFFORT
+            ALTERNATIVE:
+              type: ReportedPriority
+              children:
+                CRITICAL: DROP_TOOLS
+                HIGH: DROP_TOOLS
+                MEDIUM: SPIKE_EFFORT
+                LOW: BACKLOG
+    VERIFIED_UNREACHABLE:
+      type: RemediationOption
+      children:
+        PATCHABLE_DEPLOYMENT:
+          type: MitigationOption
+          children:
+            AUTOMATION:
+              type: ReportedPriority
+              children:
+                CRITICAL: NIGHTLY_AUTO_PATCH
+                HIGH: NIGHTLY_AUTO_PATCH
+                MEDIUM: NIGHTLY_AUTO_PATCH
+                LOW: NIGHTLY_AUTO_PATCH
+        PATCHABLE_VERSION_LOCKED:
+          type: MitigationOption
+          children:
+            CODE_CHANGE:
+              type: ReportedPriority
+              children:
+                CRITICAL: SPIKE_EFFORT
+                HIGH: SPIKE_EFFORT
+                MEDIUM: BACKLOG
+                LOW: BACKLOG
+        PATCHABLE_MANUAL:
+          type: MitigationOption
+          children:
+            CODE_CHANGE:
+              type: ReportedPriority
+              children:
+                CRITICAL: SPIKE_EFFORT
+                HIGH: BACKLOG
+                MEDIUM: BACKLOG
+                LOW: BACKLOG
+        PATCH_UNAVAILABLE:
+          type: MitigationOption
+          children:
+            INFRASTRUCTURE:
+              type: ReportedPriority
+              children:
+                CRITICAL: SPIKE_EFFORT
+                HIGH: BACKLOG
+                MEDIUM: BACKLOG
+                LOW: BACKLOG
+            CODE_CHANGE:
+              type: ReportedPriority
+              children:
+                CRITICAL: SPIKE_EFFORT
+                HIGH: BACKLOG
+                MEDIUM: BACKLOG
+                LOW: BACKLOG
+            UPSTREAM_PR:
+              type: ReportedPriority
+              children:
+                CRITICAL: SPIKE_EFFORT
+                HIGH: SPIKE_EFFORT
+                MEDIUM: SPIKE_EFFORT
+                LOW: BACKLOG
+            ALTERNATIVE:
+              type: ReportedPriority
+              children:
+                CRITICAL: SPIKE_EFFORT
+                HIGH: SPIKE_EFFORT
+                MEDIUM: SPIKE_EFFORT
+                LOW: BACKLOG
+        NO_PATCH:
+          type: MitigationOption
+          children:
+            INFRASTRUCTURE:
+              type: ReportedPriority
+              children:
+                CRITICAL: SPIKE_EFFORT
+                HIGH: SPIKE_EFFORT
+                MEDIUM: SPIKE_EFFORT
+                LOW: BACKLOG
+            CODE_CHANGE:
+              type: ReportedPriority
+              children:
+                CRITICAL: SPIKE_EFFORT
+                HIGH: BACKLOG
+                MEDIUM: BACKLOG
+                LOW: BACKLOG
+            UPSTREAM_PR:
+              type: ReportedPriority
+              children:
+                CRITICAL: SPIKE_EFFORT
+                HIGH: SPIKE_EFFORT
+                MEDIUM: SPIKE_EFFORT
+                LOW: BACKLOG
+            ALTERNATIVE:
+              type: ReportedPriority
+              children:
+                CRITICAL: SPIKE_EFFORT
+                HIGH: SPIKE_EFFORT
+                MEDIUM: BACKLOG
+                LOW: BACKLOG
+    UNKNOWN:
+      type: RemediationOption
+      children:
+        PATCHABLE_DEPLOYMENT:
+          type: MitigationOption
+          children:
+            AUTOMATION:
+              type: ReportedPriority
+              children:
+                CRITICAL: DROP_TOOLS
+                HIGH: NIGHTLY_AUTO_PATCH
+                MEDIUM: NIGHTLY_AUTO_PATCH
+                LOW: NIGHTLY_AUTO_PATCH
+        PATCHABLE_VERSION_LOCKED:
+          type: MitigationOption
+          children:
+            CODE_CHANGE:
+              type: ReportedPriority
+              children:
+                CRITICAL: DROP_TOOLS
+                HIGH: DROP_TOOLS
+                MEDIUM: SPIKE_EFFORT
+                LOW: SPIKE_EFFORT
+        PATCHABLE_MANUAL:
+          type: MitigationOption
+          children:
+            CODE_CHANGE:
+              type: ReportedPriority
+              children:
+                CRITICAL: DROP_TOOLS
+                HIGH: DROP_TOOLS
+                MEDIUM: SPIKE_EFFORT
+                LOW: SPIKE_EFFORT
+        PATCH_UNAVAILABLE:
+          type: MitigationOption
+          children:
+            INFRASTRUCTURE:
+              type: ReportedPriority
+              children:
+                CRITICAL: DROP_TOOLS
+                HIGH: DROP_TOOLS
+                MEDIUM: SPIKE_EFFORT
+                LOW: SPIKE_EFFORT
+            CODE_CHANGE:
+              type: ReportedPriority
+              children:
+                CRITICAL: DROP_TOOLS
+                HIGH: DROP_TOOLS
+                MEDIUM: SPIKE_EFFORT
+                LOW: BACKLOG
+            UPSTREAM_PR:
+              type: ReportedPriority
+              children:
+                CRITICAL: DROP_TOOLS
+                HIGH: DROP_TOOLS
+                MEDIUM: SPIKE_EFFORT
+                LOW: SPIKE_EFFORT
+            ALTERNATIVE:
+              type: ReportedPriority
+              children:
+                CRITICAL: DROP_TOOLS
+                HIGH: DROP_TOOLS
+                MEDIUM: SPIKE_EFFORT
+                LOW: SPIKE_EFFORT
+        NO_PATCH:
+          type: MitigationOption
+          children:
+            INFRASTRUCTURE:
+              type: ReportedPriority
+              children:
+                CRITICAL: DROP_TOOLS
+                HIGH: DROP_TOOLS
+                MEDIUM: SPIKE_EFFORT
+                LOW: SPIKE_EFFORT
+            CODE_CHANGE:
+              type: ReportedPriority
+              children:
+                CRITICAL: DROP_TOOLS
+                HIGH: DROP_TOOLS
+                MEDIUM: DROP_TOOLS
+                LOW: SPIKE_EFFORT
+            UPSTREAM_PR:
+              type: ReportedPriority
+              children:
+                CRITICAL: DROP_TOOLS
+                HIGH: DROP_TOOLS
+                MEDIUM: DROP_TOOLS
+                LOW: SPIKE_EFFORT
+            ALTERNATIVE:
+              type: ReportedPriority
+              children:
+                CRITICAL: DROP_TOOLS
+                HIGH: DROP_TOOLS
+                MEDIUM: SPIKE_EFFORT
+                LOW: SPIKE_EFFORT
+
+# Default action for unmapped paths - routine patches go through automated process
+defaultAction: NIGHTLY_AUTO_PATCH
+
+# Vector string metadata (required per schema)
+vectorMetadata:
+  prefix: DEVEL
+  version: v1
+  parameterMappings:
+    reachability:
+      abbrev: R
+      enumType: Reachability
+      valueMappings:
+        VERIFIED_REACHABLE: VR
+        VERIFIED_UNREACHABLE: VU
+        UNKNOWN: U
+    remediation_option:
+      abbrev: RO
+      enumType: RemediationOption
+      valueMappings:
+        PATCHABLE_VERSION_LOCKED: PVL
+        PATCHABLE_DEPLOYMENT: PD
+        PATCHABLE_MANUAL: PM
+        PATCH_UNAVAILABLE: PU
+        NO_PATCH: NP
+    mitigation_option:
+      abbrev: MO
+      enumType: MitigationOption
+      valueMappings:
+        INFRASTRUCTURE: I
+        CODE_CHANGE: CC
+        UPSTREAM_PR: UP
+        ALTERNATIVE: A
+        AUTOMATION: AU
+    reported_priority:
+      abbrev: RP
+      enumType: ReportedPriority
+      valueMappings:
+        CRITICAL: C
+        HIGH: H
+        MEDIUM: M
+        LOW: L

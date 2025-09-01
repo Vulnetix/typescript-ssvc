@@ -2,11 +2,11 @@
 generated: true
 source: methodologies/coordinator_triage.yaml
 generator: scripts/generate-plugins.ts
-lastGenerated: 2025-08-31T12:19:08.754Z
+lastGenerated: 2025-09-01T14:11:07.041Z
 generatedFiles:
   typescript:
     path: /home/chris/github/typescript-ssvc/src/plugins/coordinator_triage-generated.ts
-    checksum: 4e34c94a073e1f206b9e8fe919afc40a0b2016f1
+    checksum: feabad7fc5625cead87d38d181ce39e451ad149a
 ---
 
 # Coordinator Triage
@@ -412,10 +412,25 @@ flowchart LR
 
 ## Usage
 
+### Direct Plugin Usage
+
 ```typescript
-import { DecisionCoordinatorTriage } from "./plugins/coordinator_triage";
+import { DecisionCoordinatorTriage } from "ssvc";
 
 const decision = new DecisionCoordinatorTriage({
+  // Add parameters based on methodology
+});
+
+const outcome = decision.evaluate();
+console.log(outcome.action, outcome.priority);
+```
+
+### Using the Generic API
+
+```typescript
+import { createDecision } from "ssvc";
+
+const decision = createDecision("coordinator_triage", {
   // Add parameters based on methodology
 });
 
@@ -447,6 +462,8 @@ COORD_TRIAGEv1/[parameters]/[timestamp]/
 ### Example Usage
 
 ```typescript
+import { DecisionCoordinatorTriage } from "ssvc";
+
 // Generate vector string from decision
 const decision = new DecisionCoordinatorTriage({
   report_public: "YES",
@@ -478,7 +495,7 @@ Verify the integrity of generated files using these commands:
 
 ```bash
 # Verify TypeScript plugin file
-echo "4e34c94a073e1f206b9e8fe919afc40a0b2016f1  /home/chris/github/typescript-ssvc/src/plugins/coordinator_triage-generated.ts" | sha1sum -c
+echo "feabad7fc5625cead87d38d181ce39e451ad149a  /home/chris/github/typescript-ssvc/src/plugins/coordinator_triage-generated.ts" | sha1sum -c
 ```
 
 **Why This Matters**: Checksum verification ensures that generated files haven't been tampered with or corrupted. This is important for:
