@@ -133,6 +133,9 @@ osv.sarif.json
 ssvc.cdx.json
 ssvc.spdx.json
 
+# Vulnetix credentials
+.vulnetix/
+
 # No AI files
 CLAUDE.md
 .claude/
