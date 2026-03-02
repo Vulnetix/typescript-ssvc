@@ -5,12 +5,14 @@ on:
     branches: [main]
   release:
     types: [published]
+  workflow_dispatch:
 
 jobs:
   sbom:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+      actions: read
 
     steps:
       - uses: actions/checkout@v4
