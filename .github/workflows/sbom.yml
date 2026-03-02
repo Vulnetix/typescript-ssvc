@@ -36,12 +36,13 @@ jobs:
         with:
           name: sbom-cyclonedx
           path: ssvc.cdx.json
-          retention-days: 90
+          retention-days: 7
 
       - name: Upload SBOM to Vulnetix
         uses: Vulnetix/cli@main
         with:
           org-id: ${{ secrets.VULNETIX_ORG_ID }}
           api-key: ${{ secrets.VULNETIX_API_KEY }}
-          task: upload
-          upload-file: ssvc.cdx.json
+          task: gha
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
