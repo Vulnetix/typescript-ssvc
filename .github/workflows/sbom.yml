@@ -20,15 +20,19 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
-      - uses: actions/setup-node@v5
-        with:
-          node-version: '20.x'
-
+      # Corepack must be enabled before setup-node, because setup-node's
+      # package-manager-cache probe shells out to `yarn` and the runner's
+      # global yarn 1.22 refuses a project pinned to yarn@4.
       - name: Enable Corepack
         run: corepack enable
 
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '20.x'
+          cache: yarn
+
       - name: Install dependencies
-        run: yarn install
+        run: yarn install --immutable
 
       - name: Install CycloneDX plugin
         run: yarn plugin import https://github.com/CycloneDX/cyclonedx-node-yarn/releases/latest/download/yarn-plugin-cyclonedx.cjs
