@@ -7,17 +7,20 @@ on:
     types: [published]
   workflow_dispatch:
 
+env:
+  VULNETIX_VERSION: v3.55.2
+
 jobs:
   sbom:
+    name: CycloneDX SBOM
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      actions: read
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           node-version: '20.x'
 
@@ -34,17 +37,100 @@ jobs:
         run: yarn cyclonedx --spec-version 1.6 --output-format JSON --output-file ssvc.cdx.json
 
       - name: Upload SBOM as build artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: sbom-cyclonedx
           path: ssvc.cdx.json
           retention-days: 7
 
-      - name: Upload SBOM to Vulnetix
-        uses: Vulnetix/cli@main
+  analyze:
+    name: ${{ matrix.name }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    env:
+      VULNETIX_ORG_ID: ${{ secrets.VULNETIX_ORG_ID }}
+      VULNETIX_API_KEY: ${{ secrets.VULNETIX_API_KEY }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - id: cbom
+            name: CBOM
+            run: vulnetix cbom --output-file dist/ssvc.cbom.cdx.json
+            artifact: dist/ssvc.cbom.cdx.json
+          - id: aibom
+            name: AIBOM
+            run: vulnetix aibom --output-file dist/ssvc.aibom.cdx.json
+            artifact: dist/ssvc.aibom.cdx.json
+          - id: license
+            name: Licenses
+            run: vulnetix license && cp .vulnetix/sbom.cdx.json dist/ssvc.licenses.cdx.json
+            artifact: dist/ssvc.licenses.cdx.json
+          - id: secrets
+            name: Secrets
+            run: vulnetix secrets && cp .vulnetix/sast.sarif dist/ssvc.secrets.sarif || true
+            artifact: dist/ssvc.secrets.sarif
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Install Vulnetix CLI
+        run: |
+          curl -fsSL https://cli.vulnetix.com/install.sh \
+            | sh -s -- --install-dir "$HOME/.local/bin" --version "$VULNETIX_VERSION"
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+
+      - name: Verify Vulnetix authentication
+        run: vulnetix auth verify
+
+      - name: Run ${{ matrix.name }}
+        run: |
+          mkdir -p dist
+          ${{ matrix.run }}
+
+      - name: Upload ${{ matrix.name }} artifact
+        uses: actions/upload-artifact@v6
+        with:
+          name: ${{ matrix.id }}
+          path: ${{ matrix.artifact }}
+          if-no-files-found: warn
+          retention-days: 7
+
+  publish:
+    name: Publish
+    runs-on: ubuntu-latest
+    needs: [sbom, analyze]
+    permissions:
+      contents: write
+      actions: read
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-go@v6
+        with:
+          go-version: stable
+
+      - name: Upload all artifacts to Vulnetix
+        uses: Vulnetix/cli@v3.55.2
         with:
           org-id: ${{ secrets.VULNETIX_ORG_ID }}
           api-key: ${{ secrets.VULNETIX_API_KEY }}
           task: gha
         env:
           GITHUB_TOKEN: ${{ github.token }}
+
+      - name: Download all artifacts
+        if: github.event_name == 'release'
+        uses: actions/download-artifact@v6
+        with:
+          path: release-assets
+          merge-multiple: true
+
+      - name: Attach artifacts to GitHub Release
+        if: github.event_name == 'release'
+        run: gh release upload "$TAG" release-assets/* --clobber
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.event.release.tag_name }}
