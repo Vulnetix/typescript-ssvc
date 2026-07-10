@@ -56,21 +56,25 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          - id: sca
+            name: SCA
+            run: vulnetix sca --no-banner --no-progress --verbose
+            artifact: .vulnetix/sbom.cdx.json
           - id: cbom
             name: CBOM
-            run: vulnetix cbom --output-file dist/ssvc.cbom.cdx.json
+            run: vulnetix cbom --output-file dist/ssvc.cbom.cdx.json --no-banner --no-progress --verbose
             artifact: dist/ssvc.cbom.cdx.json
           - id: aibom
             name: AIBOM
-            run: vulnetix aibom --output-file dist/ssvc.aibom.cdx.json
+            run: vulnetix aibom --commit-scan-max 1 --output-file dist/ssvc.aibom.cdx.json --no-banner --no-progress --verbose
             artifact: dist/ssvc.aibom.cdx.json
           - id: license
             name: Licenses
-            run: vulnetix license && cp .vulnetix/sbom.cdx.json dist/ssvc.licenses.cdx.json
+            run: vulnetix license --no-banner --no-progress --verbose && cp .vulnetix/sbom.cdx.json dist/ssvc.licenses.cdx.json
             artifact: dist/ssvc.licenses.cdx.json
           - id: secrets
             name: Secrets
-            run: vulnetix secrets && cp .vulnetix/sast.sarif dist/ssvc.secrets.sarif || true
+            run: vulnetix secrets --ignore-binaries --ignore-git --no-banner --no-progress --verbose && cp .vulnetix/sast.sarif dist/ssvc.secrets.sarif || true
             artifact: dist/ssvc.secrets.sarif
 
     steps:
@@ -82,8 +86,11 @@ jobs:
             | sh -s -- --install-dir "$HOME/.local/bin" --version "$VULNETIX_VERSION"
           echo "$HOME/.local/bin" >> "$GITHUB_PATH"
 
+      - name: Authenticate with Vulnetix
+        run: vulnetix auth login --noninteractive --store project --no-banner --no-progress --verbose
+
       - name: Verify Vulnetix authentication
-        run: vulnetix auth verify
+        run: vulnetix auth verify --no-banner --no-progress --verbose
 
       - name: Run ${{ matrix.name }}
         run: |
@@ -105,22 +112,26 @@ jobs:
     permissions:
       contents: write
       actions: read
+    env:
+      VULNETIX_ORG_ID: ${{ secrets.VULNETIX_ORG_ID }}
+      VULNETIX_API_KEY: ${{ secrets.VULNETIX_API_KEY }}
 
     steps:
       - uses: actions/checkout@v5
 
-      - uses: actions/setup-go@v6
-        with:
-          go-version: stable
+      - name: Install Vulnetix CLI
+        run: |
+          curl -fsSL https://cli.vulnetix.com/install.sh \
+            | sh -s -- --install-dir "$HOME/.local/bin" --version "$VULNETIX_VERSION"
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+
+      - name: Authenticate with Vulnetix
+        run: vulnetix auth login --noninteractive --store project --no-banner --no-progress --verbose
 
       - name: Upload all artifacts to Vulnetix
-        uses: Vulnetix/cli@v3.56.2
-        with:
-          org-id: ${{ secrets.VULNETIX_ORG_ID }}
-          api-key: ${{ secrets.VULNETIX_API_KEY }}
-          task: gha
         env:
           GITHUB_TOKEN: ${{ github.token }}
+        run: vulnetix gha upload --org-id "$VULNETIX_ORG_ID" --json --no-banner --no-progress --verbose
 
       - name: Download all artifacts
         if: github.event_name == 'release'
