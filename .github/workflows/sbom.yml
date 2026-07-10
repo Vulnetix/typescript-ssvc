@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 env:
-  VULNETIX_VERSION: v3.55.2
+  VULNETIX_VERSION: v3.56.2
 
 jobs:
   sbom:
@@ -33,9 +33,6 @@ jobs:
 
       - name: Install dependencies
         run: yarn install --immutable
-
-      - name: Install CycloneDX plugin
-        run: yarn plugin import https://github.com/CycloneDX/cyclonedx-node-yarn/releases/latest/download/yarn-plugin-cyclonedx.cjs
 
       - name: Generate CycloneDX SBOM
         run: yarn cyclonedx --spec-version 1.6 --output-format JSON --output-file ssvc.cdx.json
@@ -117,7 +114,7 @@ jobs:
           go-version: stable
 
       - name: Upload all artifacts to Vulnetix
-        uses: Vulnetix/cli@v3.55.2
+        uses: Vulnetix/cli@v3.56.2
         with:
           org-id: ${{ secrets.VULNETIX_ORG_ID }}
           api-key: ${{ secrets.VULNETIX_API_KEY }}

@@ -124,7 +124,16 @@ dist
 .idea
 
 # yarn
-.yarn
+# .yarn/plugins is committed: .yarnrc.yml declares the cyclonedx plugin by
+# path+checksum, so without the file every `yarn` invocation (even
+# `yarn --version`) fails trying to refetch it. Yarn's own guidance is to
+# commit plugins; the caches below stay ignored.
+.yarn/*
+!.yarn/plugins
+.yarn/cache
+.yarn/install-state.gz
+.yarn/unplugged
+.yarn/build-state.yml
 .pnp.*
 
 # Artifacts
