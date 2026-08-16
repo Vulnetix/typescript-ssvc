@@ -8,20 +8,34 @@ jobs:
     runs-on: ubuntu-latest
 
     strategy:
+      fail-fast: false
       matrix:
-        node-version: [20.x, 19.x, 18.x]
+        # 18 and 19 are years past end of life and 19 was never an LTS line.
+        # Testing against them says nothing about what anyone runs.
+        node-version: ['20.x', '22.x', '24.x']
 
     steps:
     - name: Checkout repository
       uses: actions/checkout@v5
 
+    # Before setup-node, not after: its package-manager-cache probe shells out
+    # to `yarn`, and the runner's global yarn 1.22 refuses a project pinned to
+    # yarn@4 with "This project's package.json defines packageManager".
+    - name: Enable Corepack
+      run: corepack enable
+
     - name: Set up Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v5
       with:
         node-version: ${{ matrix.node-version }}
+        cache: yarn
 
+    # npm, against a package.json that declares `packageManager: yarn@4.9.2`,
+    # is what failed every run of this workflow: corepack enforces the
+    # declaration and refuses. The repository's other two workflows already use
+    # yarn; this one was the odd one out.
     - name: Install dependencies
-      run: npm install
+      run: yarn install --immutable
 
     - name: Run the tests
-      run: npm run test
+      run: yarn test
