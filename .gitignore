@@ -154,3 +154,8 @@ GEMINI.md
 QWEN.md
 OpenCode.md
 .opencode/
+
+# Root-level scan artefact from a local `vulnetix` run; the workflow writes
+# .vulnetix/sbom.cdx.json and ssvc.cdx.json, never this one.
+sbom.cdx.json
+.vulnetix/
