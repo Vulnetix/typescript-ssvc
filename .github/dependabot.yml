@@ -10,6 +10,17 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+    ignore:
+      # @types/node tracks the lowest supported Node (engines.node, 22), not
+      # the newest: typing against a later major lets code call APIs a Node 22
+      # user does not have and still compile. Move it with the engines floor.
+      - dependency-name: "@types/node"
+        update-types: ["version-update:semver-major"]
+      # ts-jest declares typescript >=4.3 <7 as its peer, so the bump to 7 fails
+      # to resolve ("peer dependencies are incorrectly met"). Drop this once a
+      # ts-jest release accepts the next typescript major.
+      - dependency-name: "typescript"
+        update-types: ["version-update:semver-major"]
 
   - package-ecosystem: "github-actions"
     directory: "/"
