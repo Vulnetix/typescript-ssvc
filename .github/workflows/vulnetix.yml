@@ -51,7 +51,7 @@ jobs:
             artifact: .vulnetix/ai-bom.cdx.json
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
 
       - name: Install Vulnetix CLI
         run: |
@@ -89,7 +89,7 @@ jobs:
       VULNETIX_API_KEY: ${{ secrets.VULNETIX_API_KEY }}
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
 
       - name: Install Vulnetix CLI
         run: |

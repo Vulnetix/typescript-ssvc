@@ -24,7 +24,7 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v5
+      uses: actions/checkout@v7
 
     # Before setup-node, not after: its package-manager-cache probe shells out
     # to `yarn`, and the runner's global yarn 1.22 refuses a project pinned to

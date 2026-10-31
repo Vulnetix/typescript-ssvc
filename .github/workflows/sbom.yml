@@ -18,7 +18,7 @@ jobs:
       contents: read
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
 
       # Corepack must be enabled before setup-node, because setup-node's
       # package-manager-cache probe shells out to `yarn` and the runner's
@@ -78,7 +78,7 @@ jobs:
             artifact: dist/ssvc.secrets.sarif
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
 
       - name: Install Vulnetix CLI
         run: |
@@ -118,7 +118,7 @@ jobs:
       VULNETIX_API_KEY: ${{ secrets.VULNETIX_API_KEY }}
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
 
       - name: Install Vulnetix CLI
         run: |
