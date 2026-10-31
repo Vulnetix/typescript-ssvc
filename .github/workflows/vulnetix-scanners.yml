@@ -869,7 +869,7 @@ jobs:
       - uses: actions/checkout@v5
       - name: Generate CycloneDX SBOM
         continue-on-error: true
-        uses: anchore/sbom-action@v0.24.0
+        uses: anchore/sbom-action@v0.24.3
         with:
           artifact-name: sbom.cdx.json
           format: cyclonedx-json
@@ -909,7 +909,7 @@ jobs:
           echo "image=$image" >> "$GITHUB_OUTPUT"
       - name: Generate image SBOM
         continue-on-error: true
-        uses: anchore/sbom-action@v0.24.0
+        uses: anchore/sbom-action@v0.24.3
         with:
           format: cyclonedx-json
           image: '${{ steps.build.outputs.image }}'
