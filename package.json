@@ -21,7 +21,7 @@
     "generate-plugins": "npx ts-node scripts/generate-plugins.ts"
   },
   "dependencies": {
-    "jsonpath-plus": "^10.3.0",
+    "jsonpath-plus": "^11.2.2",
     "yaml": "^2.6.1"
   },
   "devDependencies": {
