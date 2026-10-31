@@ -38,7 +38,7 @@ jobs:
             echo '::warning::bearer produced no valid SARIF; dropping the artifact'
             rm -f bearer.sarif
           fi
-      - uses: actions/upload-artifact@v6
+      - uses: actions/upload-artifact@v7
         with:
           name: bearer
           path: bearer.sarif
@@ -69,7 +69,7 @@ jobs:
             echo '::warning::cdxgen produced no valid CycloneDX JSON; dropping the artifact'
             rm -f cdxgen.cdx.json
           fi
-      - uses: actions/upload-artifact@v6
+      - uses: actions/upload-artifact@v7
         with:
           name: cdxgen
           path: cdxgen.cdx.json
@@ -98,7 +98,7 @@ jobs:
             exit 0
           fi
           uvx --from checkov checkov -d . -o sarif --output-file-path . --soft-fail || true
-      - uses: actions/upload-artifact@v6
+      - uses: actions/upload-artifact@v7
         with:
           name: checkov
           path: results.sarif
@@ -211,7 +211,7 @@ jobs:
             echo '::warning::detect-secrets produced no valid SARIF; dropping the artifact'
             rm -f detect-secrets-results.sarif
           fi
-      - uses: actions/upload-artifact@v6
+      - uses: actions/upload-artifact@v7
         with:
           name: detect-secrets
           path: detect-secrets-results.sarif
@@ -256,7 +256,7 @@ jobs:
             echo '::warning::dockle produced no valid SARIF; dropping the artifact'
             rm -f dockle.sarif
           fi
-      - uses: actions/upload-artifact@v6
+      - uses: actions/upload-artifact@v7
         with:
           name: dockle
           path: dockle.sarif
@@ -297,7 +297,7 @@ jobs:
             echo '::warning::eslint produced no valid SARIF; dropping the artifact'
             rm -f eslint.sarif
           fi
-      - uses: actions/upload-artifact@v6
+      - uses: actions/upload-artifact@v7
         with:
           name: eslint
           path: eslint.sarif
@@ -328,7 +328,7 @@ jobs:
             echo '::warning::GitHub returned no valid SPDX; dropping the artifact'
             rm -f github-sbom.spdx.json
           fi
-      - uses: actions/upload-artifact@v6
+      - uses: actions/upload-artifact@v7
         with:
           name: github-sbom
           path: github-sbom.spdx.json
@@ -353,7 +353,7 @@ jobs:
             echo "::warning::gitleaks produced no valid SARIF; dropping the artifact"
             rm -f gitleaks.sarif
           fi
-      - uses: actions/upload-artifact@v6
+      - uses: actions/upload-artifact@v7
         with:
           name: gitleaks
           path: gitleaks.sarif
@@ -379,7 +379,7 @@ jobs:
         shell: bash --noprofile --norc {0}
         run: |
           cp "${{ steps.grype.outputs.sarif }}" grype.sarif
-      - uses: actions/upload-artifact@v6
+      - uses: actions/upload-artifact@v7
         with:
           name: grype
           path: grype.sarif
@@ -430,7 +430,7 @@ jobs:
             echo '::warning::grype image produced no valid SARIF; dropping the artifact'
             rm -f grype-image.sarif
           fi
-      - uses: actions/upload-artifact@v6
+      - uses: actions/upload-artifact@v7
         with:
           name: grype-image
           path: grype-image.sarif
@@ -471,7 +471,7 @@ jobs:
             echo '::warning::hadolint produced no valid SARIF; dropping the artifact'
             rm -f hadolint.sarif
           fi
-      - uses: actions/upload-artifact@v6
+      - uses: actions/upload-artifact@v7
         with:
           name: hadolint
           path: hadolint.sarif
@@ -491,7 +491,7 @@ jobs:
           mkdir -p kics-out
           docker run --rm -v "$PWD:/path" checkmarx/kics:v2.1.20 \
             scan -p /path -o /path/kics-out --report-formats sarif --no-progress || true
-      - uses: actions/upload-artifact@v6
+      - uses: actions/upload-artifact@v7
         with:
           name: kics
           path: kics-out/results.sarif
@@ -528,7 +528,7 @@ jobs:
             echo '::warning::njsscan produced no valid SARIF; dropping the artifact'
             rm -f njsscan.sarif
           fi
-      - uses: actions/upload-artifact@v6
+      - uses: actions/upload-artifact@v7
         with:
           name: njsscan
           path: njsscan.sarif
@@ -561,7 +561,7 @@ jobs:
             echo '::warning::noseyparker produced no valid SARIF; dropping the artifact'
             rm -f noseyparker.sarif
           fi
-      - uses: actions/upload-artifact@v6
+      - uses: actions/upload-artifact@v7
         with:
           name: noseyparker
           path: noseyparker.sarif
@@ -594,7 +594,7 @@ jobs:
             echo '::warning::opengrep produced no valid SARIF; dropping the artifact'
             rm -f opengrep.sarif
           fi
-      - uses: actions/upload-artifact@v6
+      - uses: actions/upload-artifact@v7
         with:
           name: opengrep
           path: opengrep.sarif
@@ -615,7 +615,7 @@ jobs:
             --format=sarif
             --output=osv.sarif
             ./
-      - uses: actions/upload-artifact@v6
+      - uses: actions/upload-artifact@v7
         with:
           name: osv-scanner
           path: osv.sarif
@@ -646,7 +646,7 @@ jobs:
             echo '::warning::retirejs produced no valid CycloneDX JSON; dropping the artifact'
             rm -f retirejs.cdx.json
           fi
-      - uses: actions/upload-artifact@v6
+      - uses: actions/upload-artifact@v7
         with:
           name: retirejs
           path: retirejs.cdx.json
@@ -703,7 +703,7 @@ jobs:
                 scancode.cdx.json > scancode.clean.json \
               && mv scancode.clean.json scancode.cdx.json
           fi
-      - uses: actions/upload-artifact@v6
+      - uses: actions/upload-artifact@v7
         with:
           name: scancode
           path: scancode.cdx.json
@@ -732,7 +732,7 @@ jobs:
             exit 0
           fi
           uvx --from semgrep semgrep scan --config auto --sarif --output semgrep.sarif .
-      - uses: actions/upload-artifact@v6
+      - uses: actions/upload-artifact@v7
         with:
           name: semgrep
           path: semgrep.sarif
@@ -854,7 +854,7 @@ jobs:
             echo '::warning::shellcheck produced no valid SARIF; dropping the artifact'
             rm -f shellcheck.sarif
           fi
-      - uses: actions/upload-artifact@v6
+      - uses: actions/upload-artifact@v7
         with:
           name: shellcheck
           path: shellcheck.sarif
@@ -875,7 +875,7 @@ jobs:
           format: cyclonedx-json
           output-file: sbom.cdx.json
           path: .
-      - uses: actions/upload-artifact@v6
+      - uses: actions/upload-artifact@v7
         with:
           name: syft
           path: sbom.cdx.json
@@ -923,7 +923,7 @@ jobs:
             echo '::warning::syft image produced no valid CycloneDX JSON; dropping the artifact'
             rm -f syft-image.cdx.json
           fi
-      - uses: actions/upload-artifact@v6
+      - uses: actions/upload-artifact@v7
         with:
           name: syft-image
           path: syft-image.cdx.json
@@ -944,7 +944,7 @@ jobs:
           output: trivy-config.sarif
           scan-ref: .
           scan-type: config
-      - uses: actions/upload-artifact@v6
+      - uses: actions/upload-artifact@v7
         with:
           name: trivy-config
           path: trivy-config.sarif
@@ -973,7 +973,7 @@ jobs:
           output: trivy-fs.sarif
           scan-ref: .
           scan-type: fs
-      - uses: actions/upload-artifact@v6
+      - uses: actions/upload-artifact@v7
         with:
           name: trivy-fs
           path: |
@@ -1024,7 +1024,7 @@ jobs:
             echo '::warning::trivy image produced no valid SARIF; dropping the artifact'
             rm -f trivy-image.sarif
           fi
-      - uses: actions/upload-artifact@v6
+      - uses: actions/upload-artifact@v7
         with:
           name: trivy-image
           path: trivy-image.sarif
@@ -1151,7 +1151,7 @@ jobs:
             echo '::warning::trufflehog produced no valid SARIF; dropping the artifact'
             rm -f trufflehog.sarif
           fi
-      - uses: actions/upload-artifact@v6
+      - uses: actions/upload-artifact@v7
         with:
           name: trufflehog
           path: trufflehog.sarif
@@ -1184,7 +1184,7 @@ jobs:
             echo '::warning::cyclonedx yarn produced no valid CycloneDX JSON; dropping the artifact'
             rm -f yarn-cyclonedx.cdx.json
           fi
-      - uses: actions/upload-artifact@v6
+      - uses: actions/upload-artifact@v7
         with:
           name: yarn-cyclonedx
           path: yarn-cyclonedx.cdx.json
@@ -1225,7 +1225,7 @@ jobs:
             echo "::warning::zizmor produced no valid SARIF; dropping the artifact"
             rm -f zizmor.sarif
           fi
-      - uses: actions/upload-artifact@v6
+      - uses: actions/upload-artifact@v7
         with:
           name: zizmor
           path: zizmor.sarif
