@@ -26,9 +26,17 @@ module.exports = {
     // starts doing its job today: it now fails on a REGRESSION, which is the
     // thing a threshold is for. Raise it as branch coverage improves; the
     // other three stay where they are because they already clear 80 comfortably.
+    //
+    // Re-baselined for jest 30, whose instrumenter also counts the implicit
+    // else of an `if` with no `else` (jest 29 recorded those 478 statements as
+    // a single outcome): the same 762 tests over the same code went from
+    // 2403/3035 to 2618/3513 branches, 74.52%. Every file covers at least as
+    // many branches as before and lines, statements and functions are
+    // unchanged, so the denominator moved, not the coverage. Same rule as
+    // above: pinned just under the measured value.
     coverageThreshold: {
       global: {
-        branches: 79,
+        branches: 74,
         functions: 80,
         lines: 80,
         statements: 80,
