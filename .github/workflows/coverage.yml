@@ -17,8 +17,10 @@ jobs:
       fail-fast: false
       matrix:
         # 18 and 19 are years past end of life and 19 was never an LTS line.
-        # Testing against them says nothing about what anyone runs.
-        node-version: ['20.x', '22.x', '24.x']
+        # Testing against them says nothing about what anyone runs. 20 went
+        # end of life in April 2026 and jsonpath-plus 11 requires Node 22, so
+        # the floor is the engines field in package.json.
+        node-version: ['22.x', '24.x']
 
     steps:
     - name: Checkout repository

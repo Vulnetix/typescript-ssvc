@@ -46,5 +46,8 @@
     "url": "https://github.com/trivialsec/typescript-ssvc/issues"
   },
   "homepage": "https://github.com/trivialsec/typescript-ssvc#readme",
+  "engines": {
+    "node": ">=22"
+  },
   "packageManager": "yarn@4.9.2"
 }

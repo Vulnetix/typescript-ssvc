@@ -354,7 +354,9 @@ export class DataDrivenEvaluator {
         return data;
       }
       
-      const result = JSONPath({ path: jsonPath, json: data });
+      // jsonpath-plus 11 types the result as unknown; with the default
+      // wrap: true it is the array of matches.
+      const result = JSONPath({ path: jsonPath, json: data }) as unknown[];
       
       if (result.length === 0) {
         throw new Error(`JSONPath '${jsonPath}' returned no results`);
