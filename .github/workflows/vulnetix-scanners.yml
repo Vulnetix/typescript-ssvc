@@ -1179,7 +1179,7 @@ jobs:
           fi
           corepack enable
           yarn install --immutable || yarn install --frozen-lockfile || true
-          yarn dlx -q @cyclonedx/yarn-plugin-cyclonedx --omit dev --output-format JSON --output-file yarn-cyclonedx.cdx.json || true
+          yarn dlx -q @cyclonedx/yarn-plugin-cyclonedx --production --output-format JSON --output-file yarn-cyclonedx.cdx.json || true
           if ! jq -e '.bomFormat == "CycloneDX"' yarn-cyclonedx.cdx.json >/dev/null 2>&1; then
             echo '::warning::cyclonedx yarn produced no valid CycloneDX JSON; dropping the artifact'
             rm -f yarn-cyclonedx.cdx.json
