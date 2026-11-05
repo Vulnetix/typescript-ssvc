@@ -24,7 +24,7 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v7
+      uses: actions/checkout@v7.0.1
 
     # Before setup-node, not after: its package-manager-cache probe shells out
     # to `yarn`, and the runner's global yarn 1.22 refuses a project pinned to
@@ -33,7 +33,7 @@ jobs:
       run: corepack enable
 
     - name: Set up Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v7
+      uses: actions/setup-node@v7.1.0
       with:
         node-version: ${{ matrix.node-version }}
         cache: yarn

@@ -1,0 +1,56 @@
+version: 1
+runner: vulnetix-local
+rules:
+  secrets:
+    - Vulnetix/community-rules
+    - Vulnetix/opa-fugue-regula
+    - Vulnetix/opa-checkmarx-kics
+    - Vulnetix/opa-cds-aws-tf
+    - Vulnetix/opa-cigna-tf
+    - Vulnetix/opa-aquasecurity-trivy
+  sast:
+    - Vulnetix/community-rules
+    - Vulnetix/opa-fugue-regula
+    - Vulnetix/opa-checkmarx-kics
+    - Vulnetix/opa-cds-aws-tf
+    - Vulnetix/opa-cigna-tf
+    - Vulnetix/opa-aquasecurity-trivy
+  iac:
+    - Vulnetix/community-rules
+    - Vulnetix/opa-fugue-regula
+    - Vulnetix/opa-checkmarx-kics
+    - Vulnetix/opa-cds-aws-tf
+    - Vulnetix/opa-cigna-tf
+    - Vulnetix/opa-aquasecurity-trivy
+    - Vulnetix/opa-snyk-labs-iac
+  containers:
+    - Vulnetix/community-rules
+    - Vulnetix/opa-fugue-regula
+    - Vulnetix/opa-checkmarx-kics
+    - Vulnetix/opa-cds-aws-tf
+    - Vulnetix/opa-cigna-tf
+    - Vulnetix/opa-aquasecurity-trivy
+  "sast/go":
+    - Vulnetix/opa-gosec
+  "sast/python":
+    - Vulnetix/opa-py-ruff
+license: true
+cbom: true
+aibom: true
+analyze: true
+triggers: pr
+publish: true
+tea:
+  visibility: public
+sast:
+  - typescript
+extras:
+  - action: report
+    prior:
+      - sca
+  - action: triage
+    with:
+      provider: github
+      tool: codeql
+    permissions:
+      security-events: read
