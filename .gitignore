@@ -159,3 +159,4 @@ OpenCode.md
 # .vulnetix/sbom.cdx.json and ssvc.cdx.json, never this one.
 sbom.cdx.json
 .vulnetix/
+!.vulnetix/workflow.yaml
