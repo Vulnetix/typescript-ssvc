@@ -160,3 +160,4 @@ OpenCode.md
 sbom.cdx.json
 .vulnetix/
 !.vulnetix/workflow.yaml
+!.vulnetix/workflow.yaml
