@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 env:
-  VULNESIS_VERSION: v3.56.2
+  VULNETIX_VERSION: v3.56.2
 
 jobs:
   sbom:
@@ -50,8 +50,8 @@ jobs:
     permissions:
       contents: read
     env:
-      VULNESIS_ORG_ID: ${{ secrets.VULNESIS_ORG_ID }}
-      VULNESIS_API_KEY: ${{ secrets.VULNESIS_API_KEY }}
+      VULNETIX_ORG_ID: ${{ secrets.VULNETIX_ORG_ID }}
+      VULNETIX_API_KEY: ${{ secrets.VULNETIX_API_KEY }}
     strategy:
       fail-fast: false
       matrix:
@@ -80,16 +80,16 @@ jobs:
     steps:
       - uses: actions/checkout@v7.0.1
 
-      - name: Install Vulnesis CLI
+      - name: Install Vulnetix CLI
         run: |
-          curl -fsSL https://cli.vulnes.is/install.sh \
-            | sh -s -- --install-dir "$HOME/.local/bin" --version "$VULNESIS_VERSION"
+          curl -fsSL https://cli.vulnetix.com/install.sh \
+            | sh -s -- --install-dir "$HOME/.local/bin" --version "$VULNETIX_VERSION"
           echo "$HOME/.local/bin" >> "$GITHUB_PATH"
 
-      - name: Authenticate with Vulnesis
+      - name: Authenticate with Vulnetix
         run: vulnetix auth login --noninteractive --store project --no-banner --no-progress --verbose
 
-      - name: Verify Vulnesis authentication
+      - name: Verify Vulnetix authentication
         run: vulnetix auth verify --no-banner --no-progress --verbose
 
       - name: Run ${{ matrix.name }}
@@ -114,25 +114,25 @@ jobs:
       contents: write
       actions: read
     env:
-      VULNESIS_ORG_ID: ${{ secrets.VULNESIS_ORG_ID }}
-      VULNESIS_API_KEY: ${{ secrets.VULNESIS_API_KEY }}
+      VULNETIX_ORG_ID: ${{ secrets.VULNETIX_ORG_ID }}
+      VULNETIX_API_KEY: ${{ secrets.VULNETIX_API_KEY }}
 
     steps:
       - uses: actions/checkout@v7.0.1
 
-      - name: Install Vulnesis CLI
+      - name: Install Vulnetix CLI
         run: |
-          curl -fsSL https://cli.vulnes.is/install.sh \
-            | sh -s -- --install-dir "$HOME/.local/bin" --version "$VULNESIS_VERSION"
+          curl -fsSL https://cli.vulnetix.com/install.sh \
+            | sh -s -- --install-dir "$HOME/.local/bin" --version "$VULNETIX_VERSION"
           echo "$HOME/.local/bin" >> "$GITHUB_PATH"
 
-      - name: Authenticate with Vulnesis
+      - name: Authenticate with Vulnetix
         run: vulnetix auth login --noninteractive --store project --no-banner --no-progress --verbose
 
-      - name: Upload all artifacts to Vulnesis
+      - name: Upload all artifacts to Vulnetix
         env:
           GITHUB_TOKEN: ${{ github.token }}
-        run: vulnetix gha upload --org-id "$VULNESIS_ORG_ID" --json --no-banner --no-progress --verbose
+        run: vulnetix gha upload --org-id "$VULNETIX_ORG_ID" --json --no-banner --no-progress --verbose
 
       - name: Download all artifacts
         if: github.event_name == 'release'

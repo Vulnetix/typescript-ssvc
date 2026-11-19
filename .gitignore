@@ -142,7 +142,7 @@ osv.sarif.json
 ssvc.cdx.json
 ssvc.spdx.json
 
-# Vulnesis credentials
+# Vulnetix credentials
 .vulnetix/
 
 # No AI files
